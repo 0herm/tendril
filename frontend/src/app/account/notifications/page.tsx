@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { subscribeUser, unsubscribeUser } from './actions'
 import { Button } from '@/ui/button'
-import { Bell, BellOff, Smartphone } from 'lucide-react'
+import { Bell, BellOff, Share, Smartphone } from 'lucide-react'
 
 function urlBase64ToUint8Array(base64String: string) {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -17,10 +17,12 @@ function urlBase64ToUint8Array(base64String: string) {
 function PushNotificationManager() {
     const [isSupported, setIsSupported] = useState(false)
     const [subscription, setSubscription] = useState<PushSubscription | null>(null)
+    const [permissionDenied, setPermissionDenied] = useState(false)
 
     useEffect(() => {
         if ('serviceWorker' in navigator && 'PushManager' in window) {
             setIsSupported(true)
+            setPermissionDenied(Notification.permission === 'denied')
             registerServiceWorker()
         }
     }, [])
@@ -36,6 +38,11 @@ function PushNotificationManager() {
 
     async function subscribeToPush() {
         try {
+            const permission = await Notification.requestPermission()
+            if (permission !== 'granted') {
+                setPermissionDenied(true)
+                return
+            }
             const registration = await navigator.serviceWorker.ready
             const sub = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
@@ -72,6 +79,8 @@ function PushNotificationManager() {
             <div className='px-4 py-4'>
                 {!isSupported ? (
                     <p className='text-sm text-muted-foreground'>Push notifications are not supported in this browser.</p>
+                ) : permissionDenied ? (
+                    <p className='text-sm text-muted-foreground'>Notifications are blocked. Enable them in your browser or device settings.</p>
                 ) : subscription ? (
                     <Button variant='destructive' onClick={unsubscribeFromPush} className='w-full rounded-xl'>
                         <BellOff className='h-4 w-4 mr-2' />
@@ -113,8 +122,7 @@ function InstallPrompt() {
             <div className='px-4 py-4'>
                 {isIOS ? (
                     <p className='text-sm text-muted-foreground'>
-                        Tap the share button <span role='img' aria-label='share'>⎋</span> then{' '}
-                        <strong>Add to Home Screen</strong> <span role='img' aria-label='plus'>➕</span>
+                        Tap the <Share className='inline-block align-middle mb-0.5 h-3.5 w-3.5' /> share button then <strong>Add to Home Screen</strong>
                     </p>
                 ) : (
                     <Button className='w-full rounded-xl'>Add to Home Screen</Button>

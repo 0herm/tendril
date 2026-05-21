@@ -12,6 +12,10 @@ export const metadata: Metadata = {
         capable: true,
         statusBarStyle: 'black-translucent',
         title: 'WatchBee',
+        startupImage: '/images/logo/logo_512.png',
+    },
+    icons: {
+        apple: '/images/logo/logo_192.png',
     },
 }
 

@@ -1,10 +1,17 @@
+self.addEventListener('install', function (event) {
+    self.skipWaiting()
+})
+
+self.addEventListener('activate', function (event) {
+    event.waitUntil(clients.claim())
+})
+
 self.addEventListener('push', function (event) {
     if (event.data) {
         const data = event.data.json()
         const options = {
             body: data.body,
-            icon: data.icon || '/icon.png',
-            badge: '/badge.png',
+            icon: data.icon || '/images/logo/logo_192.png',
             vibrate: [100, 50, 100],
             data: {
                 dateOfArrival: Date.now(),
@@ -17,7 +24,6 @@ self.addEventListener('push', function (event) {
 })
 
 self.addEventListener('notificationclick', function (event) {
-    console.log('Notification click received.')
     event.notification.close()
     const pushUrl = event.notification.data.url
     if (pushUrl) {
