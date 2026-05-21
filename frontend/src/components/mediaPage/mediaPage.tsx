@@ -4,13 +4,16 @@ import { Film, Globe, Star, Tv } from 'lucide-react'
 import Link from 'next/link'
 import ListTool from '../dialog/dialog'
 import WatchedTool from '../dialog/watcheddialog'
+import { TrailerButton } from '../trailerButton/trailerButton'
+import MediaSection from '../mediaSection/mediasection'
 
 type MediaPageProps = {
     item: MovieDetailsProps | ShowDetailsProps
     media: 'movie' | 'show'
+    similar?: MediaListProps | null
 }
 
-export default function MediaPage({ item, media }: MediaPageProps) {
+export default function MediaPage({ item, media, similar }: MediaPageProps) {
     const customOrder = ['flatrate', 'rent', 'buy']
     const regionProviders = (item['watch/providers']?.results[config.setting.REGION] ?? {}) as Record<string, unknown>
     const sortedProviders = Object.fromEntries(
@@ -34,7 +37,7 @@ export default function MediaPage({ item, media }: MediaPageProps) {
         : []
 
     return (
-        <div className='relative w-full flex flex-col gap-6'>
+        <div className='relative w-full flex flex-col gap-6 -mt-4'>
 
             {/* ── Ambient page backdrop ── */}
             {item.backdrop_path && (
@@ -151,6 +154,7 @@ export default function MediaPage({ item, media }: MediaPageProps) {
                             <div className='flex justify-center sm:justify-start items-center gap-2 pt-1'>
                                 <ListTool tmdbId={item.id} mediaType={media} />
                                 <WatchedTool tmdbID={item.id} mediaType={media} media={item} />
+                                <TrailerButton videos={item.videos?.results ?? []} />
                                 {item.homepage && (
                                     <Link
                                         href={item.homepage}
@@ -352,6 +356,11 @@ export default function MediaPage({ item, media }: MediaPageProps) {
 
                 </div>
             </section>
+
+            {/* ── More Like This ── */}
+            {similar && similar.results.length > 0 && (
+                <MediaSection title='More Like This' items={similar} type={media} />
+            )}
 
         </div>
     )

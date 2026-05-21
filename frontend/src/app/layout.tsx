@@ -42,7 +42,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     </header>
                     <main
                         className='w-full bg-background flex grow overflow-hidden px-4 sm:px-5 pb-32 sm:pb-8'
-                        style={{ paddingTop: 'calc(3rem + env(safe-area-inset-top, 0px))' }}
+                        style={{ paddingTop: 'calc(3rem + 1rem + env(safe-area-inset-top, 0px))' }}
                     >
                         {children}
                     </main>

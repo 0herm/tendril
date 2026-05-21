@@ -5,6 +5,7 @@ import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import { BookOpen } from 'lucide-react'
 import Link from 'next/link'
+import { SurpriseButton } from '@/components/surpriseButton/surpriseButton'
 
 async function fetchDetails(media: MediaProps | WatchedProps) {
     if (media.type === 'show') {
@@ -25,8 +26,10 @@ export default async function Page() {
     const [listsMedia, watchedResults, continueWatchingResults] = await Promise.all([
         Promise.all(lists.map(async (list) => {
             const { data: mediaItems } = await getMediaByListId(list.id)
-            const results = (await Promise.all((mediaItems ?? []).map(fetchDetails))).filter(Boolean) as (ShowDetailsProps | MovieDetailsProps)[]
-            return { list, data: { page: 1, total_pages: 1, total_results: results.length, results } }
+            const items = mediaItems ?? []
+            const results = (await Promise.all(items.map(fetchDetails))).filter(Boolean) as (ShowDetailsProps | MovieDetailsProps)[]
+            const candidates = items.map((m) => ({ id: m.tmdb_id, type: m.type }))
+            return { list, data: { page: 1, total_pages: 1, total_results: results.length, results }, candidates }
         })),
         getAllWatched().then(({ data }) => Promise.all((data ?? []).map(fetchDetails))),
         getContinueWatching().then(({ data }) => Promise.all((data ?? []).map(fetchDetails))),
@@ -37,10 +40,17 @@ export default async function Page() {
         continueWatchingResults.some(Boolean) ||
         listsMedia.some((l) => l.data.results.length > 0)
 
+    const surpriseCandidates = listsMedia.flatMap((l) => l.candidates)
+
     return (
         <div className='w-full flex flex-col gap-6'>
             {hasMedia ? (
                 <div className='flex flex-col gap-6'>
+                    {surpriseCandidates.length > 0 && (
+                        <div className='flex justify-end'>
+                            <SurpriseButton items={surpriseCandidates} />
+                        </div>
+                    )}
                     <MediaSection
                         title='Continue Watching'
                         items={{

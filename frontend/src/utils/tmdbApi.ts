@@ -48,7 +48,11 @@ export async function getUpcomingMovies(): Promise<ApiResult<TrendingProps>> {
 }
 
 export async function getDetailsMovie(id: number): Promise<ApiResult<MovieDetailsProps>> {
-    return getWrapper<MovieDetailsProps>(`3/movie/${id}?${qs({ language: LANGUAGE, append_to_response: 'watch/providers' })}`, REVALIDATE_DETAILS)
+    return getWrapper<MovieDetailsProps>(`3/movie/${id}?${qs({ language: LANGUAGE, append_to_response: 'watch/providers,videos' })}`, REVALIDATE_DETAILS)
+}
+
+export async function getSimilarMovies(id: number): Promise<ApiResult<MediaListProps>> {
+    return getWrapper<MediaListProps>(`3/movie/${id}/similar?${qs({ language: LANGUAGE })}`, REVALIDATE_DETAILS)
 }
 
 export async function getNewShows(): Promise<ApiResult<TrendingProps>> {
@@ -68,7 +72,11 @@ export async function getUpcomingShows(): Promise<ApiResult<TrendingProps>> {
 }
 
 export async function getDetailsShow(id: number): Promise<ApiResult<ShowDetailsProps>> {
-    return getWrapper<ShowDetailsProps>(`3/tv/${id}?${qs({ language: LANGUAGE, append_to_response: 'watch/providers' })}`, REVALIDATE_DETAILS)
+    return getWrapper<ShowDetailsProps>(`3/tv/${id}?${qs({ language: LANGUAGE, append_to_response: 'watch/providers,videos' })}`, REVALIDATE_DETAILS)
+}
+
+export async function getSimilarShows(id: number): Promise<ApiResult<MediaListProps>> {
+    return getWrapper<MediaListProps>(`3/tv/${id}/similar?${qs({ language: LANGUAGE })}`, REVALIDATE_DETAILS)
 }
 
 export async function getSearch(query: string, page = 1): Promise<ApiResult<SearchProps>> {

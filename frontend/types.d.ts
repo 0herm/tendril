@@ -151,6 +151,7 @@ type MovieDetailsProps = {
             }
         }
     } | null
+    videos?: { results: VideoItem[] }
 }
 
 type ShowDetailsProps = {
@@ -248,6 +249,7 @@ type ShowDetailsProps = {
             }
         }
     } | null
+    videos?: { results: VideoItem[] }
 }
 
 type SearchItemProps = {
@@ -292,6 +294,19 @@ type Language = {
 type Timezone = {
     iso_3166_1: string
     zones: string[]
+}
+
+type VideoItem = {
+    id: string
+    iso_639_1: string
+    iso_3166_1: string
+    key: string
+    name: string
+    official: boolean
+    published_at: string
+    site: string
+    size: number
+    type: string
 }
 
 type WatchedProps = {

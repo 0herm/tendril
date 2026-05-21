@@ -55,27 +55,6 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
                 </div>
             </aside>
 
-            <div className='sm:hidden'>
-                <div className='flex bg-muted/60 rounded-xl p-1 gap-0.5 border border-border/40'>
-                    {navItems.map(({ href, icon: Icon, label, exact }) => {
-                        const active = exact ? pathname === href : pathname.startsWith(href)
-                        return (
-                            <Link
-                                key={href}
-                                href={href}
-                                className={`flex flex-1 items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-all ${
-                                    active
-                                        ? 'bg-card text-foreground shadow-sm ring-1 ring-border/50'
-                                        : 'text-muted-foreground hover:text-foreground'
-                                }`}
-                            >
-                                <Icon className={`h-3.5 w-3.5 shrink-0 ${active ? 'text-brand' : ''}`} />
-                                <span className='hidden xs:inline text-xs'>{label}</span>
-                            </Link>
-                        )
-                    })}
-                </div>
-            </div>
         </>
     )
 }
