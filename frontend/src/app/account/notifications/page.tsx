@@ -18,6 +18,8 @@ function PushNotificationManager() {
     const [isSupported, setIsSupported] = useState(false)
     const [subscription, setSubscription] = useState<PushSubscription | null>(null)
     const [permissionDenied, setPermissionDenied] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -28,15 +30,21 @@ function PushNotificationManager() {
     }, [])
 
     async function registerServiceWorker() {
-        const registration = await navigator.serviceWorker.register('/sw.js', {
-            scope: '/',
-            updateViaCache: 'none',
-        })
-        const sub = await registration.pushManager.getSubscription()
-        setSubscription(sub)
+        try {
+            const registration = await navigator.serviceWorker.register('/sw.js', {
+                scope: '/',
+                updateViaCache: 'none',
+            })
+            const sub = await registration.pushManager.getSubscription()
+            setSubscription(sub)
+        } catch (err) {
+            setError(`Service worker failed to register: ${err instanceof Error ? err.message : String(err)}`)
+        }
     }
 
     async function subscribeToPush() {
+        setError(null)
+        setLoading(true)
         try {
             const permission = await Notification.requestPermission()
             if (permission !== 'granted') {
@@ -44,22 +52,41 @@ function PushNotificationManager() {
                 return
             }
             const registration = await navigator.serviceWorker.ready
+            if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) {
+                setError('VAPID public key is not configured.')
+                return
+            }
             const sub = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!),
+                applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY),
             })
             setSubscription(sub)
             const serializedSub = JSON.parse(JSON.stringify(sub))
-            await subscribeUser(serializedSub)
-        } catch (error) {
-            console.error('Error during subscription:', error)
+            const result = await subscribeUser(serializedSub)
+            if (!result.success) {
+                setError(`Failed to save subscription: ${result.error}`)
+                await sub.unsubscribe()
+                setSubscription(null)
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err.message : String(err))
+        } finally {
+            setLoading(false)
         }
     }
 
     async function unsubscribeFromPush() {
-        await subscription?.unsubscribe()
-        setSubscription(null)
-        await unsubscribeUser()
+        setError(null)
+        setLoading(true)
+        try {
+            await subscription?.unsubscribe()
+            setSubscription(null)
+            await unsubscribeUser()
+        } catch (err) {
+            setError(err instanceof Error ? err.message : String(err))
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -76,22 +103,23 @@ function PushNotificationManager() {
                     </p>
                 </div>
             </div>
-            <div className='px-4 py-4'>
+            <div className='px-4 py-4 flex flex-col gap-3'>
                 {!isSupported ? (
                     <p className='text-sm text-muted-foreground'>Push notifications are not supported in this browser.</p>
                 ) : permissionDenied ? (
                     <p className='text-sm text-muted-foreground'>Notifications are blocked. Enable them in your browser or device settings.</p>
                 ) : subscription ? (
-                    <Button variant='destructive' onClick={unsubscribeFromPush} className='w-full rounded-xl'>
+                    <Button variant='destructive' onClick={unsubscribeFromPush} disabled={loading} className='w-full rounded-xl'>
                         <BellOff className='h-4 w-4 mr-2' />
                         Unsubscribe
                     </Button>
                 ) : (
-                    <Button onClick={subscribeToPush} className='w-full rounded-xl'>
+                    <Button onClick={subscribeToPush} disabled={loading} className='w-full rounded-xl'>
                         <Bell className='h-4 w-4 mr-2' />
-                        Subscribe to Notifications
+                        {loading ? 'Subscribing…' : 'Subscribe to Notifications'}
                     </Button>
                 )}
+                {error && <p className='text-xs text-destructive'>{error}</p>}
             </div>
         </div>
     )
