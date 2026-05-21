@@ -32,10 +32,18 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <head />
             <body className='w-screen min-h-dvh m-0 p-0 font-[Inter] antialiased wrap-break-word leading-normal tracking-normal'>
                 <div className='flex flex-col w-full min-h-dvh'>
-                    <header className='fixed top-0 left-0 right-0 h-12 border-b border-border backdrop-blur-md z-50 print:hidden bg-background/80'>
-                        <NavBar />
+                    <header
+                        className='fixed top-0 left-0 right-0 border-b border-border backdrop-blur-md z-50 print:hidden bg-background/80'
+                        style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+                    >
+                        <div className='h-12'>
+                            <NavBar />
+                        </div>
                     </header>
-                    <main className='w-full bg-background flex grow overflow-hidden px-4 sm:px-5 pt-16 pb-24 sm:pb-8'>
+                    <main
+                        className='w-full bg-background flex grow overflow-hidden px-4 sm:px-5 pb-24 sm:pb-8'
+                        style={{ paddingTop: 'calc(3rem + env(safe-area-inset-top, 0px))' }}
+                    >
                         {children}
                     </main>
                     <footer className='border-t border-border hidden sm:block'>
