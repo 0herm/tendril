@@ -4,19 +4,19 @@ type ButtonVariant = 'default' | 'secondary' | 'outline' | 'destructive' | 'ghos
 type ButtonSize = 'default' | 'sm' | 'lg' | 'icon'
 
 const variantClasses: Record<ButtonVariant, string> = {
-    default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
-    destructive: 'bg-destructive text-white shadow-xs hover:bg-destructive/90',
-    outline: 'border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground',
-    secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
-    ghost: 'hover:bg-accent hover:text-accent-foreground',
-    link: 'text-primary underline-offset-4 hover:underline',
+    default:     'bg-brand text-white shadow-xs hover:bg-brand-dim active:bg-brand-dimmer',
+    secondary:   'bg-muted text-foreground shadow-xs hover:bg-muted/70 active:bg-muted/60',
+    outline:     'border border-border bg-transparent text-foreground shadow-xs hover:bg-muted active:bg-muted/70',
+    destructive: 'bg-destructive text-white shadow-xs hover:bg-destructive/90 active:bg-destructive/80',
+    ghost:       'text-muted-foreground hover:text-foreground hover:bg-muted active:bg-muted/70',
+    link:        'text-brand underline-offset-4 hover:underline h-auto p-0',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
-    default: 'h-9 px-4 py-2',
-    sm: 'h-8 rounded-md gap-1.5 px-3',
-    lg: 'h-10 rounded-md px-6',
-    icon: 'size-9',
+    default: 'h-9 px-4 py-2 rounded-lg',
+    sm:      'h-8 px-3 text-xs rounded-md gap-1.5',
+    lg:      'h-11 px-5 rounded-xl',
+    icon:    'size-9 rounded-lg',
 }
 
 interface ButtonProps extends React.ComponentProps<'button'> {
@@ -25,16 +25,13 @@ interface ButtonProps extends React.ComponentProps<'button'> {
 }
 
 function Button({ className = '', variant = 'default', size = 'default', ...props }: ButtonProps) {
-    const cls = 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md ' +
-        'text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 ' +
-        'outline-none focus-visible:ring-2 focus-visible:ring-ring/50 cursor-pointer ' +
+    const cls =
+        'inline-flex items-center justify-center gap-2 whitespace-nowrap ' +
+        'text-sm font-medium transition-colors ' +
+        'disabled:pointer-events-none disabled:opacity-40 ' +
+        'outline-none focus-visible:ring-2 focus-visible:ring-brand/30 cursor-pointer ' +
         `${variantClasses[variant]} ${sizeClasses[size]} ${className}`
-    return (
-        <button
-            className={cls}
-            {...props}
-        />
-    )
+    return <button className={cls} {...props} />
 }
 
 export { Button }

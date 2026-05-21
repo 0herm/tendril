@@ -3,6 +3,8 @@ import { getCountries, getLanguages, getTimezones } from '@/utils/tmdbApi'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import Form from 'next/form'
+import { Button } from '@/ui/button'
+import { Select } from '@/ui/select'
 
 export default async function SettingsPage() {
     const userId = await getSessionUserId()
@@ -44,41 +46,41 @@ export default async function SettingsPage() {
                         Content
                     </p>
                     <SettingRow label='Language'>
-                        <select
+                        <Select
                             name='language'
                             defaultValue={settings.language || ''}
-                            className='bg-transparent border-0 text-sm text-foreground text-right focus:outline-none py-3 pr-1 max-w-40 truncate'
+                            className='max-w-40 text-right'
                         >
                             {languages.map((language) => (
                                 <option key={language.iso_639_1} value={language.iso_639_1}>
                                     {language.english_name}
                                 </option>
                             ))}
-                        </select>
+                        </Select>
                     </SettingRow>
                     <SettingRow label='Region'>
-                        <select
+                        <Select
                             name='region'
                             defaultValue={settings.region || ''}
-                            className='bg-transparent border-0 text-sm text-foreground text-right focus:outline-none py-3 pr-1 max-w-40 truncate'
+                            className='max-w-40 text-right'
                         >
                             {countries.map((country) => (
                                 <option key={country.iso_3166_1} value={country.iso_3166_1}>
                                     {country.native_name}
                                 </option>
                             ))}
-                        </select>
+                        </Select>
                     </SettingRow>
                     <SettingRow label='Timezone' last>
-                        <select
+                        <Select
                             name='timezone'
                             defaultValue={settings.timezone || ''}
-                            className='bg-transparent border-0 text-sm text-foreground text-right focus:outline-none py-3 pr-1 max-w-40 truncate'
+                            className='max-w-40 text-right'
                         >
                             {timezones.map((timezone) => (
                                 <option key={timezone} value={timezone}>{timezone}</option>
                             ))}
-                        </select>
+                        </Select>
                     </SettingRow>
                 </div>
 
@@ -92,7 +94,7 @@ export default async function SettingsPage() {
                             type='checkbox'
                             name='original_title'
                             defaultChecked={!!settings.original_title}
-                            className='h-5 w-5 accent-brand mr-1'
+                            className='h-4 w-4 accent-brand rounded'
                         />
                     </SettingRow>
                     <SettingRow label='Include Adult Content' last>
@@ -101,17 +103,14 @@ export default async function SettingsPage() {
                             type='checkbox'
                             name='include_adult'
                             defaultChecked={!!settings.include_adult}
-                            className='h-5 w-5 accent-brand mr-1'
+                            className='h-4 w-4 accent-brand rounded'
                         />
                     </SettingRow>
                 </div>
 
-                <button
-                    type='submit'
-                    className='w-full py-3 bg-brand text-white rounded-xl text-sm font-semibold hover:bg-brand-dim active:bg-brand-dimmer transition-colors'
-                >
+                <Button type='submit' className='w-full'>
                     Save Changes
-                </button>
+                </Button>
             </Form>
         </div>
     )

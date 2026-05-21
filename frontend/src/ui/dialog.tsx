@@ -105,24 +105,29 @@ function DialogContent({
     return (
         <DialogPortal>
             <div
-                className='fixed inset-0 z-50 bg-black/50'
+                className='fixed inset-0 z-50 bg-black/60 backdrop-blur-sm'
                 onClick={() => onOpenChange(false)}
             />
             <div
                 className={
-                    'bg-background fixed top-1/2 left-1/2 z-50 grid w-full ' +
+                    'fixed top-1/2 left-1/2 z-50 w-full ' +
                     'max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 ' +
-                    `gap-4 rounded-lg border p-6 shadow-lg sm:max-w-lg ${className}`
+                    'bg-card border border-border rounded-2xl shadow-2xl overflow-hidden ' +
+                    `sm:max-w-lg ${className}`
                 }
+                onClick={(e) => e.stopPropagation()}
             >
                 {children}
                 {showCloseButton && (
                     <button
                         onClick={() => onOpenChange(false)}
-                        className='absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100'
+                        className={
+                            'absolute top-4 right-4 flex items-center justify-center w-7 h-7 ' +
+                            'rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors'
+                        }
                         aria-label='Close'
                     >
-                        <X className='size-4' />
+                        <X className='size-3.5' />
                     </button>
                 )}
             </div>
@@ -131,15 +136,20 @@ function DialogContent({
 }
 
 function DialogHeader({ className = '', ...props }: React.ComponentProps<'div'>) {
-    return <div className={`flex flex-col gap-2 text-center sm:text-left ${className}`} {...props} />
+    return (
+        <div
+            className={`flex flex-col gap-1 px-5 pt-5 pb-4 border-b border-border ${className}`}
+            {...props}
+        />
+    )
 }
 
 function DialogTitle({ className = '', ...props }: React.ComponentProps<'h2'>) {
-    return <h2 className={`text-lg leading-none font-semibold ${className}`} {...props} />
+    return <h2 className={`text-base font-semibold leading-none ${className}`} {...props} />
 }
 
 function DialogDescription({ className = '', ...props }: React.ComponentProps<'p'>) {
-    return <p className={`text-muted-foreground text-sm ${className}`} {...props} />
+    return <p className={`text-xs text-muted-foreground mt-0.5 ${className}`} {...props} />
 }
 
 export {

@@ -22,7 +22,7 @@ export default function SearchPage() {
                 <Search className='absolute left-3 h-4 w-4 text-muted-foreground pointer-events-none' />
                 <Input
                     ref={inputRef}
-                    className='h-12 pl-10 pr-12 text-base rounded-xl'
+                    className='h-12 pl-10 pr-24 text-base rounded-xl'
                     placeholder='Search movies and shows...'
                     autoFocus
                     onKeyDown={(e) => {
@@ -30,7 +30,7 @@ export default function SearchPage() {
                     }}
                 />
                 <Button
-                    className='absolute right-1.5 h-9 rounded-lg'
+                    className='absolute right-1.5 h-9 px-4 rounded-lg'
                     onClick={handleSearch}
                 >
                     Search

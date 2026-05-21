@@ -51,32 +51,38 @@ export default function LoginClient() {
     }
 
     return (
-        <div className='w-full flex flex-col items-center justify-center gap-8 py-16 max-w-sm mx-auto text-center'>
-            <div className='flex items-center gap-2'>
-                <Clapperboard className='h-5 w-5 text-brand' />
-                <span className='text-sm font-bold tracking-tight'>WatchBee</span>
+        <div className='w-full flex flex-col items-center justify-center gap-10 py-20 max-w-xs mx-auto text-center'>
+            <div className='flex flex-col items-center gap-2'>
+                <div className='flex items-center justify-center w-10 h-10 rounded-xl bg-brand/15 mb-2'>
+                    <Clapperboard className='h-5 w-5 text-brand' />
+                </div>
+                <span className='text-base font-bold tracking-tight'>
+                    Watch<span className='text-brand'>Bee</span>
+                </span>
             </div>
 
-            <div className='flex flex-col items-center gap-4'>
-                <div className='flex h-16 w-16 items-center justify-center rounded-2xl bg-muted'>
-                    <Fingerprint className='h-8 w-8 text-brand' />
+            <div className='flex flex-col items-center gap-5'>
+                <div className='flex h-20 w-20 items-center justify-center rounded-3xl bg-muted ring-1 ring-border'>
+                    <Fingerprint className='h-10 w-10 text-brand' />
                 </div>
-                <div className='flex flex-col gap-1.5'>
-                    <h1 className='text-2xl font-bold'>Welcome back</h1>
-                    <p className='text-sm text-muted-foreground'>
-                        Use your passkey to sign in.
+                <div className='flex flex-col gap-2'>
+                    <h1 className='text-2xl font-bold tracking-tight'>Welcome back</h1>
+                    <p className='text-sm text-muted-foreground leading-relaxed'>
+                        Authenticate with your passkey to continue.
                     </p>
                 </div>
             </div>
+
             {error && (
-                <p className='text-sm text-destructive bg-destructive/10 rounded-lg px-4 py-2 w-full'>{error}</p>
+                <p className='text-sm text-destructive bg-destructive/10 rounded-xl px-4 py-2.5 w-full'>{error}</p>
             )}
+
             <Button
-                className='w-full h-12 text-base rounded-xl gap-2'
+                className='w-full h-12 text-sm font-semibold rounded-xl gap-2 bg-brand hover:bg-brand-dim active:bg-brand-dimmer text-white'
                 onClick={handleLogin}
                 disabled={loading}
             >
-                <Fingerprint className='h-5 w-5' />
+                <Fingerprint className='h-4 w-4' />
                 {loading ? 'Authenticating…' : 'Sign in with Passkey'}
             </Button>
         </div>

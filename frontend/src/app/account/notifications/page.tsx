@@ -92,7 +92,7 @@ function PushNotificationManager() {
     return (
         <div className='rounded-xl border border-border overflow-hidden bg-card'>
             <div className='flex items-center gap-3 px-4 py-4 border-b border-border'>
-                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0'>
+                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0 ring-1 ring-border/50'>
                     <Bell className='h-4 w-4' />
                 </div>
                 <div>
@@ -109,13 +109,13 @@ function PushNotificationManager() {
                 ) : permissionDenied ? (
                     <p className='text-sm text-muted-foreground'>Notifications are blocked. Enable them in your browser or device settings.</p>
                 ) : subscription ? (
-                    <Button variant='destructive' onClick={unsubscribeFromPush} disabled={loading} className='w-full rounded-xl'>
-                        <BellOff className='h-4 w-4 mr-2' />
+                    <Button variant='destructive' onClick={unsubscribeFromPush} disabled={loading} className='w-full'>
+                        <BellOff className='h-4 w-4' />
                         Unsubscribe
                     </Button>
                 ) : (
-                    <Button onClick={subscribeToPush} disabled={loading} className='w-full rounded-xl'>
-                        <Bell className='h-4 w-4 mr-2' />
+                    <Button onClick={subscribeToPush} disabled={loading} className='w-full'>
+                        <Bell className='h-4 w-4' />
                         {loading ? 'Subscribing…' : 'Subscribe to Notifications'}
                     </Button>
                 )}
@@ -139,7 +139,7 @@ function InstallPrompt() {
     return (
         <div className='rounded-xl border border-border overflow-hidden bg-card'>
             <div className='flex items-center gap-3 px-4 py-4 border-b border-border'>
-                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0'>
+                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0 ring-1 ring-border/50'>
                     <Smartphone className='h-4 w-4' />
                 </div>
                 <div>
@@ -153,7 +153,7 @@ function InstallPrompt() {
                         Tap the <Share className='inline-block align-middle mb-0.5 h-3.5 w-3.5' /> share button then <strong>Add to Home Screen</strong>
                     </p>
                 ) : (
-                    <Button className='w-full rounded-xl'>Add to Home Screen</Button>
+                    <Button className='w-full'>Add to Home Screen</Button>
                 )}
             </div>
         </div>

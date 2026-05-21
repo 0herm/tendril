@@ -116,9 +116,9 @@ export default function WatchedTool({ tmdbID, mediaType, media }: ListToolProps)
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Watched Seasons</DialogTitle>
-                    <DialogDescription>Select the seasons you have watched</DialogDescription>
+                    <DialogDescription>Select the seasons you have watched.</DialogDescription>
                 </DialogHeader>
-                <div className='w-full grid grid-cols-2 xs:grid-cols-3 gap-2 max-h-[30rem] overflow-y-auto'>
+                <div className='px-5 pt-4 grid grid-cols-2 xs:grid-cols-3 gap-2 max-h-64 overflow-y-auto'>
                     {Array.from({ length: totalSeasons || 0 }, (_, i) => i + 1).map((season) => (
                         <Button
                             key={season}
@@ -129,7 +129,7 @@ export default function WatchedTool({ tmdbID, mediaType, media }: ListToolProps)
                         </Button>
                     ))}
                 </div>
-                <div className='flex justify-between gap-2'>
+                <div className='px-5 py-4 flex gap-2 border-t border-border mt-2'>
                     <Button
                         variant='outline'
                         className='flex-1'

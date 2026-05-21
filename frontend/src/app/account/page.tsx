@@ -79,9 +79,8 @@ export default async function Page() {
                     <Link
                         href='/'
                         className={
-                            'inline-flex items-center gap-1.5 px-4 py-2 ' +
-                            'bg-brand hover:bg-brand-dim active:bg-brand-dimmer ' +
-                            'text-white rounded-md text-sm font-medium transition-colors'
+                            'inline-flex items-center gap-2 h-9 px-4 rounded-lg ' +
+                            'bg-brand hover:bg-brand-dim active:bg-brand-dimmer text-white text-sm font-medium transition-colors'
                         }
                     >
                         Browse

@@ -1,7 +1,7 @@
 import MediaCard from '@/components/mediaCard/mediaCard'
 import { getSearch } from '@/utils/tmdbApi'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, SearchX } from 'lucide-react'
 
 export default async function Page({ params }: { params: Promise<{ search: string }> }) {
     const param = (await params).search
@@ -41,8 +41,16 @@ export default async function Page({ params }: { params: Promise<{ search: strin
                     ))}
                 </div>
             ) : (
-                <div className='text-center py-16 text-muted-foreground text-sm'>
-                    Try a different search term.
+                <div className='flex flex-col items-center justify-center gap-4 py-20 text-center'>
+                    <div className='flex h-14 w-14 items-center justify-center rounded-2xl bg-muted'>
+                        <SearchX className='h-7 w-7 text-muted-foreground' />
+                    </div>
+                    <div className='flex flex-col gap-1'>
+                        <p className='text-sm font-medium'>No results found</p>
+                        <p className='text-xs text-muted-foreground max-w-xs'>
+                            Try a different search term or check your spelling.
+                        </p>
+                    </div>
                 </div>
             )}
         </div>

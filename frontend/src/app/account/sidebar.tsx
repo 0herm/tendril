@@ -16,7 +16,7 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
     return (
         <>
             <aside className='hidden sm:flex flex-col w-44 shrink-0'>
-                <p className='text-[10px] font-bold uppercase tracking-widest text-muted-foreground px-3 pb-2 pt-0.5'>
+                <p className='text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 px-3 pb-2 pt-0.5'>
                     Account
                 </p>
                 <div className='flex flex-col gap-0.5'>
@@ -29,13 +29,13 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
                                 className={`relative flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors overflow-hidden ${
                                     active
                                         ? 'bg-brand-subtle text-foreground font-medium'
-                                        : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                                        : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                                 }`}
                             >
                                 {active && (
-                                    <span className='absolute left-0 top-1/2 -translate-y-1/2 h-4 w-0.5 bg-brand rounded-r-full' />
+                                    <span className='absolute left-0 top-1/2 -translate-y-1/2 h-3.5 w-0.5 bg-brand rounded-r-full' />
                                 )}
-                                <Icon className={`h-4 w-4 shrink-0 ${active ? 'text-brand' : ''}`} />
+                                <Icon className={`h-3.5 w-3.5 shrink-0 ${active ? 'text-brand' : ''}`} />
                                 {label}
                             </Link>
                         )
@@ -48,7 +48,7 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
                             type='submit'
                             className='flex w-full items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-destructive hover:bg-destructive/10 transition-colors'
                         >
-                            <LogOut className='h-4 w-4 shrink-0' />
+                            <LogOut className='h-3.5 w-3.5 shrink-0' />
                             Sign out
                         </button>
                     </form>
@@ -56,7 +56,7 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
             </aside>
 
             <div className='sm:hidden'>
-                <div className='flex bg-muted rounded-xl p-1 gap-1'>
+                <div className='flex bg-muted/60 rounded-xl p-1 gap-0.5 border border-border/40'>
                     {navItems.map(({ href, icon: Icon, label, exact }) => {
                         const active = exact ? pathname === href : pathname.startsWith(href)
                         return (
@@ -65,12 +65,12 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
                                 href={href}
                                 className={`flex flex-1 items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-all ${
                                     active
-                                        ? 'bg-card text-foreground shadow-sm'
+                                        ? 'bg-card text-foreground shadow-sm ring-1 ring-border/50'
                                         : 'text-muted-foreground hover:text-foreground'
                                 }`}
                             >
-                                <Icon className={`h-4 w-4 shrink-0 ${active ? 'text-brand' : ''}`} />
-                                <span className='hidden xs:inline'>{label}</span>
+                                <Icon className={`h-3.5 w-3.5 shrink-0 ${active ? 'text-brand' : ''}`} />
+                                <span className='hidden xs:inline text-xs'>{label}</span>
                             </Link>
                         )
                     })}

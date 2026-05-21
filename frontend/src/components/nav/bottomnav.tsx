@@ -20,22 +20,30 @@ export default function BottomNav() {
 
     return (
         <nav
-            className='fixed bottom-0 left-0 right-0 sm:hidden z-50 bg-background/95 backdrop-blur-md border-t border-border'
-            style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+            className='fixed bottom-0 left-0 right-0 sm:hidden z-50'
+            style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
         >
-            <div className='flex items-center justify-around h-14'>
-                {tabs.map(({ href, icon: Icon, label }) => (
-                    <Link
-                        key={href}
-                        href={href}
-                        className={`flex flex-col items-center gap-0.5 px-6 py-2 rounded-lg transition-colors ${
-                            isActive(href) ? 'text-brand' : 'text-muted-foreground'
-                        }`}
-                    >
-                        <Icon className={`h-5 w-5 transition-transform ${isActive(href) ? 'scale-110' : ''}`} />
-                        <span className='text-[10px] font-medium'>{label}</span>
-                    </Link>
-                ))}
+            <div className='mx-5'>
+                <div className='flex items-stretch bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl shadow-lg overflow-hidden h-16'>
+                    {tabs.map(({ href, icon: Icon, label }) => {
+                        const active = isActive(href)
+                        return (
+                            <Link
+                                key={href}
+                                href={href}
+                                className={`relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors ${
+                                    active ? 'text-brand' : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                            >
+                                {active && (
+                                    <span className='absolute inset-x-3 inset-y-2 bg-brand/10 rounded-xl' />
+                                )}
+                                <Icon className={`relative h-5 w-5 transition-transform ${active ? 'scale-110' : ''}`} />
+                                <span className='relative text-[10px] font-medium leading-none'>{label}</span>
+                            </Link>
+                        )
+                    })}
+                </div>
             </div>
         </nav>
     )

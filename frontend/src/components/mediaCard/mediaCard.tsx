@@ -102,7 +102,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
         <button
             onClick={onClick}
             className={'flex flex-1 items-center justify-center gap-1.5 py-1.5 text-xs ' +
-                `font-medium transition-colors ${watched ? 'bg-brand/80 text-white' : 'text-white/80 hover:bg-white/10'}`}
+                `font-medium transition-colors ${watched ? 'bg-brand/80 text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
         >
             {watched ? <Eye className='h-3.5 w-3.5' /> : <EyeOff className='h-3.5 w-3.5' />}
             Watched
@@ -112,7 +112,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
     return (
         <div className='group relative w-full'>
             <Link href={`/${mediaType}/${item.id}`}>
-                <div className='relative aspect-2/3 w-full overflow-hidden rounded-lg shadow-md ring-1 ring-border/50'>
+                <div className='relative aspect-2/3 w-full overflow-hidden rounded-xl shadow-md ring-1 ring-border/40'>
                     {item.poster_path ? (
                         <Image
                             src={`${config.url.IMAGE_URL}${item.poster_path}`}
@@ -126,31 +126,29 @@ export default function MediaCard({ item, type }: MediaCardProps) {
                             <ImageIcon className='h-8 w-8 text-muted-foreground' />
                         </div>
                     )}
-                    <div className='absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
+                    {rating && (
+                        <div className='absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-black/70 backdrop-blur-sm rounded-md px-1.5 py-0.5 z-10'>
+                            <Star className='h-2.5 w-2.5 fill-yellow-400 stroke-none' />
+                            <span className='text-[10px] font-semibold text-white leading-none'>{rating}</span>
+                        </div>
+                    )}
+                    <div className={
+                        'absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent ' +
+                        'opacity-0 group-hover:opacity-100 transition-opacity duration-300'
+                    } />
                     <div className='absolute bottom-10 left-0 right-0 px-2 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300'>
                         {title && <p className='text-white text-xs font-semibold line-clamp-2 leading-tight'>{title}</p>}
-                        <div className='flex items-center gap-1.5 mt-0.5'>
-                            {year && <span className='text-white/70 text-xs'>{year}</span>}
-                            {rating && (
-                                <>
-                                    <span className='text-white/40 text-xs'>·</span>
-                                    <span className='flex items-center gap-0.5 text-white/70 text-xs'>
-                                        <Star className='h-2.5 w-2.5 fill-yellow-400 stroke-yellow-400' />
-                                        {rating}
-                                    </span>
-                                </>
-                            )}
-                        </div>
+                        {year && <p className='text-white/60 text-[10px] mt-0.5'>{year}</p>}
                     </div>
                 </div>
             </Link>
 
             <div className='absolute bottom-0 left-0 right-0 px-1.5 pb-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10'>
-                <div className='flex rounded-md overflow-hidden bg-black/60 backdrop-blur-sm border border-white/10'>
+                <div className='flex rounded-lg overflow-hidden bg-black/65 backdrop-blur-sm border border-white/10'>
                     <button
                         onClick={handleSave}
                         className={'flex flex-1 items-center justify-center gap-1.5 py-1.5 text-xs ' +
-                            `font-medium transition-colors ${inList ? 'bg-primary/80 text-primary-foreground' : 'text-white/80 hover:bg-white/10'}`}
+                            `font-medium transition-colors ${inList ? 'bg-foreground/20 text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
                     >
                         <Bookmark className={`h-3.5 w-3.5${inList ? ' fill-current' : ''}`} />
                         Save
@@ -166,7 +164,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
                                     <DialogTitle>Watched Seasons</DialogTitle>
                                     <DialogDescription>Select the seasons you have watched</DialogDescription>
                                 </DialogHeader>
-                                <div className='w-full grid grid-cols-2 xs:grid-cols-3 gap-2 max-h-[30rem] overflow-y-auto'>
+                                <div className='px-5 pt-4 grid grid-cols-2 xs:grid-cols-3 gap-2 max-h-64 overflow-y-auto'>
                                     {Array.from({ length: totalSeasons }, (_, i) => i + 1).map((season) => (
                                         <Button
                                             key={season}
@@ -177,7 +175,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
                                         </Button>
                                     ))}
                                 </div>
-                                <div className='flex justify-between gap-2'>
+                                <div className='px-5 py-4 flex justify-between gap-2 border-t border-border mt-2'>
                                     <Button variant='outline' className='flex-1'
                                         onClick={() => setWatchedSeasons(Array.from({ length: totalSeasons }, (_, i) => i + 1))}>
                                         All Seasons

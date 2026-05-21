@@ -57,7 +57,8 @@ export default function ContentDialog({ tmdbId, mediaType, lists = [], mediaInLi
                 <DialogTitle>Manage Lists</DialogTitle>
                 <DialogDescription>Add or remove this title from your lists.</DialogDescription>
             </DialogHeader>
-            <div className='space-y-6'>
+
+            <div className='px-5 py-4 flex flex-col gap-4'>
                 <div className='flex gap-2 items-start'>
                     <div ref={dropdownRef} className='relative flex-1'>
                         <button
@@ -65,30 +66,32 @@ export default function ContentDialog({ tmdbId, mediaType, lists = [], mediaInLi
                             onClick={() => setDropdownOpen((v) => !v)}
                             className={
                                 'flex w-full items-center justify-between gap-2 ' +
-                                'rounded-md border border-input bg-background ' +
-                                'px-3 py-2 text-sm shadow-xs transition-colors ' +
-                                'hover:bg-accent hover:text-accent-foreground'
+                                'h-9 rounded-lg border border-border bg-muted/30 ' +
+                                'px-3 text-sm text-foreground transition-colors ' +
+                                'hover:bg-muted focus-visible:border-brand/50 focus-visible:ring-2 focus-visible:ring-brand/10 outline-none'
                             }
                         >
-                            <span className='truncate'>{selectedList?.name ?? 'Select list'}</span>
-                            <ChevronsUpDown className='size-4 shrink-0 opacity-50' />
+                            <span className={`truncate ${selectedList ? 'text-foreground' : 'text-muted-foreground/50'}`}>
+                                {selectedList?.name ?? 'Select list…'}
+                            </span>
+                            <ChevronsUpDown className='size-3.5 shrink-0 text-muted-foreground' />
                         </button>
 
                         {dropdownOpen && (
-                            <div className='absolute top-full mt-1 z-[100] w-full rounded-md border bg-popover text-popover-foreground shadow-md'>
-                                <div className='flex items-center gap-2 border-b px-3 py-2'>
-                                    <Search className='size-4 shrink-0 opacity-50' />
+                            <div className='absolute top-full mt-1.5 z-[100] w-full rounded-xl border border-border bg-card shadow-lg overflow-hidden'>
+                                <div className='flex items-center gap-2 border-b border-border px-3 py-2.5'>
+                                    <Search className='size-3.5 shrink-0 text-muted-foreground' />
                                     <input
                                         autoFocus
                                         value={search}
                                         onChange={(e) => setSearch(e.target.value)}
-                                        placeholder='Search lists...'
-                                        className='w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground'
+                                        placeholder='Search lists…'
+                                        className='w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground/50 text-foreground'
                                     />
                                 </div>
-                                <div className='max-h-52 overflow-y-auto p-1'>
+                                <div className='max-h-48 overflow-y-auto p-1'>
                                     {filtered.length === 0 ? (
-                                        <p className='py-4 text-center text-sm text-muted-foreground'>No lists found.</p>
+                                        <p className='py-4 text-center text-xs text-muted-foreground'>No lists found.</p>
                                     ) : (
                                         filtered.map((list) => (
                                             <button
@@ -99,10 +102,12 @@ export default function ContentDialog({ tmdbId, mediaType, lists = [], mediaInLi
                                                     setDropdownOpen(false)
                                                     setSearch('')
                                                 }}
-                                                className='flex w-full items-center justify-between rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground'
+                                                className='flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors'
                                             >
                                                 <span className='capitalize'>{list.name}</span>
-                                                {selectedList?.id === list.id && <Check className='size-4' />}
+                                                {selectedList?.id === list.id && (
+                                                    <Check className='size-3.5 text-brand' />
+                                                )}
                                             </button>
                                         ))
                                     )}
@@ -125,11 +130,14 @@ export default function ContentDialog({ tmdbId, mediaType, lists = [], mediaInLi
                 </div>
 
                 {currentLists.length > 0 && (
-                    <div>
-                        <h3 className='text-sm font-semibold mb-2'>Currently in</h3>
-                        <div className='space-y-2'>
-                            {currentLists.map((list) => (
-                                <div key={list.id} className='flex items-center justify-between'>
+                    <div className='flex flex-col gap-1.5'>
+                        <p className='text-xs font-semibold text-muted-foreground uppercase tracking-wider'>In lists</p>
+                        <div className='rounded-xl border border-border overflow-hidden bg-card/50'>
+                            {currentLists.map((list, idx) => (
+                                <div
+                                    key={list.id}
+                                    className={`flex items-center justify-between px-3 py-2.5 ${idx < currentLists.length - 1 ? 'border-b border-border' : ''}`}
+                                >
                                     <span className='text-sm capitalize'>{list.name}</span>
                                     <Button size='sm' variant='destructive' onClick={() => handleRemoveFromList(list.id)}>
                                         Remove
