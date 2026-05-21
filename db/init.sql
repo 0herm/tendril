@@ -67,3 +67,18 @@ CREATE TABLE IF NOT EXISTS Watched (
 -- Default lists
 INSERT INTO Lists (name) VALUES ('Want to Watch')
 ON CONFLICT DO NOTHING;
+
+-- Notification dedup log
+CREATE TABLE IF NOT EXISTS NotificationLog (
+    id      SERIAL PRIMARY KEY,
+    type    TEXT NOT NULL,
+    tmdb_id INTEGER,
+    meta    TEXT,
+    sent_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Unique per (type, tmdb_id, meta-or-empty) for item-specific entries only
+
+CREATE UNIQUE INDEX IF NOT EXISTS notificationlog_unique
+    ON NotificationLog (type, tmdb_id, COALESCE(meta, ''))
+    WHERE tmdb_id IS NOT NULL;
