@@ -2,6 +2,9 @@
 FROM oven/bun:alpine AS builder
 WORKDIR /app
 
+ARG NEXT_PUBLIC_VAPID_PUBLIC_KEY
+ENV NEXT_PUBLIC_VAPID_PUBLIC_KEY=$NEXT_PUBLIC_VAPID_PUBLIC_KEY
+
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
