@@ -35,17 +35,17 @@ export function getWatchedById(tmdbId: number): Promise<ApiResult<WatchedProps |
 
 export function addWatched(
     tmdbId: number, type: 'movie' | 'show', name: string,
-    totalSeasons?: number, showStatus?: string, watchedSeasons?: number[]
+    totalSeasons?: number, showStatus?: string, watchedSeasons?: number[], episodeCounts?: number[]
 ): Promise<ApiResult<WatchedProps | null>> {
-    return request<WatchedProps | null>('/api/watched', json({ tmdbId, type, name, totalSeasons, showStatus, watchedSeasons }))
+    return request<WatchedProps | null>('/api/watched', json({ tmdbId, type, name, totalSeasons, showStatus, watchedSeasons, episodeCounts }))
 }
 
 export function removeWatched(tmdbId: number): Promise<ApiResult<WatchedProps | null>> {
     return request<WatchedProps | null>(`/api/watched/${tmdbId}`, { method: 'DELETE' })
 }
 
-export function updateWatchedSeasons(tmdbId: number, watchedSeasons: number[]): Promise<ApiResult<WatchedProps | null>> {
-    return request<WatchedProps | null>(`/api/watched/${tmdbId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ watchedSeasons }) })
+export function updateWatchedSeasons(tmdbId: number, watchedSeasons: number[], episodeCounts?: number[]): Promise<ApiResult<WatchedProps | null>> {
+    return request<WatchedProps | null>(`/api/watched/${tmdbId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ watchedSeasons, episodeCounts }) })
 }
 
 export function updateShowStatus(tmdbId: number, showStatus: string): Promise<ApiResult<WatchedProps | null>> {

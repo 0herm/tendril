@@ -61,7 +61,8 @@ CREATE TABLE IF NOT EXISTS Watched (
     name TEXT NOT NULL,
     watched_seasons INTEGER[] DEFAULT ARRAY[]::INTEGER[],
     total_seasons INTEGER,
-    show_status TEXT
+    show_status TEXT,
+    episode_counts INTEGER[]
 );
 
 -- Default lists

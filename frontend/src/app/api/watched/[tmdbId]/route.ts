@@ -16,7 +16,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ tm
     const body = await req.json()
     const id = Number(tmdbId)
 
-    if (body.watchedSeasons !== undefined) return NextResponse.json(await updateWatchedSeasons(id, body.watchedSeasons))
+    if (body.watchedSeasons !== undefined) return NextResponse.json(await updateWatchedSeasons(id, body.watchedSeasons, body.episodeCounts))
     if (body.showStatus !== undefined) return NextResponse.json(await updateShowStatus(id, body.showStatus))
     if (body.totalSeasons !== undefined) return NextResponse.json(await updateTotalSeasons(id, body.totalSeasons))
 

@@ -191,7 +191,13 @@ type ShowDetailsProps = {
         still_path: string | null
     } | null
     name: string
-    next_episode_to_air: null
+    next_episode_to_air: {
+        id: number
+        name: string
+        season_number: number
+        episode_number: number
+        air_date: string
+    } | null
     networks: {
         id: number
         logo_path: string | null
@@ -318,4 +324,5 @@ type WatchedProps = {
     watched_seasons?: number[]
     total_seasons?: number
     show_status?: string
+    episode_counts?: number[]
 }

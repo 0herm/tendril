@@ -13,6 +13,7 @@ type TmdbShow  = {
     next_episode_to_air: { air_date: string } | null
     seasons: { season_number: number; air_date: string | null; episode_count: number }[]
 }
+type TmdbSeason = { episodes: { air_date: string | null; episode_number: number }[] }
 
 async function tmdb<T>(path: string): Promise<T | null> {
     if (!TMDB_TOKEN) return null
@@ -207,6 +208,48 @@ export async function checkNewSeason(): Promise<number> {
     return sent
 }
 
+export async function checkNewEpisodes(): Promise<number> {
+    const { data: shows } = await dbWrapper<{ tmdb_id: number; name: string; watched_seasons: number[]; episode_counts: number[] }>(
+        'SELECT tmdb_id, name, watched_seasons, episode_counts FROM Watched WHERE type = $1 AND episode_counts IS NOT NULL AND ARRAY_LENGTH(episode_counts, 1) > 0',
+        ['show']
+    )
+    if (!shows?.length) return 0
+
+    const today = new Date()
+    let sent = 0
+    for (const { tmdb_id, name, watched_seasons, episode_counts } of shows) {
+        const show = await tmdb<TmdbShow>(`3/tv/${tmdb_id}?language=${LANGUAGE}`)
+        if (!show) continue
+
+        for (let i = 0; i < watched_seasons.length; i++) {
+            const seasonNum = watched_seasons[i]
+            const storedCount = episode_counts[i]
+            if (!storedCount) continue
+
+            const seasonData = await tmdb<TmdbSeason>(`3/tv/${tmdb_id}/season/${seasonNum}?language=${LANGUAGE}`)
+            if (!seasonData) continue
+
+            const airedCount = seasonData.episodes.filter(
+                (ep) => ep.air_date && new Date(ep.air_date) <= today
+            ).length
+            if (airedCount <= storedCount) continue
+
+            const meta = `${seasonNum}:${airedCount}`
+            if (await alreadySent('new_episodes', tmdb_id, meta)) continue
+
+            const newCount = airedCount - storedCount
+            await sendPush({
+                title: 'New Episodes Available',
+                body: `${show.name ?? name} — Season ${seasonNum} has ${newCount} new episode${newCount === 1 ? '' : 's'}!`,
+                url: `/show/${tmdb_id}`,
+            })
+            await logSent('new_episodes', tmdb_id, meta)
+            sent++
+        }
+    }
+    return sent
+}
+
 export async function checkShowEnded(): Promise<number> {
     const { data: shows } = await dbWrapper<{ tmdb_id: number; name: string; show_status: string }>(
         'SELECT tmdb_id, name, show_status FROM Watched WHERE type = $1',
@@ -244,6 +287,7 @@ export async function runAllChecks(): Promise<void> {
         checkWatchlistReminder(),
         checkInactivity(),
         checkNewSeason(),
+        checkNewEpisodes(),
         checkShowEnded(),
     ])
     const sent = results.reduce((sum, r) => sum + (r.status === 'fulfilled' ? r.value : 0), 0)

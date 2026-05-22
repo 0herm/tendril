@@ -35,20 +35,47 @@ export default async function Page() {
         getContinueWatching().then(({ data }) =>
             Promise.all((data ?? []).map(async (item) => {
                 const details = await fetchDetails(item)
-                return details ? { details, watchedSeasons: item.watched_seasons ?? [] } : null
+                return details ? {
+                    details,
+                    watchedSeasons: item.watched_seasons ?? [],
+                    episodeCounts: item.episode_counts ?? [],
+                } : null
             }))
         ),
     ])
 
     const today = new Date()
     const continueWatchingFiltered = continueWatchingResults
-        .filter((r): r is { details: NonNullable<typeof r>['details']; watchedSeasons: number[] } => {
+        .filter((r): r is { details: NonNullable<typeof r>['details']; watchedSeasons: number[]; episodeCounts: number[] } => {
             if (!r) return false
-            const { details, watchedSeasons } = r
+            const { details, watchedSeasons, episodeCounts } = r
             if (!('seasons' in details)) return true
-            return details.seasons.some(
+
+            // Unwatched season with available episodes
+            if (details.seasons.some(
                 (s) => s.season_number > 0 && !watchedSeasons.includes(s.season_number) && s.episode_count > 0 && !!s.air_date && new Date(s.air_date) <= today
-            )
+            )) return true
+
+            // Watched season now has more aired episodes than when the user last saved
+            if (details.seasons.some((s) => {
+                const idx = watchedSeasons.indexOf(s.season_number)
+                if (idx === -1) return false
+                const stored = episodeCounts[idx]
+                if (stored === undefined || stored === 0) return false
+                const lastEp = details.last_episode_to_air
+                const airedCount = lastEp?.season_number === s.season_number
+                    ? lastEp.episode_number
+                    : s.episode_count
+                return airedCount > stored
+            })) return true
+
+            // Upcoming episode in a season the user has already marked watched
+            if (details.next_episode_to_air) {
+                const { season_number, air_date } = details.next_episode_to_air
+                if (watchedSeasons.includes(season_number) && new Date(air_date) <= today) return true
+            }
+
+            return false
         })
         .map((r) => r.details)
 

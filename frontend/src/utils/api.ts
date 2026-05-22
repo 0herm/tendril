@@ -84,15 +84,16 @@ export async function checkMediaInList(tmdbId: number, listId: number): Promise<
 
 export async function addWatched(
     tmdbId: number, type: 'movie' | 'show', name: string,
-    totalSeasons?: number, showStatus?: string, watchedSeasons?: number[]
+    totalSeasons?: number, showStatus?: string, watchedSeasons?: number[], episodeCounts?: number[]
 ): Promise<ApiResult<WatchedProps | null>> {
-    const query = 'INSERT INTO Watched (tmdb_id, type, name, total_seasons, show_status, watched_seasons) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *'
+    const query = 'INSERT INTO Watched (tmdb_id, type, name, total_seasons, show_status, watched_seasons, episode_counts) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *'
     const isShow = type === 'show'
     const { data, error } = await dbWrapper<WatchedProps>(query, [
         tmdbId, type, name,
         isShow ? (totalSeasons ?? null) : null,
         isShow ? (showStatus ?? null) : null,
         watchedSeasons ? `{${watchedSeasons.join(',')}}` : null,
+        episodeCounts ? `{${episodeCounts.join(',')}}` : null,
     ])
     return { data: data?.[0] ?? null, error }
 }
@@ -113,10 +114,15 @@ export async function getWatchedById(tmdbId: number): Promise<ApiResult<WatchedP
     return { data: data?.[0] ?? null, error }
 }
 
-export async function updateWatchedSeasons(tmdbId: number, watchedSeasons: number[]): Promise<ApiResult<WatchedProps | null>> {
+export async function updateWatchedSeasons(tmdbId: number, watchedSeasons: number[], episodeCounts?: number[]): Promise<ApiResult<WatchedProps | null>> {
+    const formattedSeasons = `{${watchedSeasons.join(',')}}`
+    if (episodeCounts !== undefined) {
+        const query = 'UPDATE Watched SET watched_seasons = $2, episode_counts = $3 WHERE tmdb_id = $1 RETURNING *'
+        const { data, error } = await dbWrapper<WatchedProps>(query, [tmdbId, formattedSeasons, `{${episodeCounts.join(',')}}`])
+        return { data: data?.[0] ?? null, error }
+    }
     const query = 'UPDATE Watched SET watched_seasons = $2 WHERE tmdb_id = $1 RETURNING *'
-    const formattedArray = `{${watchedSeasons.join(',')}}`
-    const { data, error } = await dbWrapper<WatchedProps>(query, [tmdbId, formattedArray])
+    const { data, error } = await dbWrapper<WatchedProps>(query, [tmdbId, formattedSeasons])
     return { data: data?.[0] ?? null, error }
 }
 
@@ -136,6 +142,7 @@ export async function getContinueWatching(): Promise<ApiResult<WatchedProps[]>> 
     return dbWrapper<WatchedProps>(`
         SELECT * FROM Watched
         WHERE ARRAY_LENGTH(watched_seasons, 1) < total_seasons
+           OR (type = 'show' AND show_status = 'Returning Series' AND ARRAY_LENGTH(watched_seasons, 1) > 0)
         ORDER BY added_at DESC
     `)
 }
