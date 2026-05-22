@@ -11,6 +11,7 @@ type TmdbShow  = {
     status: string
     number_of_seasons: number
     next_episode_to_air: { air_date: string } | null
+    seasons: { season_number: number; air_date: string | null; episode_count: number }[]
 }
 
 async function tmdb<T>(path: string): Promise<T | null> {
@@ -191,6 +192,8 @@ export async function checkNewSeason(): Promise<number> {
         if (!show || show.number_of_seasons <= total_seasons) continue
 
         const newSeasonNum = String(show.number_of_seasons)
+        const newSeason = show.seasons.find((s) => s.season_number === show.number_of_seasons)
+        if (!newSeason?.air_date || new Date(newSeason.air_date) > new Date() || newSeason.episode_count === 0) continue
         if (await alreadySent('new_season', tmdb_id, newSeasonNum)) continue
 
         await sendPush({

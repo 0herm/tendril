@@ -32,12 +32,29 @@ export default async function Page() {
             return { list, data: { page: 1, total_pages: 1, total_results: results.length, results }, candidates }
         })),
         getAllWatched().then(({ data }) => Promise.all((data ?? []).map(fetchDetails))),
-        getContinueWatching().then(({ data }) => Promise.all((data ?? []).map(fetchDetails))),
+        getContinueWatching().then(({ data }) =>
+            Promise.all((data ?? []).map(async (item) => {
+                const details = await fetchDetails(item)
+                return details ? { details, watchedSeasons: item.watched_seasons ?? [] } : null
+            }))
+        ),
     ])
+
+    const today = new Date()
+    const continueWatchingFiltered = continueWatchingResults
+        .filter((r): r is { details: NonNullable<typeof r>['details']; watchedSeasons: number[] } => {
+            if (!r) return false
+            const { details, watchedSeasons } = r
+            if (!('seasons' in details)) return true
+            return details.seasons.some(
+                (s) => s.season_number > 0 && !watchedSeasons.includes(s.season_number) && s.episode_count > 0 && !!s.air_date && new Date(s.air_date) <= today
+            )
+        })
+        .map((r) => r.details)
 
     const hasMedia =
         watchedResults.some(Boolean) ||
-        continueWatchingResults.some(Boolean) ||
+        continueWatchingFiltered.length > 0 ||
         listsMedia.some((l) => l.data.results.length > 0)
 
     const surpriseCandidates = listsMedia.flatMap((l) => l.candidates)
@@ -55,8 +72,8 @@ export default async function Page() {
                         title='Continue Watching'
                         items={{
                             page: 1, total_pages: 1,
-                            total_results: continueWatchingResults.filter(Boolean).length,
-                            results: continueWatchingResults.filter(Boolean) as (ShowDetailsProps | MovieDetailsProps)[]
+                            total_results: continueWatchingFiltered.length,
+                            results: continueWatchingFiltered as (ShowDetailsProps | MovieDetailsProps)[]
                         }}
                     />
                     <MediaSection
