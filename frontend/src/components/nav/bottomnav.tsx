@@ -1,28 +1,19 @@
 'use client'
 
-import { Home, Search, User, LayoutDashboard, Settings, Bell } from 'lucide-react'
+import { Home, Search, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 type Tab = { href: string; icon: React.ElementType; label: string; exact?: boolean }
 
-const mainTabs: Tab[] = [
+const tabs: Tab[] = [
     { href: '/', icon: Home, label: 'Home', exact: true },
     { href: '/search', icon: Search, label: 'Search' },
     { href: '/account', icon: User, label: 'Account' },
 ]
 
-const accountTabs: Tab[] = [
-    { href: '/', icon: Home, label: 'Home', exact: true },
-    { href: '/account', icon: LayoutDashboard, label: 'Overview', exact: true },
-    { href: '/account/settings', icon: Settings, label: 'Settings' },
-    { href: '/account/notifications', icon: Bell, label: 'Alerts' },
-]
-
 export default function BottomNav() {
     const pathname = usePathname()
-    const isAccountSection = pathname.startsWith('/account')
-    const tabs = isAccountSection ? accountTabs : mainTabs
 
     function isActive({ href, exact }: Tab) {
         return exact ? pathname === href : pathname.startsWith(href)
