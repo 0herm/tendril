@@ -11,11 +11,13 @@ type MediaPageProps = {
     item: MovieDetailsProps | ShowDetailsProps
     media: 'movie' | 'show'
     similar?: MediaListProps | null
+    region?: string | null
 }
 
-export default function MediaPage({ item, media, similar }: MediaPageProps) {
+export default function MediaPage({ item, media, similar, region }: MediaPageProps) {
     const customOrder = ['flatrate', 'rent', 'buy']
-    const regionProviders = (item['watch/providers']?.results[config.setting.REGION] ?? {}) as Record<string, unknown>
+    const activeRegion = region || config.setting.REGION
+    const regionProviders = (item['watch/providers']?.results[activeRegion] ?? {}) as Record<string, unknown>
     const sortedProviders = Object.fromEntries(
         customOrder.filter((k) => k in regionProviders).map((k) => [k, regionProviders[k]])
     )
