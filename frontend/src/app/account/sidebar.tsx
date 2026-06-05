@@ -1,11 +1,12 @@
 'use client'
 
-import { Bell, LayoutDashboard, LogOut, Settings } from 'lucide-react'
+import { Bell, BarChart2, LayoutDashboard, LogOut, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navItems = [
     { href: '/account', icon: LayoutDashboard, label: 'Overview', exact: true },
+    { href: '/account/stats', icon: BarChart2, label: 'Stats', exact: false },
     { href: '/account/settings', icon: Settings, label: 'Settings', exact: false },
     { href: '/account/notifications', icon: Bell, label: 'Notifications', exact: false },
 ]
