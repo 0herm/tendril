@@ -46,7 +46,17 @@ export default async function Page() {
     }
     for (const { item, details: d } of shows) {
         const avgEpRuntime = d.episode_run_time?.[0] ?? 45
-        const episodesWatched = (item.episode_counts ?? []).reduce((a, b) => a + b, 0)
+        const watchedSeasons = item.watched_seasons ?? []
+        let episodesWatched = 0
+        if ((item.episode_counts ?? []).length > 0) {
+            episodesWatched = item.episode_counts!.reduce((a, b) => a + b, 0)
+        } else {
+            // Fall back to TMDB season data
+            for (const seasonNum of watchedSeasons) {
+                const season = d.seasons.find((s) => s.season_number === seasonNum)
+                episodesWatched += season?.episode_count ?? 0
+            }
+        }
         totalMinutes += avgEpRuntime * episodesWatched
     }
 
