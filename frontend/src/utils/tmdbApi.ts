@@ -52,7 +52,7 @@ export async function getDetailsMovie(id: number): Promise<ApiResult<MovieDetail
 }
 
 export async function getSimilarMovies(id: number): Promise<ApiResult<MediaListProps>> {
-    return getWrapper<MediaListProps>(`3/movie/${id}/similar?${qs({ language: LANGUAGE })}`, REVALIDATE_DETAILS)
+    return getWrapper<MediaListProps>(`3/movie/${id}/recommendations?${qs({ language: LANGUAGE })}`, REVALIDATE_DETAILS)
 }
 
 export async function getNewShows(): Promise<ApiResult<TrendingProps>> {
@@ -76,7 +76,7 @@ export async function getDetailsShow(id: number): Promise<ApiResult<ShowDetailsP
 }
 
 export async function getSimilarShows(id: number): Promise<ApiResult<MediaListProps>> {
-    return getWrapper<MediaListProps>(`3/tv/${id}/similar?${qs({ language: LANGUAGE })}`, REVALIDATE_DETAILS)
+    return getWrapper<MediaListProps>(`3/tv/${id}/recommendations?${qs({ language: LANGUAGE })}`, REVALIDATE_DETAILS)
 }
 
 export async function getSearch(query: string, page = 1): Promise<ApiResult<SearchProps>> {
