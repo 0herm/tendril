@@ -143,7 +143,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
                 </div>
             </Link>
 
-            <div className='absolute bottom-0 left-0 right-0 px-1.5 pb-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10'>
+            <div className='absolute bottom-0 left-0 right-0 px-1.5 pb-1.5 hidden sm:block sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 z-10'>
                 <div className='flex rounded-lg overflow-hidden bg-black/65 backdrop-blur-sm border border-white/10'>
                     <button
                         onClick={handleSave}
