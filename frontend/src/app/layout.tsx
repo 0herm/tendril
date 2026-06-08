@@ -30,8 +30,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang='en' className='dark'>
             <head />
-            <body className='w-screen min-h-dvh m-0 p-0 font-[Inter] antialiased wrap-break-word leading-normal tracking-normal'>
-                <div className='flex flex-col w-full min-h-dvh'>
+            <body className='w-screen min-h-screen m-0 p-0 font-[Inter] antialiased wrap-break-word leading-normal tracking-normal'>
+                <div className='flex flex-col w-full min-h-screen'>
                     <header
                         className='fixed top-0 left-0 right-0 border-b border-border backdrop-blur-md z-50 print:hidden bg-background/80'
                         style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
@@ -41,7 +41,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                         </div>
                     </header>
                     <main
-                        className='w-full bg-background flex grow overflow-hidden px-4 sm:px-5 pb-32 sm:pb-8'
+                        className='w-full bg-background px-4 sm:px-5 pb-28 sm:pb-8'
                         style={{ paddingTop: 'calc(3rem + 1rem + env(safe-area-inset-top, 0px))' }}
                     >
                         {children}
