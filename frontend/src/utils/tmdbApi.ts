@@ -51,6 +51,10 @@ export async function getDetailsMovie(id: number): Promise<ApiResult<MovieDetail
     return getWrapper<MovieDetailsProps>(`3/movie/${id}?${qs({ language: LANGUAGE, append_to_response: 'watch/providers,videos' })}`, REVALIDATE_DETAILS)
 }
 
+export async function getMovieCollection(id: number): Promise<ApiResult<CollectionProps>> {
+    return getWrapper<CollectionProps>(`3/collection/${id}?${qs({ language: LANGUAGE })}`, REVALIDATE_DETAILS)
+}
+
 export async function getSimilarMovies(id: number): Promise<ApiResult<MediaListProps>> {
     return getWrapper<MediaListProps>(`3/movie/${id}/recommendations?${qs({ language: LANGUAGE })}`, REVALIDATE_DETAILS)
 }

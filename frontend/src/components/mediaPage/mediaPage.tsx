@@ -12,9 +12,10 @@ type MediaPageProps = {
     media: 'movie' | 'show'
     similar?: MediaListProps | null
     region?: string | null
+    collection?: CollectionProps | null
 }
 
-export default function MediaPage({ item, media, similar, region }: MediaPageProps) {
+export default function MediaPage({ item, media, similar, region, collection }: MediaPageProps) {
     const customOrder = ['flatrate', 'rent', 'buy']
     const activeRegion = region || config.setting.REGION
     const regionProviders = (item['watch/providers']?.results[activeRegion] ?? {}) as Record<string, unknown>
@@ -358,6 +359,22 @@ export default function MediaPage({ item, media, similar, region }: MediaPagePro
 
                 </div>
             </section>
+
+            {/* ── Part of Series ── */}
+            {collection && collection.parts.length > 0 && (() => {
+                const sorted = [...collection.parts].sort(
+                    (a, b) => new Date(a.release_date ?? '').getTime() - new Date(b.release_date ?? '').getTime()
+                )
+                const collectionList: MediaListProps = {
+                    page: 1,
+                    total_pages: 1,
+                    total_results: sorted.length,
+                    results: sorted,
+                }
+                return (
+                    <MediaSection title={collection.name} items={collectionList} type='movie' />
+                )
+            })()}
 
             {/* ── More Like This ── */}
             {similar && similar.results.length > 0 && (
