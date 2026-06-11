@@ -5,7 +5,8 @@ const TMDB_BASE  = 'https://api.themoviedb.org/'
 const TMDB_TOKEN = process.env.TMDB_ACCESS_TOKEN || process.env.ACCESS_TOKEN
 const LANGUAGE   = process.env.LANGUAGE || 'en-GB'
 
-type TmdbMovie = { title: string; status: string; release_date: string }
+type TmdbMovie = { title: string; status: string; release_date: string; belongs_to_collection: { id: number; name: string } | null }
+type TmdbCollection = { name: string; parts: { id: number; title: string; release_date: string | null; status?: string }[] }
 type TmdbShow  = {
     name: string
     status: string
@@ -280,6 +281,56 @@ export async function checkShowEnded(): Promise<number> {
     return sent
 }
 
+export async function checkNewCollectionMovie(): Promise<number> {
+    const { data: watchlistItems } = await dbWrapper<{ tmdb_id: number }>(
+        'SELECT DISTINCT tmdb_id FROM Media WHERE type = $1',
+        ['movie']
+    )
+    const { data: watchedItems } = await dbWrapper<{ tmdb_id: number }>(
+        'SELECT DISTINCT tmdb_id FROM Watched WHERE type = $1',
+        ['movie']
+    )
+
+    const allIds = new Set([
+        ...(watchlistItems ?? []).map((r) => r.tmdb_id),
+        ...(watchedItems ?? []).map((r) => r.tmdb_id),
+    ])
+    if (!allIds.size) return 0
+
+    const checkedCollections = new Set<number>()
+    let sent = 0
+
+    for (const tmdb_id of allIds) {
+        const movie = await tmdb<TmdbMovie>(`3/movie/${tmdb_id}?language=${LANGUAGE}`)
+        if (!movie?.belongs_to_collection) continue
+
+        const collectionId = movie.belongs_to_collection.id
+        if (checkedCollections.has(collectionId)) continue
+        checkedCollections.add(collectionId)
+
+        const collection = await tmdb<TmdbCollection>(`3/collection/${collectionId}?language=${LANGUAGE}`)
+        if (!collection) continue
+
+        for (const part of collection.parts) {
+            if (allIds.has(part.id)) continue
+            if (!part.release_date) continue
+            const age = daysFromNow(part.release_date)
+            if (age < 0 || age > 7) continue
+
+            if (await alreadySent('collection_movie', part.id)) continue
+
+            await sendPush({
+                title: 'New Collection Movie Released',
+                body: `${part.title} is out — part of ${collection.name}`,
+                url: `/movie/${part.id}`,
+            })
+            await logSent('collection_movie', part.id)
+            sent++
+        }
+    }
+    return sent
+}
+
 export async function runAllChecks(): Promise<void> {
     const results = await Promise.allSettled([
         checkMovieReleased(),
@@ -289,6 +340,7 @@ export async function runAllChecks(): Promise<void> {
         checkNewSeason(),
         checkNewEpisodes(),
         checkShowEnded(),
+        checkNewCollectionMovie(),
     ])
     const sent = results.reduce((sum, r) => sum + (r.status === 'fulfilled' ? r.value : 0), 0)
     console.log(`[notifications] ran all checks — ${sent} notification(s) sent`)
