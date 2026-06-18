@@ -1,13 +1,48 @@
-# Tendril
-> **Tendril** (`/ˈtɛn.drɪl/`, *TEN-dril*). The slender shoot a climbing plant sends out to reach, find, and latch onto support, just as the app reaches out to track whats worth holding onto.
+<div align="center">
 
-A self-hosted media tracker for movies and TV shows. Search, explore recommendations, browse categories, check out upcoming releases, and stay on top of what you're watching.
+<img src="frontend/public/images/logo/logo.svg" alt="Tendril logo" width="80" height="80" />
 
-**Build With**  
-NextJS with TypeScript, React and Tailwind. For the database Postgress is used to store watch lists.
+<h1>Tendril</h1>
+
+<p>
+  <sub><code>/ˈtɛn.drɪl/</code> &nbsp;·&nbsp; <i>TEN-dril</i>. The slender shoot a climbing plant sends out to reach,<br/>
+  find, and latch onto support, just as the app reaches out to track what's worth holding onto.</sub>
+</p>
+
+<p>
+  <b>A self-hosted media tracker for movies &amp; TV shows.</b><br/>
+  Search, explore recommendations, browse categories, track upcoming releases,<br/>
+  and stay on top of what you're watching.
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/Next.js-599459?style=flat-square&logo=nextdotjs&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/React-599459?style=flat-square&logo=react&logoColor=white" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-599459?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-599459?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Bun-599459?style=flat-square&logo=bun&logoColor=white" alt="Bun" />
+  <img src="https://img.shields.io/badge/PostgreSQL-599459?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Docker-599459?style=flat-square&logo=docker&logoColor=white" alt="Docker" />
+  <img src="https://img.shields.io/badge/TMDB-599459?style=flat-square&logo=themoviedatabase&logoColor=white" alt="TMDB" />
+</p>
+
+</div>
+
+---
 
 ### ✨ Features
 
+- **Find something to watch.** Browse trending, popular, top rated, new, and upcoming titles for both movies and TV shows, or just search for the one you already have in mind.
+- **Dig into the details.** Every title gets its own page with the trailer, cast and crew, the studios and networks behind it, and a "More Like This" rail for when one good film turns into a whole evening.
+- **Keep track of what you've seen.** Mark things watched, and for shows it goes season by season and episode by episode, so "Continue Watching" actually knows where you left off.
+- **Make it yours.** Build your own lists and organize titles however makes sense to you.
+- **See your habits.** Stats add up how many movies and shows you've finished and how many hours you've poured into them. (No judgement.)
+- **Can't decide?** Hit **Surprise me** and let it pick for you.
+- **Get a nudge.** Opt into push notifications and Tendril will tell you when something you're tracking lands, or when a new entry shows up in a collection you follow.
+- **No passwords.** Sign in with a passkey. Nothing to remember, nothing to leak.
+- **Set it up your way.** Region, language, timezone, original vs. localized titles, and whether to include adult content are all yours to configure.
+- **Install it like an app.** It's a PWA, so it lives on your home screen and works like a native app.
+- **Yours, on your box.** Fully self-hosted. One `docker compose up` and it's running on your own server.
 
 ### ⚙️ Environment Variables
 
