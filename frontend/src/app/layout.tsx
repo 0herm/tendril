@@ -6,12 +6,12 @@ import BottomNav from '@/components/nav/bottomnav'
 import Footer from '@/components/footer/footer'
 
 export const metadata: Metadata = {
-    title: 'WatchBee',
+    title: 'Tendril',
     description: 'Movie tracker',
     appleWebApp: {
         capable: true,
         statusBarStyle: 'black-translucent',
-        title: 'WatchBee',
+        title: 'Tendril',
         startupImage: '/images/logo/logo_512.png',
     },
     icons: {

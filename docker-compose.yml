@@ -1,6 +1,6 @@
 services:
-  watchbee:
-    container_name: watchbee
+  tendril:
+    container_name: tendril
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -9,15 +9,15 @@ services:
     ports:
       - "3002:3000"
     depends_on:
-      - watchbee_database
+      - tendril_database
     restart: always
     env_file:
       - .env
 
-  watchbee_database:
-  
+  tendril_database:
+
     image: postgres:18
-    container_name: watchbee_database
+    container_name: tendril_database
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}

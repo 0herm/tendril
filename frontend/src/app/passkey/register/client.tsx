@@ -66,7 +66,7 @@ export default function RegisterClient() {
                     <Fingerprint className='h-10 w-10 text-brand' />
                 </div>
                 <div className='flex flex-col gap-2'>
-                    <h1 className='text-2xl font-bold tracking-tight'>Welcome to WatchBee</h1>
+                    <h1 className='text-2xl font-bold tracking-tight'>Welcome to Tendril</h1>
                     <p className='text-sm text-muted-foreground leading-relaxed'>
                         Create a passkey to get started. Stored securely on this device.
                     </p>

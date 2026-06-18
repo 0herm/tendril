@@ -1,4 +1,6 @@
-# WatchBee
+# Tendril
+> **Tendril** (`/ˈtɛn.drɪl/`, *TEN-dril*). The slender shoot a climbing plant sends out to reach, find, and latch onto support, just as the app reaches out to track whats worth holding onto.
+
 A self-hosted media tracker for movies and TV shows. Search, explore recommendations, browse categories, check out upcoming releases, and stay on top of what you're watching.
 
 **Build With**  
@@ -21,7 +23,7 @@ NextJS with TypeScript, React and Tailwind. For the database Postgress is used t
 | POSTGRES_PORT     | Default to `5432`, the port for the postgres database                                                                            |
 | POSTGRES_USER     | Default to `admin`, the username for the postgres database                                                                       |
 | POSTGRES_PASSWORD | Passowrd for the postgres database user                                                                                          |
-| POSTGRES_DB       | Default to `watchbee`, the name for the postgres database                                                                        |
+| POSTGRES_DB       | Default to `tendril`, the name for the postgres database                                                                         |
 
 ### 🐳 Install with Docker
 Remember to set the environment variables you wish in the .env file. ( minimum `ACCESS_TOKEN` and `POSTGRES_PASSWORD` )   

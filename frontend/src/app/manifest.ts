@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'WatchBee',
-        short_name: 'WatchBee',
+        name: 'Tendril',
+        short_name: 'Tendril',
         theme_color: '#0A0A0A',
         description: 'Movie tracker',
         start_url: '/',

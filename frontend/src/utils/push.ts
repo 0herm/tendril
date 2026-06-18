@@ -12,7 +12,7 @@ function initVapid() {
     const priv = process.env.VAPID_PRIVATE_KEY
     const origin = process.env.ORIGIN
     if (!pub || !priv) throw new Error('VAPID keys not configured')
-    webpush.setVapidDetails(origin ?? 'mailto:admin@watchbee.local', pub, priv)
+    webpush.setVapidDetails(origin ?? 'mailto:admin@tendril.local', pub, priv)
 }
 
 export async function sendPush(payload: PushPayload): Promise<void> {

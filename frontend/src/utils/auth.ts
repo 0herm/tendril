@@ -14,7 +14,7 @@ import { cookies } from 'next/headers'
 import { dbWrapper } from './api'
 import crypto from 'crypto'
 
-const RP_NAME = 'WatchBee'
+const RP_NAME = 'Tendril'
 const RP_ID = process.env.RP_ID || 'localhost'
 const ORIGIN = process.env.ORIGIN || 'http://localhost:3002'
 const SESSION_DURATION_DAYS = 2
@@ -75,8 +75,8 @@ export async function getRegistrationOptions() {
     const options = await generateRegistrationOptions({
         rpName: RP_NAME,
         rpID: RP_ID,
-        userName: 'watchbee-user',
-        userDisplayName: 'WatchBee',
+        userName: 'tendril-user',
+        userDisplayName: 'Tendril',
         attestationType: 'none',
         authenticatorSelection: {
             residentKey: 'required',
