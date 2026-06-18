@@ -15,6 +15,8 @@ const tabs: Tab[] = [
 export default function BottomNav() {
     const pathname = usePathname()
 
+    if (pathname.startsWith('/passkey')) return null
+
     function isActive({ href, exact }: Tab) {
         return exact ? pathname === href : pathname.startsWith(href)
     }
