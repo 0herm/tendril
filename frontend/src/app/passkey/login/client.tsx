@@ -57,7 +57,7 @@ export default function LoginClient() {
                     <Clapperboard className='h-5 w-5 text-brand' />
                 </div>
                 <span className='text-base font-bold tracking-tight'>
-                    Watch<span className='text-brand'>Bee</span>
+                    Tendril
                 </span>
             </div>
 

@@ -8,7 +8,7 @@ export default function Footer() {
                 <div className='flex items-center justify-center w-5 h-5 rounded-md bg-brand/15'>
                     <Clapperboard className='h-3 w-3 text-brand' />
                 </div>
-                <span className='font-semibold text-foreground/70'>Watch<span className='text-brand'>Bee</span></span>
+                <span className='font-semibold text-foreground/70'>Tendril</span>
                 <span>© {new Date().getFullYear()}</span>
             </div>
             <span className='font-medium text-brand/70'>v{config.version}</span>

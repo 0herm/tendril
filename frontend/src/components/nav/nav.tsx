@@ -42,7 +42,7 @@ export default function NavBar() {
                         <Clapperboard className='h-3.5 w-3.5 text-brand' />
                     </div>
                     <span className='font-bold text-sm tracking-tight hidden xs:block'>
-                        Watch<span className='text-brand'>Bee</span>
+                        Tendril
                     </span>
                 </Link>
 
