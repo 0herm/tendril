@@ -87,6 +87,22 @@ export async function getSeasonEpisodes(showId: number, season: number): Promise
     return getWrapper<SeasonDetails>(`3/tv/${showId}/season/${season}?${qs({ language: LANGUAGE })}`, REVALIDATE_DETAILS)
 }
 
+export async function getMovieGenres(): Promise<ApiResult<{ genres: Genre[] }>> {
+    return getWrapper<{ genres: Genre[] }>(`3/genre/movie/list?${qs({ language: LANGUAGE })}`, REVALIDATE_LISTS)
+}
+
+export async function getTvGenres(): Promise<ApiResult<{ genres: Genre[] }>> {
+    return getWrapper<{ genres: Genre[] }>(`3/genre/tv/list?${qs({ language: LANGUAGE })}`, REVALIDATE_LISTS)
+}
+
+export async function discoverMovies(genreId: number, page = 1): Promise<ApiResult<MediaListProps>> {
+    return getWrapper<MediaListProps>(`3/discover/movie?${qs({ language: LANGUAGE, region: REGION, include_adult: INCLUDE_ADULT ? String(INCLUDE_ADULT) : null, sort_by: 'popularity.desc', with_genres: String(genreId), page: String(page) })}`, REVALIDATE_LISTS)
+}
+
+export async function discoverShows(genreId: number, page = 1): Promise<ApiResult<MediaListProps>> {
+    return getWrapper<MediaListProps>(`3/discover/tv?${qs({ language: LANGUAGE, include_adult: INCLUDE_ADULT ? String(INCLUDE_ADULT) : null, sort_by: 'popularity.desc', with_genres: String(genreId), page: String(page) })}`, REVALIDATE_LISTS)
+}
+
 export async function getSearch(query: string, page = 1): Promise<ApiResult<SearchProps>> {
     const url = `3/search/multi?${qs({ query, include_adult: INCLUDE_ADULT ? String(INCLUDE_ADULT) : null, language: LANGUAGE, page: String(page) })}`
     return getWrapper<SearchProps>(url, REVALIDATE_SEARCH)

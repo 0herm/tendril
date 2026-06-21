@@ -353,6 +353,11 @@ type SeasonDetails = {
     episodes: Episode[]
 }
 
+type Genre = {
+    id: number
+    name: string
+}
+
 type WatchedProps = {
     id: number
     tmdb_id: number

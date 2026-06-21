@@ -1,6 +1,6 @@
 'use client'
 
-import { Clapperboard, Search, User } from 'lucide-react'
+import { Clapperboard, Compass, Search, User } from 'lucide-react'
 import Link from 'next/link'
 import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
@@ -63,6 +63,14 @@ export default function NavBar() {
                             </kbd>
                         </div>
                     </div>
+
+                    <Link
+                        href='/discover'
+                        className='hidden sm:flex items-center justify-center w-8 h-8 rounded-full ring-1 ring-border bg-muted hover:bg-accent transition-all'
+                        aria-label='Discover'
+                    >
+                        <Compass className='h-3.5 w-3.5' />
+                    </Link>
 
                     <Link
                         href='/account'

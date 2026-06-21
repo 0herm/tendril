@@ -1,6 +1,6 @@
 'use client'
 
-import { Home, Search, User } from 'lucide-react'
+import { Home, Search, User, Compass } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -8,6 +8,7 @@ type Tab = { href: string; icon: React.ElementType; label: string; exact?: boole
 
 const tabs: Tab[] = [
     { href: '/', icon: Home, label: 'Home', exact: true },
+    { href: '/discover', icon: Compass, label: 'Discover' },
     { href: '/search', icon: Search, label: 'Search' },
     { href: '/account', icon: User, label: 'Account' },
 ]
