@@ -1,5 +1,6 @@
 import { getAllLists, getMediaByListId, getAllWatched, getContinueWatching } from '@/utils/api'
 import MediaSection from '@/components/mediaSection/mediasection'
+import MediaCard from '@/components/mediaCard/mediaCard'
 import { getDetailsShow, getDetailsMovie } from '@/utils/tmdbApi'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
@@ -95,14 +96,40 @@ export default async function Page() {
                             <SurpriseButton items={surpriseCandidates} />
                         </div>
                     )}
-                    <MediaSection
-                        title='Continue Watching'
-                        items={{
-                            page: 1, total_pages: 1,
-                            total_results: continueWatchingFiltered.length,
-                            results: continueWatchingFiltered as (ShowDetailsProps | MovieDetailsProps)[]
-                        }}
-                    />
+                    {continueWatchingFiltered.length > 0 ? (
+                        <MediaSection
+                            title='Continue Watching'
+                            items={{
+                                page: 1, total_pages: 1,
+                                total_results: continueWatchingFiltered.length,
+                                results: continueWatchingFiltered as (ShowDetailsProps | MovieDetailsProps)[]
+                            }}
+                        />
+                    ) : (
+                        <section className='flex flex-col gap-3'>
+                            <div className='flex items-center gap-3'>
+                                <h2 className='text-sm font-semibold tracking-tight text-foreground shrink-0'>Continue Watching</h2>
+                                <div className='flex-1 h-px bg-border/60' />
+                            </div>
+                            <div className='flex items-center gap-4 rounded-xl bg-muted/50 p-4'>
+                                {listsMedia.find(l => l.list.name === 'Want to Watch')?.data.results.slice(0, 3).map((item, i) => (
+                                    <div key={i} className='w-[clamp(5rem,14vw,8rem)] shrink-0 opacity-60'>
+                                        <MediaCard item={item} />
+                                    </div>
+                                ))}
+                                <div className='flex flex-col gap-2 flex-1 min-w-0'>
+                                    <p className='text-sm font-medium'>Nothing in progress</p>
+                                    <p className='text-xs text-muted-foreground'>Pick something from your list to get started.</p>
+                                    <Link
+                                        href='#want-to-watch'
+                                        className='inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-brand hover:bg-brand-dim text-white text-xs font-medium transition-colors self-start'
+                                    >
+                                        Pick something
+                                    </Link>
+                                </div>
+                            </div>
+                        </section>
+                    )}
                     <MediaSection
                         title='Watched'
                         items={{
