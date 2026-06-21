@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { getAuthenticationOptions, verifyAuthentication } from '@/utils/auth'
-import { toBuffer, toBase64url } from '@/utils/passkey'
+import { startAuthentication } from '@simplewebauthn/browser'
 import { Clapperboard, Fingerprint } from 'lucide-react'
 import { Button } from '@/ui/button'
 
@@ -15,28 +15,7 @@ export default function LoginClient() {
         setError(null)
         try {
             const options = await getAuthenticationOptions()
-            const cred = await navigator.credentials.get({
-                publicKey: {
-                    ...options,
-                    challenge: toBuffer(options.challenge),
-                    allowCredentials: (options.allowCredentials ?? []).map((c: { id: string }) => ({
-                        ...c, id: toBuffer(c.id),
-                    })) as PublicKeyCredentialDescriptor[],
-                },
-            }) as PublicKeyCredential
-            const resp = cred.response as AuthenticatorAssertionResponse
-            const response = {
-                id: cred.id,
-                rawId: toBase64url(cred.rawId),
-                response: {
-                    authenticatorData: toBase64url(resp.authenticatorData),
-                    clientDataJSON: toBase64url(resp.clientDataJSON),
-                    signature: toBase64url(resp.signature),
-                    userHandle: resp.userHandle ? toBase64url(resp.userHandle) : undefined,
-                },
-                type: cred.type as 'public-key',
-                clientExtensionResults: cred.getClientExtensionResults(),
-            }
+            const response = await startAuthentication({ optionsJSON: options })
             const result = await verifyAuthentication(response)
             if (result.success) {
                 window.location.href = '/'

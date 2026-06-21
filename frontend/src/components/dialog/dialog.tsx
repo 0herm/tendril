@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Bookmark } from 'lucide-react'
 import { Button } from '@/ui/button'
-import { addMedia, removeMedia, checkMediaInList, getAllLists } from '@/utils/clientApi'
+import { addMedia, removeMedia, checkMediaInList, getAllLists } from '@/utils/api'
 
 type ListToolProps = {
     tmdbId: number

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { getRegistrationOptions, verifyRegistration } from '@/utils/auth'
-import { toBuffer, toBase64url } from '@/utils/passkey'
+import { startRegistration } from '@simplewebauthn/browser'
 import { Clapperboard, Fingerprint } from 'lucide-react'
 import { Button } from '@/ui/button'
 import Link from 'next/link'
@@ -16,27 +16,7 @@ export default function RegisterClient() {
         setError(null)
         try {
             const options = await getRegistrationOptions()
-            const cred = await navigator.credentials.create({
-                publicKey: {
-                    ...options,
-                    challenge: toBuffer(options.challenge),
-                    user: { ...options.user, id: toBuffer(options.user.id) },
-                    excludeCredentials: (options.excludeCredentials ?? []).map((c: { id: string }) => ({
-                        ...c, id: toBuffer(c.id),
-                    })) as PublicKeyCredentialDescriptor[],
-                },
-            }) as PublicKeyCredential
-            const resp = cred.response as AuthenticatorAttestationResponse
-            const response = {
-                id: cred.id,
-                rawId: toBase64url(cred.rawId),
-                response: {
-                    attestationObject: toBase64url(resp.attestationObject),
-                    clientDataJSON: toBase64url(resp.clientDataJSON),
-                },
-                type: cred.type as 'public-key',
-                clientExtensionResults: cred.getClientExtensionResults(),
-            }
+            const response = await startRegistration({ optionsJSON: options })
             const result = await verifyRegistration(response)
             if (result.success) {
                 window.location.href = '/'

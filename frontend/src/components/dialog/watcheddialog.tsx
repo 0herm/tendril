@@ -10,7 +10,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/ui/dialog'
-import { addWatched, getWatchedById, removeWatched, removeMedia, updateWatchedSeasons, updateShowStatus, updateTotalSeasons, getAllLists } from '@/utils/clientApi'
+import { addWatched, getWatchedById, removeWatched, removeMedia, updateWatched, getAllLists } from '@/utils/api'
 import { useEffect, useState } from 'react'
 
 type SeasonEntry = { season: number; episodeCount: number }
@@ -55,11 +55,11 @@ export default function WatchedTool({ tmdbID, mediaType, media }: ListToolProps)
         if (mediaType === 'show' && seen) {
             const syncShowState = async () => {
                 if (totalSeasons !== seen.total_seasons) {
-                    const { error } = await updateTotalSeasons(tmdbID, totalSeasons || 0)
+                    const { error } = await updateWatched(tmdbID, { totalSeasons: totalSeasons || 0 })
                     if (error) console.error(error)
                 }
                 if (showStatus !== seen.show_status) {
-                    const { error } = await updateShowStatus(tmdbID, showStatus || '')
+                    const { error } = await updateWatched(tmdbID, { showStatus: showStatus || '' })
                     if (error) console.error(error)
                 }
             }
@@ -111,8 +111,8 @@ export default function WatchedTool({ tmdbID, mediaType, media }: ListToolProps)
             if (data) { setSeen(null); setWatchedEntries([]); setInitialEntries([]) }
         } else if (watchedSeasons.length > 0) {
             if (seen) {
-                const { data, error } = await updateWatchedSeasons(
-                    tmdbID, watchedSeasons, seasonsChanged ? episodeCounts : undefined
+                const { data, error } = await updateWatched(
+                    tmdbID, { watchedSeasons, episodeCounts: seasonsChanged ? episodeCounts : undefined }
                 )
                 if (error) { console.error(error); return }
                 if (data) {

@@ -3,7 +3,7 @@
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/ui/dialog'
 import { Button } from '@/ui/button'
 import { useEffect, useRef, useState } from 'react'
-import { addMedia, removeMedia } from '@/utils/clientApi'
+import { addMedia, removeMedia } from '@/utils/api'
 import { Check, ChevronsUpDown, Search } from 'lucide-react'
 
 type ContentDialogProps = {

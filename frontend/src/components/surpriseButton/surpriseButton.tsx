@@ -5,6 +5,7 @@ import { Shuffle } from 'lucide-react'
 import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { Button } from '@/ui/button'
+import { getAllWatched } from '@/utils/api'
 
 type Candidate = { id: number; type: 'movie' | 'show'; genre_ids?: number[]; runtime?: number }
 
@@ -63,8 +64,7 @@ export function SurpriseButton({ items }: { items: Candidate[] }) {
     async function handleFromHistory() {
         setLoading(true)
         try {
-            const res = await fetch('/api/watched')
-            const { data } = await res.json()
+            const { data } = await getAllWatched()
             if (!data?.length) return
             const watched = pickRandom(data as { tmdb_id: number; type: 'movie' | 'show' }[])
             if (!watched) return

@@ -2,7 +2,7 @@
 
 import config from '@config'
 import LoadImage from '@components/loadImage/loadimage'
-import { getWatchedById, updateWatchedSeasons } from '@/utils/clientApi'
+import { getWatchedById, updateWatched } from '@/utils/api'
 import { useState } from 'react'
 
 type Props = {
@@ -40,7 +40,7 @@ export default function SeasonSection({ showId, seasons }: Props) {
             : [...existingSeasons, seasonNumber]
         const updatedCounts = [...existingCounts]
         updatedCounts[seasonIdx] = episodeNumber
-        await updateWatchedSeasons(showId, updatedSeasons, updatedCounts)
+        await updateWatched(showId, { watchedSeasons: updatedSeasons, episodeCounts: updatedCounts })
     }
 
     return (

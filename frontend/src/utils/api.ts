@@ -114,27 +114,25 @@ export async function getWatchedById(tmdbId: number): Promise<ApiResult<WatchedP
     return { data: data?.[0] ?? null, error }
 }
 
-export async function updateWatchedSeasons(tmdbId: number, watchedSeasons: number[], episodeCounts?: number[]): Promise<ApiResult<WatchedProps | null>> {
-    const formattedSeasons = `{${watchedSeasons.join(',')}}`
-    if (episodeCounts !== undefined) {
-        const query = 'UPDATE Watched SET watched_seasons = $2, episode_counts = $3 WHERE tmdb_id = $1 RETURNING *'
-        const { data, error } = await dbWrapper<WatchedProps>(query, [tmdbId, formattedSeasons, `{${episodeCounts.join(',')}}`])
-        return { data: data?.[0] ?? null, error }
-    }
-    const query = 'UPDATE Watched SET watched_seasons = $2 WHERE tmdb_id = $1 RETURNING *'
-    const { data, error } = await dbWrapper<WatchedProps>(query, [tmdbId, formattedSeasons])
-    return { data: data?.[0] ?? null, error }
-}
+export async function updateWatched(tmdbId: number, fields: {
+    watchedSeasons?: number[]
+    episodeCounts?: number[]
+    showStatus?: string
+    totalSeasons?: number
+}): Promise<ApiResult<WatchedProps | null>> {
+    const sets: string[] = []
+    const values: DbParam[] = [tmdbId]
+    const set = (col: string, value: DbParam) => sets.push(`${col} = $${values.push(value)}`)
 
-export async function updateShowStatus(tmdbId: number, showStatus: string): Promise<ApiResult<WatchedProps | null>> {
-    const query = 'UPDATE Watched SET show_status = $2 WHERE tmdb_id = $1 RETURNING *'
-    const { data, error } = await dbWrapper<WatchedProps>(query, [tmdbId, showStatus])
-    return { data: data?.[0] ?? null, error }
-}
+    if (fields.watchedSeasons !== undefined) set('watched_seasons', `{${fields.watchedSeasons.join(',')}}`)
+    if (fields.episodeCounts !== undefined) set('episode_counts', `{${fields.episodeCounts.join(',')}}`)
+    if (fields.showStatus !== undefined) set('show_status', fields.showStatus)
+    if (fields.totalSeasons !== undefined) set('total_seasons', fields.totalSeasons)
 
-export async function updateTotalSeasons(tmdbId: number, totalSeasons: number): Promise<ApiResult<WatchedProps | null>> {
-    const query = 'UPDATE Watched SET total_seasons = $2 WHERE tmdb_id = $1 RETURNING *'
-    const { data, error } = await dbWrapper<WatchedProps>(query, [tmdbId, totalSeasons])
+    if (sets.length === 0) return { data: null, error: null }
+
+    const query = `UPDATE Watched SET ${sets.join(', ')} WHERE tmdb_id = $1 RETURNING *`
+    const { data, error } = await dbWrapper<WatchedProps>(query, values)
     return { data: data?.[0] ?? null, error }
 }
 

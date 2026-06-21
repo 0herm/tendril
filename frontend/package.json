@@ -11,6 +11,7 @@
     "lint:fix": "eslint --fix ./src"
   },
   "dependencies": {
+    "@simplewebauthn/browser": "^13.3.0",
     "@simplewebauthn/server": "^13.3.0",
     "lucide-react": "^1.14.0",
     "next": "16.2.6",

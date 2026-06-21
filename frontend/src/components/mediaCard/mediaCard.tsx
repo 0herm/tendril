@@ -5,7 +5,7 @@ import config from '@config'
 import Link from 'next/link'
 import { Image as ImageIcon, Star, Bookmark, Eye, EyeOff } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { addMedia, removeMedia, checkMediaInList, addWatched, removeWatched, getWatchedById, updateWatchedSeasons, getShowTotalSeasons, getAllLists } from '@/utils/clientApi'
+import { addMedia, removeMedia, checkMediaInList, addWatched, removeWatched, getWatchedById, updateWatched, getShowTotalSeasons, getAllLists } from '@/utils/api'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/ui/dialog'
 import { Button } from '@/ui/button'
 
@@ -73,7 +73,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
     async function fetchSeasonData() {
         if (totalSeasons) return
         const existing = (item as { number_of_seasons?: number }).number_of_seasons
-        const { data } = existing ? { data: existing } : await getShowTotalSeasons(item.id)
+        const data = existing ?? await getShowTotalSeasons(item.id)
         setTotalSeasons(data ?? 0)
     }
 
@@ -84,7 +84,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
                 if (!error && data) setWatched(false)
             }
         } else if (watched) {
-            await updateWatchedSeasons(item.id, watchedSeasons)
+            await updateWatched(item.id, { watchedSeasons })
         } else {
             const { data, error } = await addWatched(item.id, 'show', title, totalSeasons || undefined, undefined, watchedSeasons)
             if (!error && data) {
