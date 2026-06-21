@@ -1,9 +1,10 @@
-import MediaCard from '@/components/mediaCard/mediaCard'
+import LoadMore from '@/components/loadMore/loadMore'
 import { discoverMovies } from '@/utils/tmdbApi'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { fetchMoreMovies } from './actions'
 
 export default async function Page({ params, searchParams }: { params: Promise<{ genre: string }>; searchParams: Promise<{ name?: string }> }) {
     if (!await getSessionUserId()) redirect('/passkey/login')
@@ -12,6 +13,9 @@ export default async function Page({ params, searchParams }: { params: Promise<{
     const { name } = await searchParams
     const { data } = await discoverMovies(Number(genre))
     const results = data?.results ?? []
+    const totalPages = data?.total_pages ?? 1
+
+    const fetchMore = fetchMoreMovies.bind(null, Number(genre))
 
     return (
         <div className='w-full flex flex-col gap-4'>
@@ -22,11 +26,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
                 </Link>
                 <h1 className='text-base font-semibold truncate'>{name ?? 'Movies'}</h1>
             </div>
-            <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3'>
-                {results.map((item, index) => (
-                    <MediaCard key={index} item={item} />
-                ))}
-            </div>
+            <LoadMore initialItems={results} totalPages={totalPages} fetchMore={fetchMore} />
         </div>
     )
 }

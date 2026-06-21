@@ -1,13 +1,16 @@
 import MediaCard from '@/components/mediaCard/mediaCard'
+import LoadMore from '@/components/loadMore/loadMore'
 import { getSearch } from '@/utils/tmdbApi'
 import Link from 'next/link'
 import { ArrowLeft, SearchX } from 'lucide-react'
+import { fetchMoreSearch } from './actions'
 
 export default async function Page({ params }: { params: Promise<{ search: string }> }) {
     const param = (await params).search
     const query = decodeURIComponent(param)
 
     const { data: searchResult } = await getSearch(param)
+    const totalPages = searchResult?.total_pages ?? 1
 
     const sortedResults = searchResult
         ? [...searchResult.results].sort((a, b) =>
@@ -18,6 +21,8 @@ export default async function Page({ params }: { params: Promise<{ search: strin
     const results = sortedResults.filter(
         (item) => item.media_type === 'movie' || item.media_type === 'tv'
     )
+
+    const fetchMore = fetchMoreSearch.bind(null, param)
 
     return (
         <div className='w-full flex flex-col gap-4'>
@@ -35,11 +40,7 @@ export default async function Page({ params }: { params: Promise<{ search: strin
             </div>
 
             {results.length > 0 ? (
-                <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3'>
-                    {results.map((item, index) => (
-                        <MediaCard key={index} item={item} />
-                    ))}
-                </div>
+                <LoadMore initialItems={results} totalPages={totalPages} fetchMore={fetchMore} />
             ) : (
                 <div className='flex flex-col items-center justify-center gap-4 py-20 text-center'>
                     <div className='flex h-14 w-14 items-center justify-center rounded-2xl bg-muted'>
