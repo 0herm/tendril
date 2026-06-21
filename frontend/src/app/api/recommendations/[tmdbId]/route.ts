@@ -1,9 +1,10 @@
 import { getSimilarMovies, getSimilarShows } from '@/utils/tmdbApi'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(req: NextRequest, { params }: { params: { tmdbId: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ tmdbId: string }> }) {
     const type = req.nextUrl.searchParams.get('type')
-    const id = Number(params.tmdbId)
+    const { tmdbId } = await params
+    const id = Number(tmdbId)
     const result = type === 'show' ? await getSimilarShows(id) : await getSimilarMovies(id)
     return NextResponse.json(result)
 }

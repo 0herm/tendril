@@ -33,7 +33,7 @@ export default async function Page() {
                 id: d.id,
                 type: ('title' in d ? 'movie' : 'show') as 'movie' | 'show',
                 genre_ids: d.genres?.map((g: { id: number }) => g.id),
-                runtime: 'runtime' in d ? d.runtime : (d as ShowDetailsProps).episode_run_time?.[0],
+                runtime: ('runtime' in d ? d.runtime : (d as ShowDetailsProps).episode_run_time?.[0]) ?? undefined,
             }))
             return { list, data: { page: 1, total_pages: 1, total_results: results.length, results }, candidates }
         })),
