@@ -8,8 +8,21 @@ import {
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 
+function SetupError({ reason }: { reason: string }) {
+    return (
+        <div className='w-full flex flex-col items-center justify-center gap-3 py-16 text-center'>
+            <p className='text-sm font-medium'>Setup required</p>
+            <p className='text-xs text-destructive bg-destructive/10 rounded-lg px-3 py-1.5 max-w-sm'>{reason}</p>
+            <p className='text-xs text-muted-foreground'>Set <code>TMDB_ACCESS_TOKEN</code> in your environment and restart.</p>
+        </div>
+    )
+}
+
 export default async function Home() {
     if (!await getSessionUserId()) redirect('/passkey/login')
+
+    const hasToken = !!(process.env.TMDB_ACCESS_TOKEN || process.env.ACCESS_TOKEN)
+    if (!hasToken) return <SetupError reason="TMDB API key is not configured." />
 
     const [
         trendingResult,
@@ -43,6 +56,8 @@ export default async function Home() {
 
     if (!hasContent) {
         const tmdbError = results.find((r) => r.error)?.error
+        const isInvalidKey = tmdbError?.includes('Invalid API key')
+        if (isInvalidKey) return <SetupError reason="Invalid TMDB API key. Check your TMDB_ACCESS_TOKEN." />
         return (
             <div className='w-full flex flex-col items-center justify-center gap-2 py-16 text-center'>
                 <p className='text-sm text-muted-foreground'>No content available.</p>
