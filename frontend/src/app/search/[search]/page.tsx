@@ -1,4 +1,3 @@
-import MediaCard from '@/components/mediaCard/mediaCard'
 import LoadMore from '@/components/loadMore/loadMore'
 import { getSearch } from '@/utils/tmdbApi'
 import Link from 'next/link'

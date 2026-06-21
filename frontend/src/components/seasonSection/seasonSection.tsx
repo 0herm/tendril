@@ -2,8 +2,9 @@
 
 import config from '@config'
 import LoadImage from '@components/loadImage/loadimage'
+import { Check } from 'lucide-react'
 import { getWatchedById, updateWatched } from '@/utils/api'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type Props = {
     showId: number
@@ -14,6 +15,17 @@ export default function SeasonSection({ showId, seasons }: Props) {
     const [selectedSeason, setSelectedSeason] = useState<number | null>(null)
     const [episodes, setEpisodes] = useState<Episode[]>([])
     const [loading, setLoading] = useState(false)
+    const [watched, setWatched] = useState<WatchedProps | null>(null)
+
+    useEffect(() => {
+        getWatchedById(showId).then(({ data }) => setWatched(data ?? null))
+    }, [showId])
+
+    function watchedUpTo(seasonNumber: number): number {
+        const idx = watched?.watched_seasons?.indexOf(seasonNumber) ?? -1
+        if (idx === -1) return 0
+        return watched?.episode_counts?.[idx] ?? 0
+    }
 
     async function handleSeasonClick(seasonNumber: number) {
         if (selectedSeason === seasonNumber) {
@@ -30,17 +42,22 @@ export default function SeasonSection({ showId, seasons }: Props) {
     }
 
     async function handleWatchedUpTo(episodeNumber: number, seasonNumber: number) {
-        const watched = await getWatchedById(showId)
-        if (!watched.data) return
-        const existingSeasons = watched.data.watched_seasons ?? []
-        const existingCounts = watched.data.episode_counts ?? []
-        const seasonIdx = seasonNumber - 1
-        const updatedSeasons = existingSeasons.includes(seasonNumber)
-            ? existingSeasons
-            : [...existingSeasons, seasonNumber]
+        const current = watched ?? (await getWatchedById(showId)).data
+        if (!current) return
+        const existingSeasons = current.watched_seasons ?? []
+        const existingCounts = current.episode_counts ?? []
+        const idx = existingSeasons.indexOf(seasonNumber)
+        let updatedSeasons: number[]
         const updatedCounts = [...existingCounts]
-        updatedCounts[seasonIdx] = episodeNumber
+        if (idx === -1) {
+            updatedSeasons = [...existingSeasons, seasonNumber]
+            updatedCounts[existingSeasons.length] = episodeNumber
+        } else {
+            updatedSeasons = existingSeasons
+            updatedCounts[idx] = episodeNumber
+        }
         await updateWatched(showId, { watchedSeasons: updatedSeasons, episodeCounts: updatedCounts })
+        setWatched({ ...current, watched_seasons: updatedSeasons, episode_counts: updatedCounts })
     }
 
     return (
@@ -95,34 +112,44 @@ export default function SeasonSection({ showId, seasons }: Props) {
                         </div>
                     ) : (
                         <div className='divide-y divide-border'>
-                            {episodes.map((ep) => (
-                                <div key={ep.episode_number} className='flex items-center gap-3 px-4 py-3'>
-                                    {ep.still_path && (
-                                        <div className='relative w-20 aspect-video rounded-md overflow-hidden shrink-0 bg-muted'>
-                                            <LoadImage
-                                                source={`${config.url.IMAGE_URL}${ep.still_path}`}
-                                                error={ep.still_path}
-                                                className='object-cover'
-                                                fill={true}
-                                            />
+                            {episodes.map((ep) => {
+                                const isWatched = ep.episode_number <= watchedUpTo(selectedSeason)
+                                return (
+                                    <div key={ep.episode_number} className='flex items-center gap-3 px-4 py-3'>
+                                        {ep.still_path && (
+                                            <div className='relative w-20 aspect-video rounded-md overflow-hidden shrink-0 bg-muted'>
+                                                <LoadImage
+                                                    source={`${config.url.IMAGE_URL}${ep.still_path}`}
+                                                    error={ep.still_path}
+                                                    className='object-cover'
+                                                    fill={true}
+                                                />
+                                            </div>
+                                        )}
+                                        <div className='flex-1 min-w-0'>
+                                            <p className='text-xs font-medium truncate'>
+                                                {ep.episode_number}. {ep.name}
+                                            </p>
+                                            {ep.air_date && (
+                                                <p className='text-[10px] text-muted-foreground mt-0.5'>{ep.air_date}</p>
+                                            )}
                                         </div>
-                                    )}
-                                    <div className='flex-1 min-w-0'>
-                                        <p className='text-xs font-medium truncate'>
-                                            {ep.episode_number}. {ep.name}
-                                        </p>
-                                        {ep.air_date && (
-                                            <p className='text-[10px] text-muted-foreground mt-0.5'>{ep.air_date}</p>
+                                        {isWatched ? (
+                                            <span className='shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-brand px-2 py-1'>
+                                                <Check className='h-3 w-3' />
+                                                Watched
+                                            </span>
+                                        ) : (
+                                            <button
+                                                onClick={() => handleWatchedUpTo(ep.episode_number, selectedSeason)}
+                                                className='shrink-0 text-[10px] font-medium text-brand hover:text-brand-dim transition-colors px-2 py-1 rounded-md hover:bg-brand/8'
+                                            >
+                                                Watched up to here
+                                            </button>
                                         )}
                                     </div>
-                                    <button
-                                        onClick={() => handleWatchedUpTo(ep.episode_number, selectedSeason)}
-                                        className='shrink-0 text-[10px] font-medium text-brand hover:text-brand-dim transition-colors px-2 py-1 rounded-md hover:bg-brand/8'
-                                    >
-                                        Watched up to here
-                                    </button>
-                                </div>
-                            ))}
+                                )
+                            })}
                         </div>
                     )}
                 </div>

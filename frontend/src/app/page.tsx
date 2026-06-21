@@ -5,9 +5,8 @@ import {
     getPopularMovies, getPopularShows,
     getTopRatedMovies, getTopRatedShows,
     getUpcomingMovies, getUpcomingShows,
-    getDetailsShow,
 } from '@/utils/tmdbApi'
-import { getContinueWatching } from '@/utils/api'
+import { getFilteredContinueWatching } from '@/utils/continueWatching'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 
@@ -25,10 +24,10 @@ export default async function Home() {
     if (!await getSessionUserId()) redirect('/passkey/login')
 
     const hasToken = !!(process.env.TMDB_ACCESS_TOKEN || process.env.ACCESS_TOKEN)
-    if (!hasToken) return <SetupError reason="TMDB API key is not configured." />
+    if (!hasToken) return <SetupError reason='TMDB API key is not configured.' />
 
     const [
-        continueWatchingResult,
+        cwItems,
         trendingDailyResult,
         trendingResult,
         newMoviesResult,
@@ -40,7 +39,7 @@ export default async function Home() {
         upcomingMoviesResult,
         upcomingShowsResult,
     ] = await Promise.all([
-        getContinueWatching(),
+        getFilteredContinueWatching(),
         getTrendingDaily(),
         getTrending(),
         getNewMovies(),
@@ -53,11 +52,8 @@ export default async function Home() {
         getUpcomingShows(),
     ])
 
-    const cwItems = continueWatchingResult.data ?? []
-    const cwDetailResults = await Promise.all(cwItems.map((item) => getDetailsShow(item.tmdb_id)))
-    const cwDetails = cwDetailResults.map((r) => r.data).filter((d): d is ShowDetailsProps => d !== null)
-    const continueWatchingData: MediaListProps | null = cwDetails.length > 0
-        ? { page: 1, total_pages: 1, total_results: cwDetails.length, results: cwDetails }
+    const continueWatchingData: MediaListProps | null = cwItems.length > 0
+        ? { page: 1, total_pages: 1, total_results: cwItems.length, results: cwItems }
         : null
 
     const results = [
@@ -71,7 +67,7 @@ export default async function Home() {
     if (!hasContent) {
         const tmdbError = results.find((r) => r.error)?.error
         const isInvalidKey = tmdbError?.includes('Invalid API key')
-        if (isInvalidKey) return <SetupError reason="Invalid TMDB API key. Check your TMDB_ACCESS_TOKEN." />
+        if (isInvalidKey) return <SetupError reason='Invalid TMDB API key. Check your TMDB_ACCESS_TOKEN.' />
         return (
             <div className='w-full flex flex-col items-center justify-center gap-2 py-16 text-center'>
                 <p className='text-sm text-muted-foreground'>No content available.</p>
@@ -84,7 +80,7 @@ export default async function Home() {
 
     return (
         <div className='flex flex-col gap-6 w-full overflow-hidden'>
-            <MediaSection title='Continue Watching' items={continueWatchingData}                    type={'show'} />
+            <MediaSection title='Continue Watching' items={continueWatchingData} />
             <MediaSection title='Top 10 Right Now'  items={trendingDailyResult.data}               ranked />
             <MediaSection title='Trending'          items={trendingResult.data} />
             <MediaSection title='New Movies'        items={newMoviesResult.data}       type={'movie'} />

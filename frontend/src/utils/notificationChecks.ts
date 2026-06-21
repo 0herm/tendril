@@ -159,7 +159,7 @@ export async function checkInactivity(): Promise<number> {
     const lastAdded = data?.[0]?.added_at
     if (!lastAdded || daysFromNow(lastAdded) < 14) return 0
 
-    const p = { title: 'Long time no watch', body: "You haven't logged anything in 14 days. Jump back in!", url: '/' }
+    const p = { title: 'Long time no watch', body: 'You haven\'t logged anything in 14 days. Jump back in!', url: '/' }
     await sendPush(p)
     await logSent('inactivity', null, undefined, p)
     return 1
