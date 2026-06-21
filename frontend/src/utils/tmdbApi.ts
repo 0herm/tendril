@@ -31,6 +31,10 @@ export async function getTrending(): Promise<ApiResult<TrendingProps>> {
     return getWrapper<TrendingProps>(`3/trending/all/week?${qs({ language: LANGUAGE })}`, REVALIDATE_LISTS)
 }
 
+export async function getTrendingDaily(): Promise<ApiResult<TrendingProps>> {
+    return getWrapper<TrendingProps>(`3/trending/all/day?${qs({ language: LANGUAGE })}`, REVALIDATE_LISTS)
+}
+
 export async function getNewMovies(): Promise<ApiResult<NewMoviesProps>> {
     return getWrapper<NewMoviesProps>(`3/movie/now_playing?${qs({ language: LANGUAGE, region: REGION })}`, REVALIDATE_LISTS)
 }
