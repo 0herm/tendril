@@ -1,7 +1,8 @@
+import React from 'react'
 import MediaCard from '@components/mediaCard/mediaCard'
 
 type SectionProps = {
-    title: string
+    title: React.ReactNode
     items: MediaListProps | null
     type?: MediaType
 }

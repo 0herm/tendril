@@ -13,9 +13,10 @@ type MediaPageProps = {
     similar?: MediaListProps | null
     region?: string | null
     collection?: CollectionProps | null
+    watchedInSimilar?: number
 }
 
-export default function MediaPage({ item, media, similar, region, collection }: MediaPageProps) {
+export default function MediaPage({ item, media, similar, region, collection, watchedInSimilar }: MediaPageProps) {
     const customOrder = ['flatrate', 'rent', 'buy']
     const activeRegion = region || config.setting.REGION
     const regionProviders = (item['watch/providers']?.results[activeRegion] ?? {}) as Record<string, unknown>
@@ -378,7 +379,18 @@ export default function MediaPage({ item, media, similar, region, collection }: 
 
             {/* ── More Like This ── */}
             {similar && similar.results.length > 0 && (
-                <MediaSection title='More Like This' items={similar} type={media} />
+                <MediaSection
+                    title={
+                        <span className='flex items-center gap-2'>
+                            More Like This
+                            {watchedInSimilar != null && watchedInSimilar > 0 && (
+                                <span className='text-xs font-normal text-brand'>{watchedInSimilar} watched</span>
+                            )}
+                        </span>
+                    }
+                    items={similar}
+                    type={media}
+                />
             )}
 
         </div>
