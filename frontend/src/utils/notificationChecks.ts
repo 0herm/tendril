@@ -42,10 +42,10 @@ async function alreadySent(type: string, tmdbId: number | null, meta?: string): 
     return (data?.length ?? 0) > 0
 }
 
-async function logSent(type: string, tmdbId: number | null, meta?: string): Promise<void> {
+async function logSent(type: string, tmdbId: number | null, meta?: string, payload?: { title: string; body: string; url?: string }): Promise<void> {
     await dbWrapper(
-        'INSERT INTO NotificationLog (type, tmdb_id, meta) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING',
-        [type, tmdbId, meta ?? null]
+        'INSERT INTO NotificationLog (type, tmdb_id, meta, notif_title, notif_body, notif_url) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING',
+        [type, tmdbId, meta ?? null, payload?.title ?? null, payload?.body ?? null, payload?.url ?? null]
     )
 }
 
@@ -68,12 +68,9 @@ export async function checkMovieReleased(): Promise<number> {
         const age = daysFromNow(movie.release_date)
         if (age < 0 || age > 7) continue
 
-        await sendPush({
-            title: 'Now Available',
-            body: `${movie.title} has been released — it's on your watchlist!`,
-            url: `/movie/${tmdb_id}`,
-        })
-        await logSent('movie_released', tmdb_id)
+        const p = { title: 'Now Available', body: `${movie.title} has been released — it's on your watchlist!`, url: `/movie/${tmdb_id}` }
+        await sendPush(p)
+        await logSent('movie_released', tmdb_id, undefined, p)
         sent++
     }
     return sent
@@ -112,12 +109,9 @@ export async function checkUpcomingRelease(): Promise<number> {
         if (await alreadySent(notifType, tmdb_id, dateStr)) continue
 
         const formatted = new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
-        await sendPush({
-            title: 'Coming Soon',
-            body: `${label} ${type === 'movie' ? 'releases' : 'airs'} on ${formatted}`,
-            url,
-        })
-        await logSent(notifType, tmdb_id, dateStr)
+        const p = { title: 'Coming Soon', body: `${label} ${type === 'movie' ? 'releases' : 'airs'} on ${formatted}`, url }
+        await sendPush(p)
+        await logSent(notifType, tmdb_id, dateStr, p)
         sent++
     }
     return sent
@@ -139,26 +133,19 @@ export async function checkWatchlistReminder(): Promise<number> {
     }
     if (!unsent.length) return 0
 
+    let reminderPayload: { title: string; body: string; url: string }
     if (unsent.length === 1) {
         const { tmdb_id, type } = unsent[0]
         const data = type === 'movie'
             ? await tmdb<TmdbMovie>(`3/movie/${tmdb_id}?language=${LANGUAGE}`)
             : await tmdb<TmdbShow>(`3/tv/${tmdb_id}?language=${LANGUAGE}`)
         const name = data ? ((data as TmdbMovie).title ?? (data as TmdbShow).name) : `#${tmdb_id}`
-        await sendPush({
-            title: 'Still on your list…',
-            body: `${name} has been waiting over a month.`,
-            url: `/${type === 'movie' ? 'movie' : 'show'}/${tmdb_id}`,
-        })
+        reminderPayload = { title: 'Still on your list…', body: `${name} has been waiting over a month.`, url: `/${type === 'movie' ? 'movie' : 'show'}/${tmdb_id}` }
     } else {
-        await sendPush({
-            title: 'Your watchlist is waiting',
-            body: `${unsent.length} titles have been on your list for over a month.`,
-            url: '/',
-        })
+        reminderPayload = { title: 'Your watchlist is waiting', body: `${unsent.length} titles have been on your list for over a month.`, url: '/' }
     }
-
-    for (const { tmdb_id } of unsent) await logSent('watchlist_reminder', tmdb_id)
+    await sendPush(reminderPayload)
+    for (const { tmdb_id } of unsent) await logSent('watchlist_reminder', tmdb_id, undefined, reminderPayload)
     return 1
 }
 
@@ -172,12 +159,9 @@ export async function checkInactivity(): Promise<number> {
     const lastAdded = data?.[0]?.added_at
     if (!lastAdded || daysFromNow(lastAdded) < 14) return 0
 
-    await sendPush({
-        title: 'Long time no watch',
-        body: 'You haven\'t logged anything in 14 days. Jump back in!',
-        url: '/',
-    })
-    await logSent('inactivity', null)
+    const p = { title: 'Long time no watch', body: "You haven't logged anything in 14 days. Jump back in!", url: '/' }
+    await sendPush(p)
+    await logSent('inactivity', null, undefined, p)
     return 1
 }
 
@@ -198,12 +182,9 @@ export async function checkNewSeason(): Promise<number> {
         if (!newSeason?.air_date || new Date(newSeason.air_date) > new Date() || newSeason.episode_count === 0) continue
         if (await alreadySent('new_season', tmdb_id, newSeasonNum)) continue
 
-        await sendPush({
-            title: 'New Season Available',
-            body: `${show.name ?? name} — Season ${show.number_of_seasons} just dropped!`,
-            url: `/show/${tmdb_id}`,
-        })
-        await logSent('new_season', tmdb_id, newSeasonNum)
+        const p = { title: 'New Season Available', body: `${show.name ?? name} — Season ${show.number_of_seasons} just dropped!`, url: `/show/${tmdb_id}` }
+        await sendPush(p)
+        await logSent('new_season', tmdb_id, newSeasonNum, p)
         sent++
     }
     return sent
@@ -239,12 +220,9 @@ export async function checkNewEpisodes(): Promise<number> {
             if (await alreadySent('new_episodes', tmdb_id, meta)) continue
 
             const newCount = airedCount - storedCount
-            await sendPush({
-                title: 'New Episodes Available',
-                body: `${show.name ?? name} — Season ${seasonNum} has ${newCount} new episode${newCount === 1 ? '' : 's'}!`,
-                url: `/show/${tmdb_id}`,
-            })
-            await logSent('new_episodes', tmdb_id, meta)
+            const p = { title: 'New Episodes Available', body: `${show.name ?? name} — Season ${seasonNum} has ${newCount} new episode${newCount === 1 ? '' : 's'}!`, url: `/show/${tmdb_id}` }
+            await sendPush(p)
+            await logSent('new_episodes', tmdb_id, meta, p)
             sent++
         }
     }
@@ -268,14 +246,9 @@ export async function checkShowEnded(): Promise<number> {
         if (await alreadySent('show_ended', tmdb_id)) continue
 
         const cancelled = show.status === 'Canceled'
-        await sendPush({
-            title: cancelled ? 'Show Cancelled' : 'Show Ended',
-            body: cancelled
-                ? `${show.name ?? name} has been cancelled.`
-                : `${show.name ?? name} has ended.`,
-            url: `/show/${tmdb_id}`,
-        })
-        await logSent('show_ended', tmdb_id)
+        const p = { title: cancelled ? 'Show Cancelled' : 'Show Ended', body: cancelled ? `${show.name ?? name} has been cancelled.` : `${show.name ?? name} has ended.`, url: `/show/${tmdb_id}` }
+        await sendPush(p)
+        await logSent('show_ended', tmdb_id, undefined, p)
         sent++
     }
     return sent
@@ -319,12 +292,9 @@ export async function checkNewCollectionMovie(): Promise<number> {
 
             if (await alreadySent('collection_movie', part.id)) continue
 
-            await sendPush({
-                title: 'New Collection Movie Released',
-                body: `${part.title} is out — part of ${collection.name}`,
-                url: `/movie/${part.id}`,
-            })
-            await logSent('collection_movie', part.id)
+            const p = { title: 'New Collection Movie Released', body: `${part.title} is out — part of ${collection.name}`, url: `/movie/${part.id}` }
+            await sendPush(p)
+            await logSent('collection_movie', part.id, undefined, p)
             sent++
         }
     }

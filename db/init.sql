@@ -71,11 +71,14 @@ ON CONFLICT DO NOTHING;
 
 -- Notification dedup log
 CREATE TABLE IF NOT EXISTS NotificationLog (
-    id      SERIAL PRIMARY KEY,
-    type    TEXT NOT NULL,
-    tmdb_id INTEGER,
-    meta    TEXT,
-    sent_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    id          SERIAL PRIMARY KEY,
+    type        TEXT NOT NULL,
+    tmdb_id     INTEGER,
+    meta        TEXT,
+    notif_title TEXT,
+    notif_body  TEXT,
+    notif_url   TEXT,
+    sent_at     TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Unique per (type, tmdb_id, meta-or-empty) for item-specific entries only

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { subscribeUser, unsubscribeUser } from './actions'
 import { Button } from '@/ui/button'
-import { Bell, BellOff, Share, Smartphone } from 'lucide-react'
+import { Bell, BellOff, Film, Share, Smartphone, Tv } from 'lucide-react'
 
 function urlBase64ToUint8Array(base64String: string) {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -160,6 +160,51 @@ function InstallPrompt() {
     )
 }
 
+function RecentAlerts() {
+    const [entries, setEntries] = useState<NotificationEntry[]>([])
+
+    useEffect(() => {
+        fetch('/api/notifications')
+            .then(r => r.json())
+            .then(({ data }) => setEntries(data ?? []))
+            .catch(() => {})
+    }, [])
+
+    const icon = (type: string) => {
+        if (type.includes('movie') || type.includes('collection')) return <Film className='h-4 w-4' />
+        if (type.includes('show') || type.includes('season') || type.includes('episode')) return <Tv className='h-4 w-4' />
+        return <Bell className='h-4 w-4' />
+    }
+
+    return (
+        <div className='rounded-xl border border-border overflow-hidden bg-card'>
+            <div className='flex items-center gap-3 px-4 py-4 border-b border-border'>
+                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0 ring-1 ring-border/50'>
+                    <Bell className='h-4 w-4' />
+                </div>
+                <div>
+                    <p className='text-sm font-medium'>Recent Alerts</p>
+                    <p className='text-xs text-muted-foreground'>Notifications sent by Tendril</p>
+                </div>
+            </div>
+            <div className='divide-y divide-border'>
+                {entries.length === 0 ? (
+                    <p className='px-4 py-4 text-sm text-muted-foreground'>No notifications sent yet.</p>
+                ) : entries.map(e => (
+                    <div key={e.id} className='flex items-start gap-3 px-4 py-3'>
+                        <div className='mt-0.5 text-muted-foreground shrink-0'>{icon(e.type)}</div>
+                        <div className='flex flex-col gap-0.5 min-w-0'>
+                            <p className='text-sm font-medium truncate'>{e.notif_title}</p>
+                            <p className='text-xs text-muted-foreground'>{e.notif_body}</p>
+                            <p className='text-xs text-muted-foreground/60'>{new Date(e.sent_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
 export default function Page() {
     return (
         <div className='w-full flex flex-col gap-4 max-w-xl'>
@@ -169,6 +214,7 @@ export default function Page() {
             </div>
             <PushNotificationManager />
             <InstallPrompt />
+            <RecentAlerts />
         </div>
     )
 }
