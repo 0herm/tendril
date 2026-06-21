@@ -369,3 +369,12 @@ type WatchedProps = {
     show_status?: string
     episode_counts?: number[]
 }
+interface NotificationEntry {
+    id: number
+    type: string
+    tmdb_id: number
+    notif_title: string
+    notif_body: string
+    notif_url: string | null
+    sent_at: string
+}

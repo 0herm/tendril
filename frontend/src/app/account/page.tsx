@@ -29,7 +29,12 @@ export default async function Page() {
             const { data: mediaItems } = await getMediaByListId(list.id)
             const items = mediaItems ?? []
             const results = (await Promise.all(items.map(fetchDetails))).filter(Boolean) as (ShowDetailsProps | MovieDetailsProps)[]
-            const candidates = items.map((m) => ({ id: m.tmdb_id, type: m.type }))
+            const candidates = results.map((d) => ({
+                id: d.id,
+                type: ('title' in d ? 'movie' : 'show') as 'movie' | 'show',
+                genre_ids: d.genres?.map((g: { id: number }) => g.id),
+                runtime: 'runtime' in d ? d.runtime : (d as ShowDetailsProps).episode_run_time?.[0],
+            }))
             return { list, data: { page: 1, total_pages: 1, total_results: results.length, results }, candidates }
         })),
         getAllWatched().then(({ data }) => Promise.all((data ?? []).map(fetchDetails))),
