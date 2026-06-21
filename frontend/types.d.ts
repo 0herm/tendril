@@ -329,6 +329,30 @@ type CollectionProps = {
     parts: TrendingItemProps[]
 }
 
+type Season = {
+    air_date: string
+    episode_count: number
+    id: number
+    name: string
+    overview: string
+    poster_path: string | null
+    season_number: number
+    vote_average: number
+}
+
+type Episode = {
+    episode_number: number
+    name: string
+    overview: string
+    still_path: string | null
+    air_date: string
+    runtime: number | null
+}
+
+type SeasonDetails = {
+    episodes: Episode[]
+}
+
 type WatchedProps = {
     id: number
     tmdb_id: number

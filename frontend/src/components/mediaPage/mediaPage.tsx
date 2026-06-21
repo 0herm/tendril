@@ -6,6 +6,7 @@ import ListTool from '../dialog/dialog'
 import WatchedTool from '../dialog/watcheddialog'
 import { TrailerButton } from '../trailerButton/trailerButton'
 import MediaSection from '../mediaSection/mediasection'
+import SeasonSection from '../seasonSection/seasonSection'
 
 type MediaPageProps = {
     item: MovieDetailsProps | ShowDetailsProps
@@ -232,39 +233,7 @@ export default function MediaPage({ item, media, similar, region, collection, wa
 
             {/* ── Seasons ── */}
             {seasons.length > 0 && (
-                <section className='flex flex-col gap-3'>
-                    <SectionHeading>
-                        Seasons
-                        <span className='ml-1.5 font-normal text-muted-foreground'>{seasons.length}</span>
-                    </SectionHeading>
-                    <div className='-mx-4 sm:-mx-5 px-4 sm:px-5 flex gap-3 overflow-x-auto noscroll pb-1'>
-                        {seasons.map((season) => (
-                            <div
-                                key={season.id}
-                                className={
-                                    'flex-none w-28 sm:w-32 bg-card border border-border rounded-xl ' +
-                                    'overflow-hidden shadow-sm hover:border-brand/40 hover:shadow-md transition-all group'
-                                }
-                            >
-                                <div className='relative aspect-[2/3] w-full bg-muted overflow-hidden'>
-                                    <LoadImage
-                                        source={season.poster_path ? `${config.url.IMAGE_URL}${season.poster_path}` : ''}
-                                        error={season.poster_path}
-                                        className='object-cover transition-transform duration-300 group-hover:scale-[1.03]'
-                                        fill={true}
-                                    />
-                                </div>
-                                <div className='p-2.5 flex flex-col gap-0.5'>
-                                    <p className='font-medium text-xs leading-snug truncate'>{season.name}</p>
-                                    <p className='text-[10px] text-muted-foreground'>
-                                        {season.episode_count} eps
-                                        {season.air_date ? ` · ${season.air_date.split('-')[0]}` : ''}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
+                <SeasonSection showId={item.id} seasons={seasons} />
             )}
 
             {/* ── Details ── */}

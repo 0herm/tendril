@@ -83,6 +83,10 @@ export async function getSimilarShows(id: number): Promise<ApiResult<MediaListPr
     return getWrapper<MediaListProps>(`3/tv/${id}/recommendations?${qs({ language: LANGUAGE })}`, REVALIDATE_DETAILS)
 }
 
+export async function getSeasonEpisodes(showId: number, season: number): Promise<ApiResult<SeasonDetails>> {
+    return getWrapper<SeasonDetails>(`3/tv/${showId}/season/${season}?${qs({ language: LANGUAGE })}`, REVALIDATE_DETAILS)
+}
+
 export async function getSearch(query: string, page = 1): Promise<ApiResult<SearchProps>> {
     const url = `3/search/multi?${qs({ query, include_adult: INCLUDE_ADULT ? String(INCLUDE_ADULT) : null, language: LANGUAGE, page: String(page) })}`
     return getWrapper<SearchProps>(url, REVALIDATE_SEARCH)
