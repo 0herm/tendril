@@ -28,10 +28,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <html lang='en' className='dark'>
+        <html lang='en' className='dark h-full'>
             <head />
-            <body className='w-screen min-h-screen m-0 p-0 font-[Inter] antialiased wrap-break-word leading-normal tracking-normal'>
-                <div className='flex flex-col w-full min-h-screen'>
+            <body className='w-screen h-full overflow-hidden m-0 p-0 font-[Inter] antialiased wrap-break-word leading-normal tracking-normal'>
+                <div className='flex flex-col w-full h-full'>
                     <header
                         className='fixed top-0 left-0 right-0 border-b border-border backdrop-blur-md z-50 print:hidden bg-background/80'
                         style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
@@ -41,7 +41,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                         </div>
                     </header>
                     <main
-                        className='grow w-full bg-background px-4 sm:px-5 pb-28 sm:pb-8'
+                        className='grow w-full bg-background px-4 sm:px-5 pb-28 sm:pb-8 overflow-y-auto'
                         style={{ paddingTop: 'calc(3rem + 1rem + env(safe-area-inset-top, 0px))' }}
                     >
                         {children}
