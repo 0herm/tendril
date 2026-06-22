@@ -23,9 +23,9 @@ export default function BottomNav() {
     }
 
     return (
-        <nav className='fixed bottom-0 left-0 right-0 sm:hidden z-50'>
+        <nav className='fixed bottom-0 left-0 right-0 sm:hidden z-50 px-5'>
             <div
-                className='bg-card/95 backdrop-blur-xl border-t border-border/60 shadow-lg'
+                className='bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl shadow-lg overflow-hidden'
                 style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
             >
                 <div className='flex items-stretch h-16'>
@@ -51,6 +51,5 @@ export default function BottomNav() {
                 </div>
             </div>
         </nav>
-
     )
 }
