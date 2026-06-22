@@ -108,6 +108,15 @@
     --brand-subtle: oklch(0.58 0.12 145 / 15%);
 }
 
+@keyframes genre-card-in {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+.genre-card-animate {
+    animation: genre-card-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @layer base {
     * {
         @apply border-border outline-ring/50;
