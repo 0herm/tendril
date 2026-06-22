@@ -11,7 +11,7 @@ export async function getFilteredContinueWatching(): Promise<(ShowDetailsProps |
                 ? await getDetailsMovie(item.tmdb_id)
                 : await getDetailsShow(item.tmdb_id)
             return details
-                ? { details, watchedSeasons: item.watched_seasons ?? [], episodeCounts: item.episode_counts ?? [] }
+                ? { details, type: item.type, watchedSeasons: item.watched_seasons ?? [], episodeCounts: item.episode_counts ?? [] }
                 : null
         })
     )).filter((r): r is NonNullable<typeof r> => r !== null)
@@ -53,5 +53,5 @@ export async function getFilteredContinueWatching(): Promise<(ShowDetailsProps |
 
             return false
         })
-        .map((r) => r.details)
+        .map((r) => ({ ...r.details, media_type: r.type === 'show' ? 'tv' : 'movie' })) as (ShowDetailsProps | MovieDetailsProps)[]
 }

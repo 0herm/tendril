@@ -5,9 +5,10 @@ import config from '@config'
 import Link from 'next/link'
 import { Image as ImageIcon, Star, Bookmark, Eye, EyeOff } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { addMedia, removeMedia, checkMediaInList, addWatched, removeWatched, getWatchedById, updateWatched, getShowTotalSeasons, getAllLists } from '@/utils/api'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/ui/dialog'
-import { Button } from '@/ui/button'
+import { addMedia, removeMedia, checkMediaInList, addWatched, removeWatched, getWatchedById, getShowDetails, getAllLists } from '@/utils/api'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
+import { WatchedProvider } from '@components/watched/watchedContext'
+import { WatchedSeasonsBody, WatchedSeasonsSkeleton } from '@components/watched/watchedSeasonsDialog'
 
 interface MediaCardProps {
     item: MediaItemProps
@@ -27,8 +28,8 @@ export default function MediaCard({ item, type }: MediaCardProps) {
 
     const [inList, setInList] = useState(false)
     const [watched, setWatched] = useState(false)
-    const [watchedSeasons, setWatchedSeasons] = useState<number[]>([])
-    const [totalSeasons, setTotalSeasons] = useState(0)
+    const [showDetails, setShowDetails] = useState<ShowDetailsProps | null>(null)
+    const [dialogOpen, setDialogOpen] = useState(false)
 
     useEffect(() => {
         getAllLists().then(({ data }) => setListId(data?.[0]?.id))
@@ -36,10 +37,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
 
     useEffect(() => {
         if (listId) checkMediaInList(item.id, listId).then(({ data }) => setInList(data ?? false))
-        getWatchedById(item.id).then(({ data }) => {
-            setWatched(!!data)
-            if (data) setWatchedSeasons(data.watched_seasons ?? [])
-        })
+        getWatchedById(item.id).then(({ data }) => setWatched(!!data))
     }, [item.id, listId])
 
     async function handleSave() {
@@ -55,7 +53,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
         }
     }
 
-    async function handleWatched() {
+    async function handleWatchedMovie() {
         if (watched) {
             const { data, error } = await removeWatched(item.id)
             if (error) { console.error(error); return }
@@ -70,47 +68,30 @@ export default function MediaCard({ item, type }: MediaCardProps) {
         }
     }
 
-    async function fetchSeasonData() {
-        if (totalSeasons) return
-        const existing = (item as { number_of_seasons?: number }).number_of_seasons
-        const data = existing ?? await getShowTotalSeasons(item.id)
-        setTotalSeasons(data ?? 0)
-    }
-
-    async function closeShowDialog() {
-        if (watchedSeasons.length === 0) {
-            if (watched) {
-                const { data, error } = await removeWatched(item.id)
-                if (!error && data) setWatched(false)
-            }
-        } else if (watched) {
-            await updateWatched(item.id, { watchedSeasons })
-        } else {
-            const { data, error } = await addWatched(item.id, 'show', title, totalSeasons || undefined, undefined, watchedSeasons)
-            if (!error && data) {
-                setWatched(true)
-                if (inList && listId) { await removeMedia(item.id, listId); setInList(false) }
-            }
+    // Prefetch the full show (seasons + last_episode_to_air) so the watched dialog opens instantly.
+    function loadShowDetails() {
+        if (mediaType !== 'show' || showDetails) return
+        const existing = item as Partial<ShowDetailsProps>
+        if (existing.seasons && existing.number_of_seasons != null) {
+            setShowDetails(existing as ShowDetailsProps)
+            return
         }
+        getShowDetails(item.id).then((data) => { if (data) setShowDetails(data) })
     }
 
-    function handleSeasonToggle(season: number) {
-        setWatchedSeasons((prev) => prev.includes(season) ? prev.filter((s) => s !== season) : [...prev, season])
-    }
-
-    const watchedBtn = (onClick?: () => void) => (
+    const watchedBtn = (isWatched: boolean, onClick?: () => void) => (
         <button
             onClick={onClick}
             className={'flex flex-1 items-center justify-center gap-1.5 py-1.5 text-xs ' +
-                `font-medium transition-colors ${watched ? 'bg-brand/80 text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+                `font-medium transition-colors ${isWatched ? 'bg-brand/80 text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
         >
-            {watched ? <Eye className='h-3.5 w-3.5' /> : <EyeOff className='h-3.5 w-3.5' />}
+            {isWatched ? <Eye className='h-3.5 w-3.5' /> : <EyeOff className='h-3.5 w-3.5' />}
             Watched
         </button>
     )
 
     return (
-        <div className='group relative w-full'>
+        <div className='group relative w-full' onPointerEnter={loadShowDetails} onFocus={loadShowDetails}>
             <Link href={`/${mediaType}/${item.id}`}>
                 <div className='relative aspect-2/3 w-full overflow-hidden rounded-xl shadow-md ring-1 ring-border/40'>
                     {item.poster_path ? (
@@ -155,39 +136,24 @@ export default function MediaCard({ item, type }: MediaCardProps) {
                     </button>
                     <div className='w-px bg-white/10' />
                     {mediaType === 'show' ? (
-                        <Dialog onOpenChange={(open) => { if (!open) closeShowDialog() }}>
-                            <DialogTrigger asChild>
-                                {watchedBtn(fetchSeasonData)}
-                            </DialogTrigger>
+                        <Dialog open={dialogOpen} onOpenChange={(open) => { if (open) loadShowDetails(); setDialogOpen(open) }}>
+                            <DialogTrigger asChild>{watchedBtn(watched)}</DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
                                     <DialogTitle>Watched Seasons</DialogTitle>
-                                    <DialogDescription>Select the seasons you have watched</DialogDescription>
+                                    <DialogDescription>Select the seasons you have watched.</DialogDescription>
                                 </DialogHeader>
-                                <div className='px-5 pt-4 grid grid-cols-2 xs:grid-cols-3 gap-2 max-h-64 overflow-y-auto'>
-                                    {Array.from({ length: totalSeasons }, (_, i) => i + 1).map((season) => (
-                                        <Button
-                                            key={season}
-                                            variant={watchedSeasons.includes(season) ? 'default' : 'secondary'}
-                                            onClick={() => handleSeasonToggle(season)}
-                                        >
-                                            Season {season}
-                                        </Button>
-                                    ))}
-                                </div>
-                                <div className='px-5 py-4 flex justify-between gap-2 border-t border-border mt-2'>
-                                    <Button variant='outline' className='flex-1'
-                                        onClick={() => setWatchedSeasons(Array.from({ length: totalSeasons }, (_, i) => i + 1))}>
-                                        All Seasons
-                                    </Button>
-                                    <Button variant='destructive' className='flex-1' onClick={() => setWatchedSeasons([])}>
-                                        Clear All
-                                    </Button>
-                                </div>
+                                {showDetails ? (
+                                    <WatchedProvider show={showDetails}>
+                                        <WatchedSeasonsBody />
+                                    </WatchedProvider>
+                                ) : (
+                                    <WatchedSeasonsSkeleton />
+                                )}
                             </DialogContent>
                         </Dialog>
                     ) : (
-                        watchedBtn(handleWatched)
+                        watchedBtn(watched, handleWatchedMovie)
                     )}
                 </div>
             </div>

@@ -8,6 +8,11 @@ export async function getShowTotalSeasons(tmdbId: number): Promise<number> {
     return data?.number_of_seasons ?? 0
 }
 
+export async function getShowDetails(tmdbId: number): Promise<ShowDetailsProps | null> {
+    const { data } = await getDetailsShow(tmdbId)
+    return data ?? null
+}
+
 type DbParam = string | number | boolean | null | Buffer | string[]
 
 export async function dbWrapper<T>(query: string, params: DbParam[] = []): Promise<ApiResult<T[]>> {

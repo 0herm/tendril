@@ -220,7 +220,8 @@ export async function checkNewEpisodes(): Promise<number> {
             if (await alreadySent('new_episodes', tmdb_id, meta)) continue
 
             const newCount = airedCount - storedCount
-            const p = { title: 'New Episodes Available', body: `${show.name ?? name} — Season ${seasonNum} has ${newCount} new episode${newCount === 1 ? '' : 's'}!`, url: `/show/${tmdb_id}` }
+            const body = `${show.name ?? name} — Season ${seasonNum} has ${newCount} new episode${newCount === 1 ? '' : 's'}!`
+            const p = { title: 'New Episodes Available', body, url: `/show/${tmdb_id}` }
             await sendPush(p)
             await logSent('new_episodes', tmdb_id, meta, p)
             sent++
@@ -246,7 +247,8 @@ export async function checkShowEnded(): Promise<number> {
         if (await alreadySent('show_ended', tmdb_id)) continue
 
         const cancelled = show.status === 'Canceled'
-        const p = { title: cancelled ? 'Show Cancelled' : 'Show Ended', body: cancelled ? `${show.name ?? name} has been cancelled.` : `${show.name ?? name} has ended.`, url: `/show/${tmdb_id}` }
+        const endBody = cancelled ? `${show.name ?? name} has been cancelled.` : `${show.name ?? name} has ended.`
+        const p = { title: cancelled ? 'Show Cancelled' : 'Show Ended', body: endBody, url: `/show/${tmdb_id}` }
         await sendPush(p)
         await logSent('show_ended', tmdb_id, undefined, p)
         sent++

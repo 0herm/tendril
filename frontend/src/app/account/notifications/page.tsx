@@ -92,14 +92,26 @@ function PushNotificationManager() {
     return (
         <div className='rounded-xl border border-border overflow-hidden bg-card'>
             <div className='flex items-center gap-3 px-4 py-4 border-b border-border'>
-                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0 ring-1 ring-border/50'>
+                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0'>
                     <Bell className='h-4 w-4' />
                 </div>
-                <div>
-                    <p className='text-sm font-medium'>Push Notifications</p>
-                    <p className='text-xs text-muted-foreground flex items-center gap-1.5'>
-                        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${subscription ? 'bg-brand' : 'bg-muted-foreground/40'}`} />
-                        {!isSupported ? 'Not supported in this browser' : subscription ? 'Active' : 'Not subscribed'}
+                <div className='flex-1 min-w-0'>
+                    <div className='flex items-center gap-2'>
+                        <p className='text-sm font-medium'>Push Notifications</p>
+                        {isSupported && (
+                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full leading-none ${
+                                subscription
+                                    ? 'bg-brand/15 text-brand'
+                                    : 'bg-muted text-muted-foreground'
+                            }`}>
+                                {subscription ? 'Active' : 'Off'}
+                            </span>
+                        )}
+                    </div>
+                    <p className='text-xs text-muted-foreground mt-0.5'>
+                        {!isSupported
+                            ? 'Not supported in this browser'
+                            : 'Get notified about new releases'}
                     </p>
                 </div>
             </div>
@@ -139,18 +151,18 @@ function InstallPrompt() {
     return (
         <div className='rounded-xl border border-border overflow-hidden bg-card'>
             <div className='flex items-center gap-3 px-4 py-4 border-b border-border'>
-                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0 ring-1 ring-border/50'>
+                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0'>
                     <Smartphone className='h-4 w-4' />
                 </div>
                 <div>
                     <p className='text-sm font-medium'>Install App</p>
-                    <p className='text-xs text-muted-foreground'>Add to home screen for app experience</p>
+                    <p className='text-xs text-muted-foreground mt-0.5'>Add to home screen for a native app experience</p>
                 </div>
             </div>
             <div className='px-4 py-4'>
                 {isIOS ? (
                     <p className='text-sm text-muted-foreground'>
-                        Tap the <Share className='inline-block align-middle mb-0.5 h-3.5 w-3.5' /> share button then <strong>Add to Home Screen</strong>
+                        Tap the <Share className='inline-block align-middle mb-0.5 h-3.5 w-3.5' /> share button then <strong className='text-foreground'>Add to Home Screen</strong>
                     </p>
                 ) : (
                     <Button className='w-full'>Add to Home Screen</Button>
@@ -171,32 +183,39 @@ function RecentAlerts() {
     }, [])
 
     const icon = (type: string) => {
-        if (type.includes('movie') || type.includes('collection')) return <Film className='h-4 w-4' />
-        if (type.includes('show') || type.includes('season') || type.includes('episode')) return <Tv className='h-4 w-4' />
-        return <Bell className='h-4 w-4' />
+        if (type.includes('movie') || type.includes('collection')) return <Film className='h-3.5 w-3.5' />
+        if (type.includes('show') || type.includes('season') || type.includes('episode')) return <Tv className='h-3.5 w-3.5' />
+        return <Bell className='h-3.5 w-3.5' />
     }
 
     return (
         <div className='rounded-xl border border-border overflow-hidden bg-card'>
             <div className='flex items-center gap-3 px-4 py-4 border-b border-border'>
-                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0 ring-1 ring-border/50'>
+                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0'>
                     <Bell className='h-4 w-4' />
                 </div>
                 <div>
                     <p className='text-sm font-medium'>Recent Alerts</p>
-                    <p className='text-xs text-muted-foreground'>Notifications sent by Tendril</p>
+                    <p className='text-xs text-muted-foreground mt-0.5'>Notifications sent by Tendril</p>
                 </div>
             </div>
             <div className='divide-y divide-border'>
                 {entries.length === 0 ? (
-                    <p className='px-4 py-4 text-sm text-muted-foreground'>No notifications sent yet.</p>
+                    <div className='flex flex-col items-center gap-2 px-4 py-8 text-center'>
+                        <Bell className='h-5 w-5 text-muted-foreground/40' />
+                        <p className='text-sm text-muted-foreground'>No notifications sent yet.</p>
+                    </div>
                 ) : entries.map(e => (
-                    <div key={e.id} className='flex items-start gap-3 px-4 py-3'>
-                        <div className='mt-0.5 text-muted-foreground shrink-0'>{icon(e.type)}</div>
-                        <div className='flex flex-col gap-0.5 min-w-0'>
+                    <div key={e.id} className='flex items-start gap-3 px-4 py-3.5'>
+                        <div className='mt-0.5 flex h-7 w-7 items-center justify-center rounded-md bg-muted text-muted-foreground shrink-0'>
+                            {icon(e.type)}
+                        </div>
+                        <div className='flex flex-col gap-0.5 min-w-0 flex-1'>
                             <p className='text-sm font-medium truncate'>{e.notif_title}</p>
-                            <p className='text-xs text-muted-foreground'>{e.notif_body}</p>
-                            <p className='text-xs text-muted-foreground/60'>{new Date(e.sent_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                            <p className='text-xs text-muted-foreground leading-relaxed'>{e.notif_body}</p>
+                            <p className='text-[11px] text-muted-foreground/50 mt-0.5'>
+                                {new Date(e.sent_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </p>
                         </div>
                     </div>
                 ))}

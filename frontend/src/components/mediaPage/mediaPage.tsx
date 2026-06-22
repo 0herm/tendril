@@ -7,6 +7,7 @@ import WatchedTool from '../dialog/watcheddialog'
 import { TrailerButton } from '../trailerButton/trailerButton'
 import MediaSection from '../mediaSection/mediasection'
 import SeasonSection from '../seasonSection/seasonSection'
+import { WatchedProvider } from '../watched/watchedContext'
 
 type MediaPageProps = {
     item: MovieDetailsProps | ShowDetailsProps
@@ -41,7 +42,7 @@ export default function MediaPage({ item, media, similar, region, collection, wa
         ? (item as ShowDetailsProps).seasons.filter((s) => s.season_number > 0)
         : []
 
-    return (
+    const content = (
         <div className='relative w-full flex flex-col gap-6 -mt-4'>
 
             {/* ── Ambient page backdrop ── */}
@@ -364,6 +365,10 @@ export default function MediaPage({ item, media, similar, region, collection, wa
 
         </div>
     )
+
+    return media === 'show'
+        ? <WatchedProvider show={item as ShowDetailsProps}>{content}</WatchedProvider>
+        : content
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────

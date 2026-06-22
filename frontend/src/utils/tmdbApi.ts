@@ -100,11 +100,15 @@ export async function getTvGenres(): Promise<ApiResult<{ genres: Genre[] }>> {
 }
 
 export async function discoverMovies(genreId: number, page = 1): Promise<ApiResult<MediaListProps>> {
-    return getWrapper<MediaListProps>(`3/discover/movie?${qs({ language: LANGUAGE, region: REGION, include_adult: INCLUDE_ADULT ? String(INCLUDE_ADULT) : null, sort_by: 'popularity.desc', with_genres: String(genreId), page: String(page) })}`, REVALIDATE_LISTS)
+    const adult = INCLUDE_ADULT ? String(INCLUDE_ADULT) : null
+    const params = qs({ language: LANGUAGE, region: REGION, include_adult: adult, sort_by: 'popularity.desc', with_genres: String(genreId), page: String(page) })
+    return getWrapper<MediaListProps>(`3/discover/movie?${params}`, REVALIDATE_LISTS)
 }
 
 export async function discoverShows(genreId: number, page = 1): Promise<ApiResult<MediaListProps>> {
-    return getWrapper<MediaListProps>(`3/discover/tv?${qs({ language: LANGUAGE, include_adult: INCLUDE_ADULT ? String(INCLUDE_ADULT) : null, sort_by: 'popularity.desc', with_genres: String(genreId), page: String(page) })}`, REVALIDATE_LISTS)
+    const adult = INCLUDE_ADULT ? String(INCLUDE_ADULT) : null
+    const params = qs({ language: LANGUAGE, include_adult: adult, sort_by: 'popularity.desc', with_genres: String(genreId), page: String(page) })
+    return getWrapper<MediaListProps>(`3/discover/tv?${params}`, REVALIDATE_LISTS)
 }
 
 export async function getSearch(query: string, page = 1): Promise<ApiResult<SearchProps>> {

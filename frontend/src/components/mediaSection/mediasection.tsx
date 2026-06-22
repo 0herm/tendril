@@ -21,12 +21,15 @@ export default function MediaSection({ title, items, type, ranked }: SectionProp
                 <div className='flex-1 h-px bg-border/60' />
                 {!ranked && <span className='text-xs text-muted-foreground tabular-nums shrink-0'>{results.length}</span>}
             </div>
-            <div className='flex flex-row gap-3 w-full overflow-x-auto noscroll pb-1'>
+            <div className={`flex flex-row gap-3 w-full overflow-x-auto noscroll pb-1${ranked ? ' pt-2 pl-2' : ''}`}>
                 {results.map((item, index) => (
-                    <div key={index} className={`shrink-0 ${ranked ? 'w-[clamp(7rem,18vw,10rem)] pt-2 pl-2' : 'w-[clamp(7.5rem,20vw,11rem)]'}`}>
+                    <div key={index} className='shrink-0 w-[clamp(7.5rem,20vw,11rem)]'>
                         <div className='relative'>
                             {ranked && (
-                                <span className='absolute -top-2 -left-2 z-20 min-w-[1.375rem] h-[1.375rem] flex items-center justify-center bg-foreground text-background text-[10px] font-bold rounded-full px-1 shadow-sm'>
+                                <span className={
+                                    'absolute -top-2 -left-2 z-20 min-w-[1.375rem] h-[1.375rem] px-1 shadow-sm ' +
+                                    'flex items-center justify-center bg-foreground text-background text-[10px] font-bold rounded-full'
+                                }>
                                     {index + 1}
                                 </span>
                             )}

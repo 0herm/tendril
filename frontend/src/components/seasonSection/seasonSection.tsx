@@ -2,9 +2,9 @@
 
 import config from '@config'
 import LoadImage from '@components/loadImage/loadimage'
+import { useWatched } from '@components/watched/watchedContext'
 import { Check } from 'lucide-react'
-import { getWatchedById, updateWatched } from '@/utils/api'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 type Props = {
     showId: number
@@ -12,20 +12,12 @@ type Props = {
 }
 
 export default function SeasonSection({ showId, seasons }: Props) {
+    const ctx = useWatched()
     const [selectedSeason, setSelectedSeason] = useState<number | null>(null)
     const [episodes, setEpisodes] = useState<Episode[]>([])
     const [loading, setLoading] = useState(false)
-    const [watched, setWatched] = useState<WatchedProps | null>(null)
 
-    useEffect(() => {
-        getWatchedById(showId).then(({ data }) => setWatched(data ?? null))
-    }, [showId])
-
-    function watchedUpTo(seasonNumber: number): number {
-        const idx = watched?.watched_seasons?.indexOf(seasonNumber) ?? -1
-        if (idx === -1) return 0
-        return watched?.episode_counts?.[idx] ?? 0
-    }
+    const watchedUpTo = (seasonNumber: number) => ctx?.watchedUpTo(seasonNumber) ?? 0
 
     async function handleSeasonClick(seasonNumber: number) {
         if (selectedSeason === seasonNumber) {
@@ -39,25 +31,6 @@ export default function SeasonSection({ showId, seasons }: Props) {
         const json: ApiResult<SeasonDetails> = await res.json()
         setEpisodes(json.data?.episodes ?? [])
         setLoading(false)
-    }
-
-    async function handleWatchedUpTo(episodeNumber: number, seasonNumber: number) {
-        const current = watched ?? (await getWatchedById(showId)).data
-        if (!current) return
-        const existingSeasons = current.watched_seasons ?? []
-        const existingCounts = current.episode_counts ?? []
-        const idx = existingSeasons.indexOf(seasonNumber)
-        let updatedSeasons: number[]
-        const updatedCounts = [...existingCounts]
-        if (idx === -1) {
-            updatedSeasons = [...existingSeasons, seasonNumber]
-            updatedCounts[existingSeasons.length] = episodeNumber
-        } else {
-            updatedSeasons = existingSeasons
-            updatedCounts[idx] = episodeNumber
-        }
-        await updateWatched(showId, { watchedSeasons: updatedSeasons, episodeCounts: updatedCounts })
-        setWatched({ ...current, watched_seasons: updatedSeasons, episode_counts: updatedCounts })
     }
 
     return (
@@ -141,7 +114,7 @@ export default function SeasonSection({ showId, seasons }: Props) {
                                             </span>
                                         ) : (
                                             <button
-                                                onClick={() => handleWatchedUpTo(ep.episode_number, selectedSeason)}
+                                                onClick={() => ctx?.setWatchedUpTo(selectedSeason, ep.episode_number)}
                                                 className='shrink-0 text-[10px] font-medium text-brand hover:text-brand-dim transition-colors px-2 py-1 rounded-md hover:bg-brand/8'
                                             >
                                                 Watched up to here

@@ -1,0 +1,181 @@
+'use client'
+
+import { addWatched, getWatchedById, removeWatched, removeMedia, updateWatched, getAllLists } from '@/utils/api'
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
+
+type WatchedContextValue = {
+    watched: WatchedProps | null
+    seasons: Season[]
+    lastWatchedSeason: number
+    allWatched: boolean
+    airedEpisodeCount: (seasonNumber: number) => number
+    watchedUpTo: (seasonNumber: number) => number
+    isSeasonWatched: (seasonNumber: number) => boolean
+    toggleSeason: (seasonNumber: number) => void
+    setAllSeasons: () => void
+    clearAll: () => void
+    setWatchedUpTo: (seasonNumber: number, episodeNumber: number) => void
+}
+
+const WatchedContext = createContext<WatchedContextValue | null>(null)
+
+export function useWatched() {
+    return useContext(WatchedContext)
+}
+
+type WatchedProviderProps = {
+    show: ShowDetailsProps
+    children: ReactNode
+}
+
+export function WatchedProvider({ show, children }: WatchedProviderProps) {
+    const tmdbID = show.id
+    const title = show.name
+    const totalSeasons = show.number_of_seasons
+    const showStatus = show.status
+    const seasons = show.seasons.filter((s) => s.season_number > 0)
+
+    const [watched, setWatched] = useState<WatchedProps | null>(null)
+    const [listId, setListId] = useState<number | undefined>(undefined)
+
+    useEffect(() => {
+        getAllLists().then(({ data }) => setListId(data?.[0]?.id))
+    }, [])
+
+    useEffect(() => {
+        getWatchedById(tmdbID).then(({ data, error }) => {
+            if (error) console.error(error)
+            setWatched(data ?? null)
+        })
+    }, [tmdbID])
+
+    useEffect(() => {
+        if (!watched) return
+        if (totalSeasons === watched.total_seasons && showStatus === watched.show_status) return
+        const syncShowState = async () => {
+            const { error } = await updateWatched(tmdbID, { totalSeasons: totalSeasons || 0, showStatus: showStatus || '' })
+            if (error) { console.error(error); return }
+            setWatched((prev) => (prev ? { ...prev, total_seasons: totalSeasons, show_status: showStatus } : prev))
+        }
+        void syncShowState()
+    }, [totalSeasons, showStatus, watched, tmdbID])
+
+    const airedEpisodeCount = useCallback((seasonNumber: number): number => {
+        const seasonData = seasons.find((s) => s.season_number === seasonNumber)
+        const lastEp = show.last_episode_to_air
+        if (lastEp && lastEp.season_number === seasonNumber) return lastEp.episode_number
+        return seasonData?.episode_count ?? 0
+    }, [seasons, show.last_episode_to_air])
+
+    function watchedUpTo(seasonNumber: number): number {
+        const idx = watched?.watched_seasons?.indexOf(seasonNumber) ?? -1
+        if (idx === -1) return 0
+        return watched?.episode_counts?.[idx] ?? 0
+    }
+
+    function isSeasonWatched(seasonNumber: number): boolean {
+        return watched?.watched_seasons?.includes(seasonNumber) ?? false
+    }
+
+    const allWatched = seasons.length > 0 && seasons.every((s) => isSeasonWatched(s.season_number))
+
+    const seasonExists = (seasonNumber: number) => seasons.some((s) => s.season_number === seasonNumber)
+
+    const lastWatchedSeason = (watched?.watched_seasons ?? [])
+        .filter(seasonExists)
+        .reduce((max, s) => Math.max(max, s), 0)
+
+    function currentEntries(): { season: number; count: number }[] {
+        const watchedSeasons = watched?.watched_seasons ?? []
+        const counts = watched?.episode_counts ?? []
+        return watchedSeasons
+            .map((season, i) => ({ season, count: counts[i] ?? 0 }))
+            .filter((e) => seasonExists(e.season))
+    }
+
+    async function commit(entries: { season: number; count: number }[]) {
+        const maxSeason = entries.reduce((max, e) => Math.max(max, e.season), 0)
+        const normalized = [...entries]
+            .sort((a, b) => a.season - b.season)
+            .map((e) => ({
+                season: e.season,
+                count: e.season === maxSeason ? e.count : airedEpisodeCount(e.season),
+            }))
+        const nextSeasons = normalized.map((e) => e.season)
+        const nextCounts = normalized.map((e) => e.count)
+        const prev = watched
+
+        if (nextSeasons.length === 0) {
+            if (!watched) return
+            setWatched(null)
+            const { error } = await removeWatched(tmdbID)
+            if (error) { console.error(error); setWatched(prev) }
+            return
+        }
+
+        if (watched) {
+            setWatched({ ...watched, watched_seasons: nextSeasons, episode_counts: nextCounts })
+            const { error } = await updateWatched(tmdbID, { watchedSeasons: nextSeasons, episodeCounts: nextCounts })
+            if (error) { console.error(error); setWatched(prev) }
+        } else {
+            const { data, error } = await addWatched(tmdbID, 'show', title, totalSeasons, showStatus, nextSeasons, nextCounts)
+            if (error) { console.error(error); return }
+            if (data) {
+                setWatched(data)
+                if (listId) await removeMedia(tmdbID, listId)
+            }
+        }
+    }
+
+    function toggleSeason(seasonNumber: number) {
+        const entries = currentEntries()
+        if (entries.some((e) => e.season === seasonNumber)) {
+            commit(entries.filter((e) => e.season !== seasonNumber))
+        } else {
+            commit([...entries, { season: seasonNumber, count: airedEpisodeCount(seasonNumber) }])
+        }
+    }
+
+    function setAllSeasons() {
+        commit(seasons.map((s) => ({ season: s.season_number, count: airedEpisodeCount(s.season_number) })))
+    }
+
+    function clearAll() {
+        commit([])
+    }
+
+    function setWatchedUpTo(seasonNumber: number, episodeNumber: number) {
+        const entries = currentEntries()
+        const idx = entries.findIndex((e) => e.season === seasonNumber)
+        if (episodeNumber <= 0) {
+            if (idx === -1) return
+            commit(entries.filter((e) => e.season !== seasonNumber))
+        } else if (idx === -1) {
+            commit([...entries, { season: seasonNumber, count: episodeNumber }])
+        } else {
+            const next = [...entries]
+            next[idx] = { season: seasonNumber, count: episodeNumber }
+            commit(next)
+        }
+    }
+
+    return (
+        <WatchedContext.Provider
+            value={{
+                watched,
+                seasons,
+                lastWatchedSeason,
+                allWatched,
+                airedEpisodeCount,
+                watchedUpTo,
+                isSeasonWatched,
+                toggleSeason,
+                setAllSeasons,
+                clearAll,
+                setWatchedUpTo,
+            }}
+        >
+            {children}
+        </WatchedContext.Provider>
+    )
+}

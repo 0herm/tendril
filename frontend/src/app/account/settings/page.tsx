@@ -42,7 +42,7 @@ export default async function SettingsPage() {
             </div>
             <Form action={updateSettings} className='w-full flex flex-col gap-3'>
                 <div className='rounded-xl border border-border overflow-hidden bg-card'>
-                    <p className='text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 pt-3 pb-1'>
+                    <p className='text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider px-4 pt-3 pb-1'>
                         Content
                     </p>
                     <SettingRow label='Language'>
@@ -85,27 +85,20 @@ export default async function SettingsPage() {
                 </div>
 
                 <div className='rounded-xl border border-border overflow-hidden bg-card'>
-                    <p className='text-xs font-semibold text-muted-foreground uppercase tracking-wider px-4 pt-3 pb-1'>
+                    <p className='text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider px-4 pt-3 pb-1'>
                         Preferences
                     </p>
-                    <SettingRow label='Show Original Title'>
-                        <input
-                            id='original_title'
-                            type='checkbox'
-                            name='original_title'
-                            defaultChecked={!!settings.original_title}
-                            className='h-4 w-4 accent-brand rounded'
-                        />
-                    </SettingRow>
-                    <SettingRow label='Include Adult Content' last>
-                        <input
-                            id='include_adult'
-                            type='checkbox'
-                            name='include_adult'
-                            defaultChecked={!!settings.include_adult}
-                            className='h-4 w-4 accent-brand rounded'
-                        />
-                    </SettingRow>
+                    <ToggleRow
+                        label='Show Original Title'
+                        name='original_title'
+                        defaultChecked={!!settings.original_title}
+                    />
+                    <ToggleRow
+                        label='Include Adult Content'
+                        name='include_adult'
+                        defaultChecked={!!settings.include_adult}
+                        last
+                    />
                 </div>
 
                 <Button type='submit' className='w-full'>
@@ -126,5 +119,34 @@ function SettingRow({ label, children, last = false }: {
             <span className='text-sm font-medium'>{label}</span>
             {children}
         </div>
+    )
+}
+
+function ToggleRow({ label, name, defaultChecked, last = false }: {
+    label: string
+    name: string
+    defaultChecked?: boolean
+    last?: boolean
+}) {
+    return (
+        <label className={`flex items-center justify-between px-4 min-h-12 cursor-pointer select-none ${!last ? 'border-b border-border' : ''}`}>
+            <span className='text-sm font-medium'>{label}</span>
+            <span className='relative inline-flex h-5 w-9 shrink-0 items-center'>
+                <input
+                    type='checkbox'
+                    name={name}
+                    defaultChecked={defaultChecked}
+                    className='peer sr-only'
+                />
+                <span className={
+                    'block h-5 w-9 rounded-full border border-border/60 bg-muted ' +
+                    'transition-colors duration-200 peer-checked:border-brand peer-checked:bg-brand'
+                } />
+                <span className={
+                    'pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full ' +
+                    'bg-foreground/30 shadow-sm transition-transform duration-200 peer-checked:translate-x-4 peer-checked:bg-white'
+                } />
+            </span>
+        </label>
     )
 }
