@@ -1,4 +1,5 @@
 import { getAllLists, getMediaByListId, getAllWatched } from '@/utils/api'
+import { MediaStateProvider } from '@/components/mediaState/mediaStateContext'
 import { getFilteredContinueWatching } from '@/utils/continueWatching'
 import MediaSection from '@/components/mediaSection/mediasection'
 import { getDetailsShow, getDetailsMovie } from '@/utils/tmdbApi'
@@ -47,10 +48,20 @@ export default async function Page() {
         listsMedia.some((l) => l.data.results.length > 0)
 
     const surpriseCandidates = listsMedia.flatMap((l) => l.candidates)
-
     const continueItems = continueWatchingFiltered as (ShowDetailsProps | MovieDetailsProps)[]
 
+    const defaultListId = lists[0]?.id
+    const defaultListItems = defaultListId
+        ? (listsMedia.find(l => l.list.id === defaultListId)?.data.results ?? [])
+        : []
+    const watchedItemIds = (watchedResults.filter(Boolean) as (ShowDetailsProps | MovieDetailsProps)[]).map(w => w.id)
+
     return (
+        <MediaStateProvider
+            listId={defaultListId}
+            watchedIds={watchedItemIds}
+            listedIds={defaultListItems.map(r => r.id)}
+        >
         <div className='w-full flex flex-col gap-6'>
             {hasMedia ? (
                 <div className='flex flex-col gap-6'>
@@ -105,5 +116,6 @@ export default async function Page() {
                 </div>
             )}
         </div>
+        </MediaStateProvider>
     )
 }

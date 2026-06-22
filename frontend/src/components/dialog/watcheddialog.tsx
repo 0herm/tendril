@@ -5,6 +5,7 @@ import { Button } from '@/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { addWatched, getWatchedById, removeWatched, removeMedia, getDefaultList } from '@/utils/api'
 import { useWatched } from '@components/watched/watchedContext'
+import { useMediaState } from '@/components/mediaState/mediaStateContext'
 import { WatchedSeasonsBody } from '@components/watched/watchedSeasonsDialog'
 import { useEffect, useState } from 'react'
 
@@ -16,12 +17,14 @@ type ListToolProps = {
 
 export default function WatchedTool({ tmdbID, mediaType, media }: ListToolProps) {
     const ctx = useWatched()
+    const ms = useMediaState()
     const [seen, setSeen] = useState<WatchedProps | null>(null)
-    const [listId, setListId] = useState<number | undefined>(undefined)
+    const [listId, setListId] = useState<number | undefined>(ms?.listId)
 
     useEffect(() => {
-        if (mediaType !== 'movie') return
+        if (mediaType !== 'movie' || listId !== undefined) return
         getDefaultList().then(({ data }) => setListId(data?.id))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [mediaType])
 
     useEffect(() => {

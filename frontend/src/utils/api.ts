@@ -146,6 +146,13 @@ export async function updateWatched(tmdbId: number, fields: {
     return { data: data?.[0] ?? null, error }
 }
 
+export async function getDefaultListState(): Promise<{ listId: number | undefined; listedIds: number[] }> {
+    const { data: list } = await getDefaultList()
+    if (!list?.id) return { listId: undefined, listedIds: [] }
+    const { data: items } = await getMediaByListId(list.id)
+    return { listId: list.id, listedIds: (items ?? []).map((i) => i.tmdb_id) }
+}
+
 export async function getContinueWatching(): Promise<ApiResult<WatchedProps[]>> {
     return dbWrapper<WatchedProps>(`
         SELECT * FROM Watched

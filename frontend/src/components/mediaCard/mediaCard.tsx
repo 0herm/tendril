@@ -4,8 +4,9 @@ import Image from 'next/image'
 import config from '@config'
 import Link from 'next/link'
 import { Image as ImageIcon, Star, Bookmark, Eye, EyeOff } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { addMedia, removeMedia, checkMediaInList, addWatched, removeWatched, getWatchedById, getShowDetails, getDefaultList } from '@/utils/api'
+import { useState } from 'react'
+import { addMedia, removeMedia, addWatched, removeWatched, getShowDetails } from '@/utils/api'
+import { useMediaState } from '@/components/mediaState/mediaStateContext'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { WatchedProvider } from '@components/watched/watchedContext'
 import { WatchedSeasonsBody, WatchedSeasonsSkeleton } from '@components/watched/watchedSeasonsDialog'
@@ -16,8 +17,9 @@ interface MediaCardProps {
 }
 
 export default function MediaCard({ item, type }: MediaCardProps) {
+    const ms = useMediaState()
     const mediaType: MediaType = type ?? (item.media_type === 'tv' ? 'show' : 'movie')
-    const [listId, setListId] = useState<number | undefined>(undefined)
+    const listId = ms?.listId
 
     const title = ('title' in item ? item.title : null) ?? ('name' in item ? item.name : null) ?? ''
 
@@ -26,30 +28,21 @@ export default function MediaCard({ item, type }: MediaCardProps) {
 
     const rating = item.vote_average && item.vote_average > 0 ? item.vote_average.toFixed(1) : null
 
-    const [inList, setInList] = useState(false)
-    const [watched, setWatched] = useState(false)
+    const [inList, setInList] = useState(() => ms?.isListed(item.id) ?? false)
+    const [watched, setWatched] = useState(() => ms?.isWatched(item.id) ?? false)
     const [showDetails, setShowDetails] = useState<ShowDetailsProps | null>(null)
     const [dialogOpen, setDialogOpen] = useState(false)
-
-    useEffect(() => {
-        getDefaultList().then(({ data }) => setListId(data?.id))
-    }, [])
-
-    useEffect(() => {
-        if (listId) checkMediaInList(item.id, listId).then(({ data }) => setInList(data ?? false))
-        getWatchedById(item.id).then(({ data }) => setWatched(!!data))
-    }, [item.id, listId])
 
     async function handleSave() {
         if (!listId) return
         if (inList) {
             const { data, error } = await removeMedia(item.id, listId)
             if (error) { console.error(error); return }
-            if (data) setInList(false)
+            if (data) { setInList(false); ms?.setListed(item.id, false) }
         } else {
             const { data, error } = await addMedia(item.id, mediaType, listId)
             if (error) { console.error(error); return }
-            if (data) setInList(true)
+            if (data) { setInList(true); ms?.setListed(item.id, true) }
         }
     }
 
@@ -57,16 +50,17 @@ export default function MediaCard({ item, type }: MediaCardProps) {
         if (watched) {
             const { data, error } = await removeWatched(item.id)
             if (error) { console.error(error); return }
-            if (data) setWatched(false)
+            if (data) { setWatched(false); ms?.setWatched(item.id, false) }
         } else {
             const { data, error } = await addWatched(item.id, mediaType, title)
             if (error) { console.error(error); return }
             if (data) {
                 setWatched(true)
+                ms?.setWatched(item.id, true)
                 if (inList && listId) {
                     const { error: removeErr } = await removeMedia(item.id, listId)
                     if (removeErr) console.error(removeErr)
-                    else setInList(false)
+                    else { setInList(false); ms?.setListed(item.id, false) }
                 }
             }
         }

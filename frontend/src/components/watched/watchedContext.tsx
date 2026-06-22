@@ -1,6 +1,7 @@
 'use client'
 
 import { addWatched, getWatchedById, removeWatched, removeMedia, updateWatched, getDefaultList } from '@/utils/api'
+import { useMediaState } from '@/components/mediaState/mediaStateContext'
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 
 type WatchedContextValue = {
@@ -36,12 +37,15 @@ export function WatchedProvider({ show, children }: WatchedProviderProps) {
     const showStatus = show.status
     const seasons = show.seasons.filter((s) => s.season_number > 0)
 
+    const ms = useMediaState()
     const [watched, setWatched] = useState<WatchedProps | null>(null)
     const [watchedLoading, setWatchedLoading] = useState(true)
-    const [listId, setListId] = useState<number | undefined>(undefined)
+    const [listId, setListId] = useState<number | undefined>(ms?.listId)
 
     useEffect(() => {
+        if (listId !== undefined) return
         getDefaultList().then(({ data }) => setListId(data?.id))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {

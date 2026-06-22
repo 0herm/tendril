@@ -7,8 +7,10 @@ import {
     getUpcomingMovies, getUpcomingShows,
 } from '@/utils/tmdbApi'
 import { getFilteredContinueWatching } from '@/utils/continueWatching'
+import { getAllWatched, getDefaultListState } from '@/utils/api'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
+import { MediaStateProvider } from '@/components/mediaState/mediaStateContext'
 
 function SetupError({ reason }: { reason: string }) {
     return (
@@ -28,6 +30,8 @@ export default async function Home() {
 
     const [
         cwItems,
+        listState,
+        watchedResult,
         trendingDailyResult,
         trendingResult,
         newMoviesResult,
@@ -40,6 +44,8 @@ export default async function Home() {
         upcomingShowsResult,
     ] = await Promise.all([
         getFilteredContinueWatching(),
+        getDefaultListState(),
+        getAllWatched(),
         getTrendingDaily(),
         getTrending(),
         getNewMovies(),
@@ -79,18 +85,24 @@ export default async function Home() {
     }
 
     return (
-        <div className='flex flex-col gap-6 w-full overflow-hidden'>
-            <MediaSection title='Continue Watching' items={continueWatchingData} />
-            <MediaSection title='Top 10 Right Now'  items={trendingDailyResult.data}               ranked />
-            <MediaSection title='Trending'          items={trendingResult.data} />
-            <MediaSection title='New Movies'        items={newMoviesResult.data}       type={'movie'} />
-            <MediaSection title='New Shows'       items={newShowsResult.data}        type={'show'} />
-            <MediaSection title='Popular Movies'  items={popularMoviesResult.data}   type={'movie'} />
-            <MediaSection title='Popular Shows'   items={popularShowsResult.data}    type={'show'} />
-            <MediaSection title='Top Rated Movies' items={topRatedMoviesResult.data} type={'movie'} />
-            <MediaSection title='Top Rated Shows'  items={topRatedShowsResult.data}  type={'show'} />
-            <MediaSection title='Upcoming Movies' items={upcomingMoviesResult.data}  type={'movie'} />
-            <MediaSection title='Upcoming Shows'  items={upcomingShowsResult.data}   type={'show'} />
-        </div>
+        <MediaStateProvider
+            listId={listState.listId}
+            watchedIds={(watchedResult.data ?? []).map(w => w.tmdb_id)}
+            listedIds={listState.listedIds}
+        >
+            <div className='flex flex-col gap-6 w-full overflow-hidden'>
+                <MediaSection title='Continue Watching' items={continueWatchingData} />
+                <MediaSection title='Top 10 Right Now'  items={trendingDailyResult.data}               ranked />
+                <MediaSection title='Trending'          items={trendingResult.data} />
+                <MediaSection title='New Movies'        items={newMoviesResult.data}       type={'movie'} />
+                <MediaSection title='New Shows'       items={newShowsResult.data}        type={'show'} />
+                <MediaSection title='Popular Movies'  items={popularMoviesResult.data}   type={'movie'} />
+                <MediaSection title='Popular Shows'   items={popularShowsResult.data}    type={'show'} />
+                <MediaSection title='Top Rated Movies' items={topRatedMoviesResult.data} type={'movie'} />
+                <MediaSection title='Top Rated Shows'  items={topRatedShowsResult.data}  type={'show'} />
+                <MediaSection title='Upcoming Movies' items={upcomingMoviesResult.data}  type={'movie'} />
+                <MediaSection title='Upcoming Shows'  items={upcomingShowsResult.data}   type={'show'} />
+            </div>
+        </MediaStateProvider>
     )
 }
