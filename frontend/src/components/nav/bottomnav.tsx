@@ -23,12 +23,12 @@ export default function BottomNav() {
     }
 
     return (
-        <nav className='fixed bottom-0 left-0 right-0 sm:hidden z-50 px-5'>
-            <div
-                className='bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl shadow-lg overflow-hidden'
-                style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-            >
-                <div className='flex items-stretch h-16'>
+        <nav
+            className='fixed bottom-0 left-0 right-0 sm:hidden z-50'
+            style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        >
+            <div className='mx-5'>
+                <div className='flex items-stretch bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl shadow-lg overflow-hidden h-16'>
                     {tabs.map((tab) => {
                         const { href, icon: Icon, label } = tab
                         const active = isActive(tab)
