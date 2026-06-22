@@ -21,7 +21,7 @@ export default function MediaSection({ title, items, type, ranked, action }: Sec
             <SectionHeading count={!ranked ? results.length : undefined} action={action}>
                 {title}
             </SectionHeading>
-            <div className={`flex flex-row gap-3 w-full overflow-x-auto noscroll pb-1${ranked ? ' pt-2 pl-2' : ''}`}>
+            <div className={`flex flex-row gap-3 w-full overflow-x-auto overscroll-x-contain noscroll pb-1${ranked ? ' pt-2 pl-2' : ''}`}>
                 {results.map((item, index) => (
                     <div key={index} className='shrink-0 w-[clamp(7.5rem,20vw,11rem)]'>
                         <div className='relative'>

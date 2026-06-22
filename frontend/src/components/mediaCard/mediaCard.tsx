@@ -81,7 +81,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
         <button
             onClick={onClick}
             className={'flex flex-1 items-center justify-center gap-1.5 py-1.5 text-xs ' +
-                `font-medium transition-colors ${isWatched ? 'bg-brand/80 text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
+                `font-medium transition-colors ${isWatched ? 'bg-brand/40 text-white' : 'text-white/70 hover:text-white hover:bg-white/10'}`}
         >
             {isWatched ? <Eye className='h-3.5 w-3.5' /> : <EyeOff className='h-3.5 w-3.5' />}
             Watched
@@ -89,7 +89,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
     )
 
     return (
-        <div className='group relative w-full' onPointerEnter={loadShowDetails} onFocus={loadShowDetails}>
+        <div className='group relative w-full' onMouseEnter={loadShowDetails} onFocus={loadShowDetails}>
             <Link href={`/${mediaType}/${item.id}`}>
                 <div className='relative aspect-2/3 w-full overflow-hidden rounded-xl shadow-md ring-1 ring-border/40'>
                     {item.poster_path ? (
@@ -106,7 +106,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
                         </div>
                     )}
                     {rating && (
-                        <div className='absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-black/70 backdrop-blur-sm rounded-md px-1.5 py-0.5 z-10'>
+                        <div className='absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-black/80 [@media(hover:hover)]:bg-black/10 [@media(hover:hover)]:backdrop-blur-sm rounded-md px-1.5 py-0.5 z-10'>
                             <Star className='h-2.5 w-2.5 fill-yellow-400 stroke-none' />
                             <span className='text-[10px] font-semibold text-white leading-none'>{rating}</span>
                         </div>
@@ -121,7 +121,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
             </Link>
 
             <div className='absolute bottom-0 left-0 right-0 px-1.5 pb-1.5 hidden sm:block sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 z-10'>
-                <div className='flex rounded-lg overflow-hidden bg-black/65 backdrop-blur-sm border border-white/10'>
+                <div className='flex rounded-lg overflow-hidden bg-black/10 backdrop-blur-sm border border-white/10'>
                     <button
                         onClick={handleSave}
                         className={'flex flex-1 items-center justify-center gap-1.5 py-1.5 text-xs ' +
