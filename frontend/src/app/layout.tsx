@@ -30,7 +30,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     return (
         <html lang='en' className='dark h-full'>
             <head />
-            <body className='w-screen h-full overflow-clip m-0 p-0 font-[Inter] antialiased wrap-break-word leading-normal tracking-normal' style={{ background: 'transparent' }}>
+            <body className='w-screen h-full overflow-clip m-0 p-0 font-[Inter] antialiased wrap-break-word leading-normal tracking-normal'>
                 <div className='flex flex-col w-full h-full'>
                     <header
                         className='fixed top-0 left-0 right-0 border-b border-border backdrop-blur-md z-50 print:hidden bg-background/80'
