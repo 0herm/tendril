@@ -48,7 +48,7 @@ export default function DiscoverBrowser({ movieGenres, tvGenres }: DiscoverBrows
 
     return (
         <div className='flex flex-col gap-6 w-full'>
-            {/* Header — same pattern as MediaSection */}
+            {/* Header */}
             <div className='flex items-center gap-3'>
                 <h2 className='text-sm font-semibold tracking-tight text-foreground shrink-0'>
                     Discover

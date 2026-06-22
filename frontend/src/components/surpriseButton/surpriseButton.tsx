@@ -81,7 +81,10 @@ export function SurpriseButton({ items }: { items: Candidate[] }) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <button className='inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted text-xs font-medium transition-colors'>
+                <button className={
+                    'inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border ' +
+                    'bg-card text-muted-foreground hover:text-foreground hover:bg-muted text-xs font-medium transition-colors'
+                }>
                     <Shuffle className='h-3.5 w-3.5 shrink-0' />
                     Surprise me
                 </button>
@@ -90,33 +93,57 @@ export function SurpriseButton({ items }: { items: Candidate[] }) {
                 <DialogHeader>
                     <DialogTitle>Surprise Me</DialogTitle>
                 </DialogHeader>
-                <div className='flex flex-col gap-4 pt-1'>
-                    <div className='flex flex-col gap-2'>
-                        <p className='text-xs text-muted-foreground font-medium'>Mood</p>
+                <div className='flex flex-col gap-5 px-5 pt-4 pb-5'>
+                    <div className='flex flex-col gap-3'>
+                        <div className='flex items-center gap-3'>
+                            <p className='text-xs font-medium text-muted-foreground shrink-0'>Mood</p>
+                            <div className='flex-1 h-px bg-border/60' />
+                        </div>
                         <div className='flex flex-wrap gap-1.5'>
-                            {MOODS.map((m) => (
-                                <button
-                                    key={m.id}
-                                    onClick={() => toggleMood(m.id)}
-                                    className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${selectedMoods.includes(m.id) ? 'bg-brand text-brand-foreground border-brand' : 'border-border bg-card text-muted-foreground hover:text-foreground'}`}
-                                >
-                                    {m.label}
-                                </button>
-                            ))}
+                            {MOODS.map((m) => {
+                                const active = selectedMoods.includes(m.id)
+                                return (
+                                    <button
+                                        key={m.id}
+                                        onClick={() => toggleMood(m.id)}
+                                        className={
+                                            'relative px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ' +
+                                            (active
+                                                ? 'text-brand border-brand/30'
+                                                : 'border-border/60 bg-card text-muted-foreground hover:text-foreground hover:border-border')
+                                        }
+                                    >
+                                        {active && <span className='absolute inset-0 bg-brand/10 rounded-lg' />}
+                                        <span className='relative'>{m.label}</span>
+                                    </button>
+                                )
+                            })}
                         </div>
                     </div>
-                    <div className='flex flex-col gap-2'>
-                        <p className='text-xs text-muted-foreground font-medium'>Length (movies)</p>
+                    <div className='flex flex-col gap-3'>
+                        <div className='flex items-center gap-3'>
+                            <p className='text-xs font-medium text-muted-foreground shrink-0'>Length (movies)</p>
+                            <div className='flex-1 h-px bg-border/60' />
+                        </div>
                         <div className='flex flex-wrap gap-1.5'>
-                            {TIME_FILTERS.map((tf, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => setTimeFilter(i)}
-                                    className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${timeFilter === i ? 'bg-brand text-brand-foreground border-brand' : 'border-border bg-card text-muted-foreground hover:text-foreground'}`}
-                                >
-                                    {tf.label}
-                                </button>
-                            ))}
+                            {TIME_FILTERS.map((tf, i) => {
+                                const active = timeFilter === i
+                                return (
+                                    <button
+                                        key={i}
+                                        onClick={() => setTimeFilter(i)}
+                                        className={
+                                            'relative px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ' +
+                                            (active
+                                                ? 'text-brand border-brand/30'
+                                                : 'border-border/60 bg-card text-muted-foreground hover:text-foreground hover:border-border')
+                                        }
+                                    >
+                                        {active && <span className='absolute inset-0 bg-brand/10 rounded-lg' />}
+                                        <span className='relative'>{tf.label}</span>
+                                    </button>
+                                )
+                            })}
                         </div>
                     </div>
                     <div className='flex flex-col gap-2'>
