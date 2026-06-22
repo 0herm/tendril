@@ -23,7 +23,10 @@ export default function BottomNav() {
     }
 
     return (
-        <nav className='fixed bottom-0 left-0 right-0 sm:hidden z-50'>
+        <nav
+            className='fixed bottom-0 left-0 right-0 sm:hidden z-50'
+            style={{ paddingBottom: 'max(8px, calc(env(safe-area-inset-bottom, 0px) - 4px))' }}
+        >
             <div className='mx-5'>
                 <div className='flex items-stretch bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl shadow-lg overflow-hidden h-16'>
                     {tabs.map((tab) => {
