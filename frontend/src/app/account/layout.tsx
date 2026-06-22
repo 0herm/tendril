@@ -10,7 +10,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     }
 
     return (
-        <div className='flex flex-col h-full sm:flex-row sm:overflow-hidden w-full sm:gap-8'>
+        <div className='flex flex-col min-h-full sm:flex-row sm:overflow-hidden w-full sm:gap-8'>
             <AccountSidebar logoutAction={handleLogout} />
             <div className='flex-1 min-w-0 overflow-y-auto pb-28 sm:pb-8 noscroll'>
                 {children}
