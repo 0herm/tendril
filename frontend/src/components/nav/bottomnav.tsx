@@ -23,31 +23,33 @@ export default function BottomNav() {
     }
 
     return (
-        <nav
-            className='fixed bottom-0 left-0 right-0 sm:hidden z-50'
-            style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-        >
+        <nav className='fixed bottom-0 left-0 right-0 sm:hidden z-50'>
             <div className='mx-5'>
-                <div className='flex items-stretch bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl shadow-lg overflow-hidden h-16'>
-                    {tabs.map((tab) => {
-                        const { href, icon: Icon, label } = tab
-                        const active = isActive(tab)
-                        return (
-                            <Link
-                                key={href}
-                                href={href}
-                                className={`relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors ${
-                                    active ? 'text-brand' : 'text-muted-foreground hover:text-foreground'
-                                }`}
-                            >
-                                {active && (
-                                    <span className='absolute inset-x-3 inset-y-2 bg-brand/10 rounded-xl' />
-                                )}
-                                <Icon className={`relative h-5 w-5 transition-transform ${active ? 'scale-110' : ''}`} />
-                                <span className='relative text-[10px] font-medium leading-none'>{label}</span>
-                            </Link>
-                        )
-                    })}
+                <div
+                    className='bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl shadow-lg overflow-hidden'
+                    style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+                >
+                    <div className='flex items-stretch h-16'>
+                        {tabs.map((tab) => {
+                            const { href, icon: Icon, label } = tab
+                            const active = isActive(tab)
+                            return (
+                                <Link
+                                    key={href}
+                                    href={href}
+                                    className={`relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors ${
+                                        active ? 'text-brand' : 'text-muted-foreground hover:text-foreground'
+                                    }`}
+                                >
+                                    {active && (
+                                        <span className='absolute inset-x-3 inset-y-2 bg-brand/10 rounded-xl' />
+                                    )}
+                                    <Icon className={`relative h-5 w-5 transition-transform ${active ? 'scale-110' : ''}`} />
+                                    <span className='relative text-[10px] font-medium leading-none'>{label}</span>
+                                </Link>
+                            )
+                        })}
+                    </div>
                 </div>
             </div>
         </nav>
