@@ -1,4 +1,5 @@
 import MediaSection from '@/components/mediaSection/mediasection'
+import HeroCarousel from '@/components/heroCarousel/heroCarousel'
 import {
     getTrending, getTrendingDaily,
     getNewMovies, getNewShows,
@@ -91,6 +92,9 @@ export default async function Home() {
             listedIds={listState.listedIds}
         >
             <div className='flex flex-col gap-6 w-full overflow-hidden'>
+                {trendingDailyResult.data?.results?.length ? (
+                    <HeroCarousel items={trendingDailyResult.data.results} />
+                ) : null}
                 <MediaSection title='Continue Watching' items={continueWatchingData} />
                 <MediaSection title='Top 10 Right Now'  items={trendingDailyResult.data}               ranked />
                 <MediaSection title='Trending'          items={trendingResult.data} />
