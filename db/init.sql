@@ -69,6 +69,8 @@ CREATE TABLE IF NOT EXISTS Watched (
 INSERT INTO Lists (name) VALUES ('Want to Watch')
 ON CONFLICT DO NOTHING;
 
+CREATE INDEX IF NOT EXISTS watched_tmdb_id_idx ON Watched (tmdb_id);
+
 -- Notification dedup log
 CREATE TABLE IF NOT EXISTS NotificationLog (
     id          SERIAL PRIMARY KEY,

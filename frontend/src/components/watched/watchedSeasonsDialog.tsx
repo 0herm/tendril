@@ -7,6 +7,7 @@ import { useWatched } from './watchedContext'
 export function WatchedSeasonsBody() {
     const ctx = useWatched()
     if (!ctx) return null
+    if (ctx.watchedLoading) return <WatchedSeasonsSkeleton />
 
     const pickerSeason = ctx.lastWatchedSeason > 0 ? ctx.lastWatchedSeason : (ctx.seasons[0]?.season_number ?? 0)
 

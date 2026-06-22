@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useState, type React
 
 type WatchedContextValue = {
     watched: WatchedProps | null
+    watchedLoading: boolean
     seasons: Season[]
     lastWatchedSeason: number
     allWatched: boolean
@@ -36,6 +37,7 @@ export function WatchedProvider({ show, children }: WatchedProviderProps) {
     const seasons = show.seasons.filter((s) => s.season_number > 0)
 
     const [watched, setWatched] = useState<WatchedProps | null>(null)
+    const [watchedLoading, setWatchedLoading] = useState(true)
     const [listId, setListId] = useState<number | undefined>(undefined)
 
     useEffect(() => {
@@ -43,9 +45,11 @@ export function WatchedProvider({ show, children }: WatchedProviderProps) {
     }, [])
 
     useEffect(() => {
+        setWatchedLoading(true)
         getWatchedById(tmdbID).then(({ data, error }) => {
             if (error) console.error(error)
             setWatched(data ?? null)
+            setWatchedLoading(false)
         })
     }, [tmdbID])
 
@@ -157,6 +161,7 @@ export function WatchedProvider({ show, children }: WatchedProviderProps) {
         <WatchedContext.Provider
             value={{
                 watched,
+                watchedLoading,
                 seasons,
                 lastWatchedSeason,
                 allWatched,
