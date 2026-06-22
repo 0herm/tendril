@@ -1,7 +1,6 @@
 import { getAllLists, getMediaByListId, getAllWatched } from '@/utils/api'
 import { getFilteredContinueWatching } from '@/utils/continueWatching'
 import MediaSection from '@/components/mediaSection/mediasection'
-import MediaCard from '@/components/mediaCard/mediaCard'
 import { getDetailsShow, getDetailsMovie } from '@/utils/tmdbApi'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
@@ -61,29 +60,11 @@ export default async function Page() {
                         </div>
                     )}
 
-                    {continueItems.length > 0 && (
-                        <section className='flex flex-col gap-3'>
-                            <div className='flex items-center gap-3'>
-                                <h2 className='text-sm font-semibold tracking-tight text-foreground shrink-0'>
-                                    Continue Watching
-                                </h2>
-                                <div className='flex-1 h-px bg-border/60' />
-                                <span className='text-xs text-muted-foreground tabular-nums shrink-0'>
-                                    {continueItems.length}
-                                </span>
-                                {surpriseCandidates.length > 0 && (
-                                    <SurpriseButton items={surpriseCandidates} />
-                                )}
-                            </div>
-                            <div className='flex flex-row gap-3 w-full overflow-x-auto noscroll pb-1'>
-                                {continueItems.map((item, i) => (
-                                    <div key={i} className='shrink-0 w-[clamp(7.5rem,20vw,11rem)]'>
-                                        <MediaCard item={item} />
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-                    )}
+                    <MediaSection
+                        title='Continue Watching'
+                        items={{ page: 1, total_pages: 1, total_results: continueItems.length, results: continueItems }}
+                        action={surpriseCandidates.length > 0 ? <SurpriseButton items={surpriseCandidates} /> : undefined}
+                    />
 
                     <MediaSection
                         title='Watched'

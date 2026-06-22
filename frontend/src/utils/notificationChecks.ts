@@ -1,9 +1,10 @@
 import { dbWrapper } from '@/utils/api'
 import { sendPush } from '@/utils/push'
+import config from '@config'
 
 const TMDB_BASE  = 'https://api.themoviedb.org/'
 const TMDB_TOKEN = process.env.TMDB_ACCESS_TOKEN || process.env.ACCESS_TOKEN
-const LANGUAGE   = process.env.LANGUAGE || 'en-GB'
+const LANGUAGE   = config.setting.LANGUAGE
 
 type TmdbMovie = { title: string; status: string; release_date: string; belongs_to_collection: { id: number; name: string } | null }
 type TmdbCollection = { name: string; parts: { id: number; title: string; release_date: string | null; status?: string }[] }
@@ -11,10 +12,10 @@ type TmdbShow  = {
     name: string
     status: string
     number_of_seasons: number
-    next_episode_to_air: { air_date: string } | null
+    next_episode_to_air: { air_date: string; season_number: number } | null
+    last_episode_to_air: { season_number: number; episode_number: number } | null
     seasons: { season_number: number; air_date: string | null; episode_count: number }[]
 }
-type TmdbSeason = { episodes: { air_date: string | null; episode_number: number }[] }
 
 async function tmdb<T>(path: string): Promise<T | null> {
     if (!TMDB_TOKEN) return null
@@ -208,12 +209,11 @@ export async function checkNewEpisodes(): Promise<number> {
             const storedCount = episode_counts[i]
             if (!storedCount) continue
 
-            const seasonData = await tmdb<TmdbSeason>(`3/tv/${tmdb_id}/season/${seasonNum}?language=${LANGUAGE}`)
-            if (!seasonData) continue
+            const seasonMeta = show.seasons.find((s) => s.season_number === seasonNum)
+            if (!seasonMeta) continue
 
-            const airedCount = seasonData.episodes.filter(
-                (ep) => ep.air_date && new Date(ep.air_date) <= today
-            ).length
+            const lastEp = show.last_episode_to_air
+            const airedCount = lastEp?.season_number === seasonNum ? lastEp.episode_number : seasonMeta.episode_count
             if (airedCount <= storedCount) continue
 
             const meta = `${seasonNum}:${airedCount}`

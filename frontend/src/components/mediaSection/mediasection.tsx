@@ -1,14 +1,16 @@
 import React from 'react'
 import MediaCard from '@components/mediaCard/mediaCard'
+import SectionHeading from '@components/sectionHeading/sectionHeading'
 
 type SectionProps = {
     title: React.ReactNode
     items: MediaListProps | null
     type?: MediaType
     ranked?: boolean
+    action?: React.ReactNode
 }
 
-export default function MediaSection({ title, items, type, ranked }: SectionProps) {
+export default function MediaSection({ title, items, type, ranked, action }: SectionProps) {
     const all = items?.results ?? []
     const results = ranked ? all.slice(0, 10) : all
 
@@ -16,11 +18,9 @@ export default function MediaSection({ title, items, type, ranked }: SectionProp
 
     return (
         <section className='flex flex-col gap-3'>
-            <div className='flex items-center gap-3'>
-                <h2 className='text-sm font-semibold tracking-tight text-foreground shrink-0'>{title}</h2>
-                <div className='flex-1 h-px bg-border/60' />
-                {!ranked && <span className='text-xs text-muted-foreground tabular-nums shrink-0'>{results.length}</span>}
-            </div>
+            <SectionHeading count={!ranked ? results.length : undefined} action={action}>
+                {title}
+            </SectionHeading>
             <div className={`flex flex-row gap-3 w-full overflow-x-auto noscroll pb-1${ranked ? ' pt-2 pl-2' : ''}`}>
                 {results.map((item, index) => (
                     <div key={index} className='shrink-0 w-[clamp(7.5rem,20vw,11rem)]'>

@@ -65,6 +65,11 @@ export async function getAllLists(): Promise<ApiResult<ListProps[]>> {
     return dbWrapper<ListProps>('SELECT * FROM Lists ORDER BY created_at DESC')
 }
 
+export async function getDefaultList(): Promise<ApiResult<ListProps | null>> {
+    const { data, error } = await dbWrapper<ListProps>('SELECT * FROM Lists ORDER BY created_at ASC LIMIT 1')
+    return { data: data?.[0] ?? null, error }
+}
+
 export async function addMedia(tmdbId: number, type: 'movie' | 'show', listId: number): Promise<ApiResult<MediaProps | null>> {
     const query = 'INSERT INTO Media (tmdb_id, type, list_id) VALUES ($1, $2, $3) RETURNING *'
     const { data, error } = await dbWrapper<MediaProps>(query, [tmdbId, type, listId])

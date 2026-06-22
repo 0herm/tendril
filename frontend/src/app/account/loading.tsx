@@ -3,7 +3,7 @@ function SkeletonRow({ titleW, count = 7, action = false }: { titleW: string; co
         <div className='flex flex-col gap-3'>
             <div className='flex items-center gap-3'>
                 <div className={`h-3.5 ${titleW} bg-muted animate-pulse rounded shrink-0`} />
-                <div className='flex-1 h-px bg-border/40' />
+                <div className='flex-1 h-px bg-border/60' />
                 {action && <div className='h-7 w-20 bg-muted animate-pulse rounded-lg shrink-0' />}
             </div>
             <div className='flex gap-3 overflow-hidden'>

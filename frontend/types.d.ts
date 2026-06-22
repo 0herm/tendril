@@ -364,7 +364,7 @@ type WatchedProps = {
     type: 'movie' | 'show'
     added_at: string
     name: string
-    watched_seasons?: number[]
+    watched_seasons: number[]
     total_seasons?: number
     show_status?: string
     episode_counts?: number[]

@@ -2,6 +2,7 @@
 
 import config from '@config'
 import LoadImage from '@components/loadImage/loadimage'
+import SectionHeading from '@components/sectionHeading/sectionHeading'
 import { useWatched } from '@components/watched/watchedContext'
 import { Check } from 'lucide-react'
 import { useState } from 'react'
@@ -35,13 +36,7 @@ export default function SeasonSection({ showId, seasons }: Props) {
 
     return (
         <section className='flex flex-col gap-3'>
-            <div className='flex items-center gap-3'>
-                <h2 className='text-sm font-semibold tracking-tight text-foreground shrink-0 flex items-baseline gap-1'>
-                    Seasons
-                    <span className='ml-1.5 font-normal text-muted-foreground'>{seasons.length}</span>
-                </h2>
-                <div className='flex-1 h-px bg-border/60' />
-            </div>
+            <SectionHeading count={seasons.length}>Seasons</SectionHeading>
 
             <div className='-mx-4 sm:-mx-5 px-4 sm:px-5 flex gap-3 overflow-x-auto noscroll pb-1'>
                 {seasons.map((season) => (

@@ -1,17 +1,15 @@
 import { getContinueWatching } from '@/utils/api'
-import { getDetailsShow, getDetailsMovie } from '@/utils/tmdbApi'
+import { getDetailsShow } from '@/utils/tmdbApi'
 
-export async function getFilteredContinueWatching(): Promise<(ShowDetailsProps | MovieDetailsProps)[]> {
+export async function getFilteredContinueWatching(): Promise<ShowDetailsProps[]> {
     const { data } = await getContinueWatching()
     if (!data?.length) return []
 
     const withDetails = (await Promise.all(
         data.map(async (item) => {
-            const { data: details } = item.type === 'movie'
-                ? await getDetailsMovie(item.tmdb_id)
-                : await getDetailsShow(item.tmdb_id)
+            const { data: details } = await getDetailsShow(item.tmdb_id)
             return details
-                ? { details, type: item.type, watchedSeasons: item.watched_seasons ?? [], episodeCounts: item.episode_counts ?? [] }
+                ? { details, watchedSeasons: item.watched_seasons ?? [], episodeCounts: item.episode_counts ?? [] }
                 : null
         })
     )).filter((r): r is NonNullable<typeof r> => r !== null)
@@ -20,10 +18,7 @@ export async function getFilteredContinueWatching(): Promise<(ShowDetailsProps |
 
     return withDetails
         .filter(({ details, watchedSeasons, episodeCounts }) => {
-            // Movies are always continuable
-            if (!('seasons' in details)) return true
-
-            const show = details as ShowDetailsProps
+            const show = details
 
             // Has an unwatched season with aired episodes
             if (show.seasons.some(
@@ -53,5 +48,5 @@ export async function getFilteredContinueWatching(): Promise<(ShowDetailsProps |
 
             return false
         })
-        .map((r) => ({ ...r.details, media_type: r.type === 'show' ? 'tv' : 'movie' })) as (ShowDetailsProps | MovieDetailsProps)[]
+        .map((r) => ({ ...r.details, media_type: 'tv' } as unknown as ShowDetailsProps)) as ShowDetailsProps[]
 }

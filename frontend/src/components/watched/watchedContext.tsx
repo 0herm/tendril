@@ -1,6 +1,6 @@
 'use client'
 
-import { addWatched, getWatchedById, removeWatched, removeMedia, updateWatched, getAllLists } from '@/utils/api'
+import { addWatched, getWatchedById, removeWatched, removeMedia, updateWatched, getDefaultList } from '@/utils/api'
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 
 type WatchedContextValue = {
@@ -39,7 +39,7 @@ export function WatchedProvider({ show, children }: WatchedProviderProps) {
     const [listId, setListId] = useState<number | undefined>(undefined)
 
     useEffect(() => {
-        getAllLists().then(({ data }) => setListId(data?.[0]?.id))
+        getDefaultList().then(({ data }) => setListId(data?.id))
     }, [])
 
     useEffect(() => {
@@ -58,7 +58,7 @@ export function WatchedProvider({ show, children }: WatchedProviderProps) {
             setWatched((prev) => (prev ? { ...prev, total_seasons: totalSeasons, show_status: showStatus } : prev))
         }
         void syncShowState()
-    }, [totalSeasons, showStatus, watched, tmdbID])
+    }, [watched?.id, totalSeasons, showStatus, tmdbID])
 
     const airedEpisodeCount = useCallback((seasonNumber: number): number => {
         const seasonData = seasons.find((s) => s.season_number === seasonNumber)
@@ -94,15 +94,9 @@ export function WatchedProvider({ show, children }: WatchedProviderProps) {
     }
 
     async function commit(entries: { season: number; count: number }[]) {
-        const maxSeason = entries.reduce((max, e) => Math.max(max, e.season), 0)
-        const normalized = [...entries]
-            .sort((a, b) => a.season - b.season)
-            .map((e) => ({
-                season: e.season,
-                count: e.season === maxSeason ? e.count : airedEpisodeCount(e.season),
-            }))
-        const nextSeasons = normalized.map((e) => e.season)
-        const nextCounts = normalized.map((e) => e.count)
+        const sorted = [...entries].sort((a, b) => a.season - b.season)
+        const nextSeasons = sorted.map((e) => e.season)
+        const nextCounts = sorted.map((e) => e.count)
         const prev = watched
 
         if (nextSeasons.length === 0) {

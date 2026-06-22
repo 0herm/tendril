@@ -7,6 +7,7 @@ import WatchedTool from '../dialog/watcheddialog'
 import { TrailerButton } from '../trailerButton/trailerButton'
 import MediaSection from '../mediaSection/mediasection'
 import SeasonSection from '../seasonSection/seasonSection'
+import SectionHeading from '../sectionHeading/sectionHeading'
 import { WatchedProvider } from '../watched/watchedContext'
 
 type MediaPageProps = {
@@ -388,17 +389,6 @@ function formatVotes(n: number): string {
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────
-
-function SectionHeading({ children }: { children: React.ReactNode }) {
-    return (
-        <div className='flex items-center gap-3'>
-            <h2 className='text-sm font-semibold tracking-tight text-foreground shrink-0 flex items-baseline gap-1'>
-                {children}
-            </h2>
-            <div className='flex-1 h-px bg-border/60' />
-        </div>
-    )
-}
 
 const STATUS_COLORS: Record<string, string> = {
     'Released':         'bg-emerald-500',

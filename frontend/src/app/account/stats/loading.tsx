@@ -34,10 +34,10 @@ export default function Loading() {
             {/* 3 stat cards */}
             <div className='grid grid-cols-3 gap-3'>
                 {[1, 2, 3].map((i) => (
-                    <div key={i} className='flex flex-col gap-2 rounded-xl border border-border bg-card p-4'>
-                        <div className='flex items-center gap-1.5'>
-                            <div className='h-4 w-4 bg-muted animate-pulse rounded' />
+                    <div key={i} className='flex flex-col gap-3 rounded-xl border border-border bg-card p-4 shadow-sm'>
+                        <div className='flex items-center justify-between'>
                             <div className='h-3 w-10 bg-muted animate-pulse rounded' />
+                            <div className='h-6 w-6 bg-muted animate-pulse rounded-md shrink-0' />
                         </div>
                         <div className='h-7 w-14 bg-muted animate-pulse rounded-lg' />
                     </div>

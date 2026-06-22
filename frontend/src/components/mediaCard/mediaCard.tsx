@@ -5,7 +5,7 @@ import config from '@config'
 import Link from 'next/link'
 import { Image as ImageIcon, Star, Bookmark, Eye, EyeOff } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { addMedia, removeMedia, checkMediaInList, addWatched, removeWatched, getWatchedById, getShowDetails, getAllLists } from '@/utils/api'
+import { addMedia, removeMedia, checkMediaInList, addWatched, removeWatched, getWatchedById, getShowDetails, getDefaultList } from '@/utils/api'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { WatchedProvider } from '@components/watched/watchedContext'
 import { WatchedSeasonsBody, WatchedSeasonsSkeleton } from '@components/watched/watchedSeasonsDialog'
@@ -32,7 +32,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
     const [dialogOpen, setDialogOpen] = useState(false)
 
     useEffect(() => {
-        getAllLists().then(({ data }) => setListId(data?.[0]?.id))
+        getDefaultList().then(({ data }) => setListId(data?.id))
     }, [])
 
     useEffect(() => {
@@ -63,7 +63,11 @@ export default function MediaCard({ item, type }: MediaCardProps) {
             if (error) { console.error(error); return }
             if (data) {
                 setWatched(true)
-                if (inList && listId) { await removeMedia(item.id, listId); setInList(false) }
+                if (inList && listId) {
+                    const { error: removeErr } = await removeMedia(item.id, listId)
+                    if (removeErr) console.error(removeErr)
+                    else setInList(false)
+                }
             }
         }
     }
@@ -113,13 +117,11 @@ export default function MediaCard({ item, type }: MediaCardProps) {
                             <span className='text-[10px] font-semibold text-white leading-none'>{rating}</span>
                         </div>
                     )}
-                    <div className={
-                        'absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent ' +
-                        'opacity-0 group-hover:opacity-100 transition-opacity duration-300'
-                    } />
+                    <div className='absolute inset-0 bg-linear-to-t from-black/50 via-black/10 to-transparent pointer-events-none' />
+                    <div className='absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none' />
                     <div className='absolute bottom-10 left-0 right-0 px-2 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300'>
-                        {title && <p className='text-white text-xs font-semibold line-clamp-2 leading-tight'>{title}</p>}
-                        {year && <p className='text-white/60 text-[10px] mt-0.5'>{year}</p>}
+                        {title && <p className='text-white text-xs font-semibold line-clamp-2 leading-tight [text-shadow:0_1px_4px_rgba(0,0,0,0.9)]'>{title}</p>}
+                        {year && <p className='text-white/70 text-[10px] mt-0.5 [text-shadow:0_1px_3px_rgba(0,0,0,0.9)]'>{year}</p>}
                     </div>
                 </div>
             </Link>

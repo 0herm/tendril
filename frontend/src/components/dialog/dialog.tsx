@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Bookmark } from 'lucide-react'
 import { Button } from '@/ui/button'
-import { addMedia, removeMedia, checkMediaInList, getAllLists } from '@/utils/api'
+import { addMedia, removeMedia, checkMediaInList, getDefaultList } from '@/utils/api'
 
 type ListToolProps = {
     tmdbId: number
@@ -15,7 +15,7 @@ export default function ListTool({ tmdbId, mediaType }: ListToolProps) {
     const [listId, setListId] = useState<number | undefined>(undefined)
 
     useEffect(() => {
-        getAllLists().then(({ data }) => setListId(data?.[0]?.id))
+        getDefaultList().then(({ data }) => setListId(data?.id))
     }, [])
 
     useEffect(() => {

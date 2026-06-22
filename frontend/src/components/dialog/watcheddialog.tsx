@@ -3,7 +3,7 @@
 import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
-import { addWatched, getWatchedById, removeWatched, removeMedia, getAllLists } from '@/utils/api'
+import { addWatched, getWatchedById, removeWatched, removeMedia, getDefaultList } from '@/utils/api'
 import { useWatched } from '@components/watched/watchedContext'
 import { WatchedSeasonsBody } from '@components/watched/watchedSeasonsDialog'
 import { useEffect, useState } from 'react'
@@ -21,7 +21,7 @@ export default function WatchedTool({ tmdbID, mediaType, media }: ListToolProps)
 
     useEffect(() => {
         if (mediaType !== 'movie') return
-        getAllLists().then(({ data }) => setListId(data?.[0]?.id))
+        getDefaultList().then(({ data }) => setListId(data?.id))
     }, [mediaType])
 
     useEffect(() => {
@@ -43,7 +43,10 @@ export default function WatchedTool({ tmdbID, mediaType, media }: ListToolProps)
             if (error) { console.error(error); return }
             if (data) {
                 setSeen(data)
-                if (listId) await removeMedia(tmdbID, listId)
+                if (listId) {
+                    const { error: removeErr } = await removeMedia(tmdbID, listId)
+                    if (removeErr) console.error(removeErr)
+                }
             }
         }
     }

@@ -165,7 +165,9 @@ function InstallPrompt() {
                         Tap the <Share className='inline-block align-middle mb-0.5 h-3.5 w-3.5' /> share button then <strong className='text-foreground'>Add to Home Screen</strong>
                     </p>
                 ) : (
-                    <Button className='w-full'>Add to Home Screen</Button>
+                    <p className='text-sm text-muted-foreground'>
+                        Open your browser menu and select <strong className='text-foreground'>Add to Home Screen</strong> or <strong className='text-foreground'>Install App</strong>
+                    </p>
                 )}
             </div>
         </div>
