@@ -3,10 +3,10 @@
 import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
-import { addWatched, getWatchedById, removeWatched, removeMedia, getDefaultList } from '@/utils/api'
-import { useWatched } from '@components/watched/watchedContext'
-import { useMediaState } from '@/components/mediaState/mediaStateContext'
-import { WatchedSeasonsBody } from '@components/watched/watchedSeasonsDialog'
+import { addWatched, getWatchedById, removeWatched, removeMedia } from '@/utils/queries'
+import { useWatched } from '@/components/watched/watchedContext'
+import { useMediaState } from '@/components/watched/mediaStateContext'
+import { WatchedSeasonsBody } from '@/components/watched/watchedSeasonsDialog'
 import { useEffect, useState } from 'react'
 
 type ListToolProps = {
@@ -19,13 +19,6 @@ export default function WatchedTool({ tmdbID, mediaType, media }: ListToolProps)
     const ctx = useWatched()
     const ms = useMediaState()
     const [seen, setSeen] = useState<WatchedProps | null>(null)
-    const [listId, setListId] = useState<number | undefined>(ms?.listId)
-
-    useEffect(() => {
-        if (mediaType !== 'movie' || listId !== undefined) return
-        getDefaultList().then(({ data }) => setListId(data?.id))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [mediaType])
 
     useEffect(() => {
         if (mediaType !== 'movie') return
@@ -46,8 +39,8 @@ export default function WatchedTool({ tmdbID, mediaType, media }: ListToolProps)
             if (error) { console.error(error); return }
             if (data) {
                 setSeen(data)
-                if (listId) {
-                    const { error: removeErr } = await removeMedia(tmdbID, listId)
+                if (ms?.listId) {
+                    const { error: removeErr } = await removeMedia(tmdbID, ms.listId)
                     if (removeErr) console.error(removeErr)
                 }
             }

@@ -51,7 +51,13 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
                 </div>
             </nav>
 
-            <aside className='hidden sm:flex flex-col w-44 shrink-0'>
+            <aside
+                className='hidden sm:flex flex-col w-44 shrink-0 sticky overflow-y-auto'
+                style={{
+                    top: 'calc(3rem + env(safe-area-inset-top, 0px))',
+                    height: 'calc(100vh - 3rem - env(safe-area-inset-top, 0px) - 1.25rem)',
+                }}
+            >
                 <p className='text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-3 pb-2 pt-0.5'>
                     Account
                 </p>
@@ -78,7 +84,7 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
                     })}
                 </nav>
 
-                <div className='mt-auto pt-4 border-t border-border/60'>
+                <div className='mt-auto pt-4 pb-4 border-t border-border/60'>
                     <form action={logoutAction}>
                         <button
                             type='submit'

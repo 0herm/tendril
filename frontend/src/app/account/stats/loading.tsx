@@ -9,13 +9,15 @@ function SkeletonBarList({ rows, leftW }: { rows: number; leftW: string }) {
                     <div className={`${leftW} h-3 bg-muted animate-pulse rounded shrink-0`}
                         style={{ animationDelay: `${i * 40}ms` }}
                     />
-                    <div className='flex items-center gap-2.5 flex-1 min-w-0'>
-                        <div
-                            className='flex-1 h-1.5 rounded-full bg-muted animate-pulse'
-                            style={{ maxWidth: `${Math.max(20, 80 - i * 8)}%`, animationDelay: `${i * 40}ms` }}
-                        />
+                    <div className='flex items-center gap-3 flex-1 min-w-0'>
+                        <div className='flex-1 h-2 rounded-full bg-muted overflow-hidden'>
+                            <div
+                                className='h-full rounded-full bg-muted-foreground/20 animate-pulse'
+                                style={{ width: `${Math.max(20, 80 - i * 8)}%`, animationDelay: `${i * 40}ms` }}
+                            />
+                        </div>
                     </div>
-                    <div className='h-3 w-4 bg-muted/60 animate-pulse rounded shrink-0' />
+                    <div className='h-3 w-5 bg-muted/60 animate-pulse rounded shrink-0' />
                 </div>
             ))}
         </div>
@@ -26,7 +28,7 @@ export default function Loading() {
     return (
         <div className='w-full flex flex-col gap-6 max-w-xl'>
             {/* Page title */}
-            <div className='flex flex-col gap-1'>
+            <div className='flex flex-col gap-0.5'>
                 <div className='h-6 w-10 bg-muted animate-pulse rounded-md' />
                 <div className='h-3.5 w-52 bg-muted/60 animate-pulse rounded' />
             </div>
@@ -50,7 +52,7 @@ export default function Loading() {
                     <div className='h-3.5 w-3.5 bg-muted animate-pulse rounded' />
                     <div className='h-3.5 w-14 bg-muted animate-pulse rounded' />
                 </div>
-                <SkeletonBarList rows={8} leftW='w-20' />
+                <SkeletonBarList rows={8} leftW='w-28' />
             </div>
 
             {/* Years section */}

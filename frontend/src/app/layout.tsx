@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 import NavBar from '@/components/nav/nav'
-import BottomNav from '@/components/nav/bottomnav'
-import Footer from '@/components/footer/footer'
+import BottomNav from '@/components/nav/bottomNav'
+import Footer from '@/components/nav/footer'
 
 export const metadata: Metadata = {
     title: 'Tendril',
@@ -42,7 +42,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                     </header>
                     <main
                         className='grow w-full bg-background px-4 sm:px-5 pb-28 sm:pb-8'
-                        style={{ paddingTop: 'calc(3rem + env(safe-area-inset-top, 0px))' }}
+                        style={{ paddingTop: 'calc(3rem + env(safe-area-inset-top, 0px) + 1.25rem)' }}
                     >
                         {children}
                     </main>

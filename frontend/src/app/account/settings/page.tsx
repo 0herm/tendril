@@ -1,4 +1,4 @@
-import { getUserSettings, updateUser } from '@/utils/api'
+import { getUserSettings, updateUser } from '@/utils/queries'
 import { getCountries, getLanguages, getTimezones } from '@/utils/tmdbApi'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'

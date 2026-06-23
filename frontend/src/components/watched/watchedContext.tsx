@@ -1,8 +1,8 @@
 'use client'
 
-import { addWatched, getWatchedById, removeWatched, removeMedia, updateWatched, getDefaultList } from '@/utils/api'
-import { useMediaState } from '@/components/mediaState/mediaStateContext'
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
+import { addWatched, getWatchedById, removeWatched, removeMedia, updateWatched } from '@/utils/queries'
+import { useMediaState } from '@/components/watched/mediaStateContext'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 
 type WatchedContextValue = {
     watched: WatchedProps | null
@@ -27,26 +27,23 @@ export function useWatched() {
 
 type WatchedProviderProps = {
     show: ShowDetailsProps
+    seasons?: Season[]
     children: ReactNode
 }
 
-export function WatchedProvider({ show, children }: WatchedProviderProps) {
+export function WatchedProvider({ show, seasons: seasonsProp, children }: WatchedProviderProps) {
     const tmdbID = show.id
     const title = show.name
     const totalSeasons = show.number_of_seasons
     const showStatus = show.status
-    const seasons = show.seasons.filter((s) => s.season_number > 0)
+    const seasons = useMemo(
+        () => seasonsProp ?? show.seasons.filter((s) => s.season_number > 0),
+        [seasonsProp, show.seasons]
+    )
 
     const ms = useMediaState()
     const [watched, setWatched] = useState<WatchedProps | null>(null)
     const [watchedLoading, setWatchedLoading] = useState(true)
-    const [listId, setListId] = useState<number | undefined>(ms?.listId)
-
-    useEffect(() => {
-        if (listId !== undefined) return
-        getDefaultList().then(({ data }) => setListId(data?.id))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
     useEffect(() => {
         setWatchedLoading(true)
@@ -87,19 +84,16 @@ export function WatchedProvider({ show, children }: WatchedProviderProps) {
 
     const allWatched = seasons.length > 0 && seasons.every((s) => isSeasonWatched(s.season_number))
 
-    const seasonExists = (seasonNumber: number) => seasons.some((s) => s.season_number === seasonNumber)
-
     const lastWatchedSeason = (watched?.watched_seasons ?? [])
-        .filter(seasonExists)
+        .filter((s) => seasons.some((x) => x.season_number === s))
         .reduce((max, s) => Math.max(max, s), 0)
 
-    function currentEntries(): { season: number; count: number }[] {
-        const watchedSeasons = watched?.watched_seasons ?? []
-        const counts = watched?.episode_counts ?? []
-        return watchedSeasons
-            .map((season, i) => ({ season, count: counts[i] ?? 0 }))
-            .filter((e) => seasonExists(e.season))
-    }
+    const currentEntries = useMemo(() =>
+        (watched?.watched_seasons ?? [])
+            .map((season, i) => ({ season, count: (watched?.episode_counts ?? [])[i] ?? 0 }))
+            .filter((e) => seasons.some((x) => x.season_number === e.season)),
+    [watched, seasons]
+    )
 
     async function commit(entries: { season: number; count: number }[]) {
         const sorted = [...entries].sort((a, b) => a.season - b.season)
@@ -120,17 +114,22 @@ export function WatchedProvider({ show, children }: WatchedProviderProps) {
             const { error } = await updateWatched(tmdbID, { watchedSeasons: nextSeasons, episodeCounts: nextCounts })
             if (error) { console.error(error); setWatched(prev) }
         } else {
+            setWatched({
+                id: 0, tmdb_id: tmdbID, type: 'show', added_at: '',
+                name: title, watched_seasons: nextSeasons, total_seasons: totalSeasons,
+                show_status: showStatus, episode_counts: nextCounts,
+            })
             const { data, error } = await addWatched(tmdbID, 'show', title, totalSeasons, showStatus, nextSeasons, nextCounts)
-            if (error) { console.error(error); return }
+            if (error) { console.error(error); setWatched(prev); return }
             if (data) {
                 setWatched(data)
-                if (listId) await removeMedia(tmdbID, listId)
+                if (ms?.listId) await removeMedia(tmdbID, ms.listId)
             }
         }
     }
 
     function toggleSeason(seasonNumber: number) {
-        const entries = currentEntries()
+        const entries = currentEntries
         if (entries.some((e) => e.season === seasonNumber)) {
             commit(entries.filter((e) => e.season !== seasonNumber))
         } else {
@@ -147,7 +146,7 @@ export function WatchedProvider({ show, children }: WatchedProviderProps) {
     }
 
     function setWatchedUpTo(seasonNumber: number, episodeNumber: number) {
-        const entries = currentEntries()
+        const entries = currentEntries
         const idx = entries.findIndex((e) => e.season === seasonNumber)
         if (episodeNumber <= 0) {
             if (idx === -1) return

@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Bookmark } from 'lucide-react'
 import { Button } from '@/ui/button'
-import { addMedia, removeMedia, checkMediaInList, getDefaultList } from '@/utils/api'
+import { addMedia, removeMedia } from '@/utils/queries'
+import { useMediaState } from '@/components/watched/mediaStateContext'
 
 type ListToolProps = {
     tmdbId: number
@@ -11,28 +12,20 @@ type ListToolProps = {
 }
 
 export default function ListTool({ tmdbId, mediaType }: ListToolProps) {
-    const [inList, setInList] = useState<boolean>(false)
-    const [listId, setListId] = useState<number | undefined>(undefined)
-
-    useEffect(() => {
-        getDefaultList().then(({ data }) => setListId(data?.id))
-    }, [])
-
-    useEffect(() => {
-        if (!listId) return
-        checkMediaInList(tmdbId, listId).then(({ data }) => setInList(data ?? false))
-    }, [tmdbId, listId])
+    const ms = useMediaState()
+    const listId = ms?.listId
+    const [inList, setInList] = useState(() => ms?.isListed(tmdbId) ?? false)
 
     async function handleToggle() {
         if (!listId) return
         if (inList) {
             const { data, error } = await removeMedia(tmdbId, listId)
             if (error) { console.error(error); return }
-            if (data) { setInList(false) }
+            if (data) { setInList(false); ms?.setListed(tmdbId, false) }
         } else {
             const { data, error } = await addMedia(tmdbId, mediaType, listId)
             if (error) { console.error(error); return }
-            if (data) { setInList(true) }
+            if (data) { setInList(true); ms?.setListed(tmdbId, true) }
         }
     }
 

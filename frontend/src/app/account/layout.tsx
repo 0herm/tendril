@@ -1,6 +1,6 @@
 import { logout } from '@/utils/auth'
 import { redirect } from 'next/navigation'
-import AccountSidebar from './sidebar'
+import AccountSidebar from '@/components/nav/accountSidebar'
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
     async function handleLogout() {

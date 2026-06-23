@@ -1,8 +1,8 @@
-import MediaPage from '@/components/mediaPage/mediaPage'
+import MediaPage from '@/components/media/mediaPage'
 import { getDetailsMovie, getSimilarMovies, getMovieCollection } from '@/utils/tmdbApi'
 import { getSessionUserId } from '@/utils/auth'
-import { getUserSettings, getAllWatched, getDefaultListState } from '@/utils/api'
-import { MediaStateProvider } from '@/components/mediaState/mediaStateContext'
+import { getUserSettings, getAllWatched, getDefaultListState } from '@/utils/queries'
+import { MediaStateProvider } from '@/components/watched/mediaStateContext'
 
 export default async function Page({ params }: { params: Promise<{ id: number }> }) {
     const { id } = await params
@@ -21,13 +21,14 @@ export default async function Page({ params }: { params: Promise<{ id: number }>
         getDefaultListState(),
     ])
 
-    const watchedIds = new Set((watchedData ?? []).map(w => w.tmdb_id))
+    const watchedIdList = (watchedData ?? []).map(w => w.tmdb_id)
+    const watchedIds = new Set(watchedIdList)
     const watchedInSimilar = similar?.results.filter(r => watchedIds.has(r.id)).length ?? 0
 
     return (
         <MediaStateProvider
             listId={listState.listId}
-            watchedIds={(watchedData ?? []).map(w => w.tmdb_id)}
+            watchedIds={watchedIdList}
             listedIds={listState.listedIds}
         >
             <MediaPage item={data} media='movie' similar={similar} region={settings?.region} collection={collection} watchedInSimilar={watchedInSimilar} />

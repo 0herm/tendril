@@ -1,163 +1,100 @@
 'use client'
 
 import * as React from 'react'
-import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 
-type DialogContextValue = {
-    open: boolean
-    onOpenChange: (open: boolean) => void
-}
+type CtxType = { setOpen: (v: boolean) => void; ref: React.RefObject<HTMLDialogElement | null> }
+const Ctx = React.createContext<CtxType>({ setOpen: () => {}, ref: { current: null } })
 
-const DialogContext = React.createContext<DialogContextValue>({
-    open: false,
-    onOpenChange: () => {},
-})
-
-function Dialog({
-    open: controlledOpen,
-    onOpenChange,
-    defaultOpen = false,
-    children,
-}: {
+function Dialog({ open: ctrl, onOpenChange, defaultOpen = false, children }: {
     open?: boolean
-    onOpenChange?: (open: boolean) => void
+    onOpenChange?: (v: boolean) => void
     defaultOpen?: boolean
     children: React.ReactNode
 }) {
-    const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen)
-    const isControlled = controlledOpen !== undefined
-    const open = isControlled ? controlledOpen : uncontrolledOpen
-
-    function handleOpenChange(value: boolean) {
-        if (!isControlled) setUncontrolledOpen(value)
-        onOpenChange?.(value)
+    const controlled = ctrl !== undefined
+    const [local, setLocal] = React.useState(defaultOpen)
+    const isOpen = controlled ? ctrl! : local
+    const ref = React.useRef<HTMLDialogElement>(null)
+    const handleRef = React.useRef<(v: boolean) => void>(null!)
+    handleRef.current = (v: boolean) => {
+        if (!controlled) setLocal(v)
+        onOpenChange?.(v)
     }
 
-    return (
-        <DialogContext.Provider value={{ open, onOpenChange: handleOpenChange }}>
-            {children}
-        </DialogContext.Provider>
-    )
+    React.useEffect(() => {
+        const el = ref.current
+        if (!el) return
+        if (isOpen && !el.open) el.showModal()
+        else if (!isOpen && el.open) el.close()
+    }, [isOpen])
+
+    React.useEffect(() => {
+        const el = ref.current
+        if (!el) return
+        const handler = () => handleRef.current(false)
+        el.addEventListener('close', handler)
+        return () => el.removeEventListener('close', handler)
+    }, [])
+
+    const setOpen = (v: boolean) => handleRef.current(v)
+    return <Ctx.Provider value={{ setOpen, ref }}>{children}</Ctx.Provider>
 }
 
 function DialogTrigger({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) {
-    const { onOpenChange } = React.useContext(DialogContext)
-
+    const { setOpen } = React.useContext(Ctx)
     if (asChild && React.isValidElement(children)) {
         const child = children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>
         return React.cloneElement(child, {
-            onClick: (e: React.MouseEvent) => {
-                child.props.onClick?.(e)
-                onOpenChange(true)
-            },
+            onClick: (e: React.MouseEvent) => { child.props.onClick?.(e); setOpen(true) },
         })
     }
-
-    return <button onClick={() => onOpenChange(true)}>{children}</button>
+    return <button onClick={() => setOpen(true)}>{children}</button>
 }
 
-function DialogPortal({ children }: { children: React.ReactNode }) {
-    const [mounted, setMounted] = React.useState(false)
-    React.useEffect(() => setMounted(true), [])
-    if (!mounted) return null
-    return createPortal(children, document.body)
-}
-
-function DialogClose({ children, asChild }: { children: React.ReactNode; asChild?: boolean }) {
-    const { onOpenChange } = React.useContext(DialogContext)
-
-    if (asChild && React.isValidElement(children)) {
-        const child = children as React.ReactElement<{ onClick?: (e: React.MouseEvent) => void }>
-        return React.cloneElement(child, {
-            onClick: (e: React.MouseEvent) => {
-                child.props.onClick?.(e)
-                onOpenChange(false)
-            },
-        })
-    }
-
-    return <button onClick={() => onOpenChange(false)}>{children}</button>
-}
-
-function DialogContent({
-    className = '',
-    children,
-    showCloseButton = true,
-}: {
+function DialogContent({ className = '', children, showCloseButton = true }: {
     className?: string
     children: React.ReactNode
     showCloseButton?: boolean
 }) {
-    const { open, onOpenChange } = React.useContext(DialogContext)
-
-    React.useEffect(() => {
-        if (!open) return
-        function onKey(e: KeyboardEvent) {
-            if (e.key === 'Escape') onOpenChange(false)
-        }
-        document.addEventListener('keydown', onKey)
-        return () => document.removeEventListener('keydown', onKey)
-    }, [open, onOpenChange])
-
-    if (!open) return null
-
+    const { setOpen, ref } = React.useContext(Ctx)
     return (
-        <DialogPortal>
-            <div
-                className='fixed inset-0 z-50 bg-black/60 backdrop-blur-sm'
-                onClick={() => onOpenChange(false)}
-            />
-            <div
-                className={
-                    'fixed top-1/2 left-1/2 z-50 w-full ' +
-                    'max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 ' +
-                    'bg-card border border-border rounded-2xl shadow-2xl overflow-hidden ' +
-                    `sm:max-w-lg ${className}`
-                }
-                onClick={(e) => e.stopPropagation()}
-            >
-                {children}
-                {showCloseButton && (
-                    <button
-                        onClick={() => onOpenChange(false)}
-                        className={
-                            'absolute top-4 right-4 flex items-center justify-center w-7 h-7 ' +
-                            'rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors'
-                        }
-                        aria-label='Close'
-                    >
-                        <X className='size-3.5' />
-                    </button>
-                )}
-            </div>
-        </DialogPortal>
+        <dialog
+            ref={ref}
+            className={
+                'relative m-auto w-full max-w-[calc(100%-2rem)] sm:max-w-lg ' +
+                'bg-card border border-border rounded-2xl shadow-2xl overflow-hidden p-0 ' +
+                className
+            }
+            onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}
+        >
+            {children}
+            {showCloseButton && (
+                <button
+                    onClick={() => setOpen(false)}
+                    className={
+                        'absolute top-4 right-4 flex items-center justify-center w-7 h-7' +
+                        ' rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors'
+                    }
+                    aria-label='Close'
+                >
+                    <X className='size-3.5' />
+                </button>
+            )}
+        </dialog>
     )
 }
 
 function DialogHeader({ className = '', ...props }: React.ComponentProps<'div'>) {
-    return (
-        <div
-            className={`flex flex-col gap-1 px-5 pt-5 pb-4 border-b border-border ${className}`}
-            {...props}
-        />
-    )
+    return <div className={`flex flex-col gap-1 px-5 pt-5 pb-4 border-b border-border ${className}`} {...props} />
 }
 
 function DialogTitle({ className = '', ...props }: React.ComponentProps<'h2'>) {
-    return <h2 className={`text-base font-semibold leading-none ${className}`} {...props} />
+    return <h2 className={`text-base font-semibold leading-none text-foreground ${className}`} {...props} />
 }
 
 function DialogDescription({ className = '', ...props }: React.ComponentProps<'p'>) {
     return <p className={`text-xs text-muted-foreground mt-0.5 ${className}`} {...props} />
 }
 
-export {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-}
+export { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger }

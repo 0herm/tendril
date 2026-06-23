@@ -11,7 +11,7 @@ import type {
     AuthenticationResponseJSON,
 } from '@simplewebauthn/server'
 import { cookies } from 'next/headers'
-import { dbWrapper } from './api'
+import { dbWrapper } from './queries'
 import crypto from 'crypto'
 
 const RP_NAME = 'Tendril'

@@ -1,4 +1,4 @@
-import run from '@/utils/db'
+import pool from '@/utils/db'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
@@ -6,7 +6,7 @@ export async function GET() {
     let tmdb: 'ok' | 'error' | 'unconfigured' = 'ok'
 
     try {
-        await run('SELECT 1', [])
+        await pool.query('SELECT 1', [])
     } catch {
         db = 'error'
     }

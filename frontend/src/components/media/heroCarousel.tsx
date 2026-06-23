@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Star, Play } from 'lucide-react'
+import config from '@config'
 
-const BACKDROP_URL = 'https://image.tmdb.org/t/p/original'
 const INTERVAL = 6000
 
 export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) {
@@ -13,15 +13,15 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
     const [current, setCurrent] = useState(0)
     const scrollRef = useRef<HTMLDivElement>(null)
 
-    const scrollTo = useCallback((index: number) => {
+    function scrollTo(index: number) {
         scrollRef.current?.scrollTo({ left: index * (scrollRef.current.offsetWidth), behavior: 'smooth' })
-    }, [])
+    }
 
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrent(c => {
                 const next = (c + 1) % slides.length
-                scrollRef.current?.scrollTo({ left: next * (scrollRef.current.offsetWidth), behavior: 'smooth' })
+                scrollTo(next)
                 return next
             })
         }, INTERVAL)
@@ -46,7 +46,7 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
             {/* scrollable track */}
             <div
                 ref={scrollRef}
-                className='flex w-full h-full overflow-x-auto rounded-2xl noscroll'
+                className='flex w-full h-full overflow-x-auto overscroll-none touch-pan-x rounded-2xl noscroll'
                 style={{ scrollSnapType: 'x mandatory' }}
                 onScroll={handleScroll}
             >
@@ -63,13 +63,14 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
                             style={{ scrollSnapAlign: 'start' }}
                         >
                             <Image
-                                src={`${BACKDROP_URL}${item.backdrop_path}`}
+                                src={`${config.url.BACKDROP_URL}${item.backdrop_path}`}
                                 alt={title}
                                 fill
                                 className='object-cover'
                                 style={{ objectPosition: 'center 30%' }}
                                 priority={i === 0}
                                 sizes='100vw'
+                                quality={90}
                             />
 
                             <div className='absolute inset-0 bg-linear-to-t from-background via-background/55 to-transparent' />
@@ -91,7 +92,10 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
                                 </div>
                                 <Link
                                     href={`/${mediaType}/${item.id}`}
-                                    className='inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-brand hover:bg-brand-dim text-white text-xs sm:text-sm font-semibold transition-colors'
+                                    className={
+                                        'inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2' +
+                                        ' rounded-lg bg-brand hover:bg-brand-dim text-white text-xs sm:text-sm font-semibold transition-colors'
+                                    }
                                 >
                                     <Play className='h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current shrink-0' />
                                     View

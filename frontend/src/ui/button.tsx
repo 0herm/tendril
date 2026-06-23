@@ -35,4 +35,3 @@ function Button({ className = '', variant = 'default', size = 'default', ...prop
 }
 
 export { Button }
-export type { ButtonVariant, ButtonSize }

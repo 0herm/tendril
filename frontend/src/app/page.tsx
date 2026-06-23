@@ -1,5 +1,5 @@
-import MediaSection from '@/components/mediaSection/mediasection'
-import HeroCarousel from '@/components/heroCarousel/heroCarousel'
+import MediaSection from '@/components/media/mediaSection'
+import HeroCarousel from '@/components/media/heroCarousel'
 import {
     getTrending, getTrendingDaily,
     getNewMovies, getNewShows,
@@ -8,10 +8,10 @@ import {
     getUpcomingMovies, getUpcomingShows,
 } from '@/utils/tmdbApi'
 import { getFilteredContinueWatching } from '@/utils/continueWatching'
-import { getAllWatched, getDefaultListState } from '@/utils/api'
+import { getAllWatched, getDefaultListState } from '@/utils/queries'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
-import { MediaStateProvider } from '@/components/mediaState/mediaStateContext'
+import { MediaStateProvider } from '@/components/watched/mediaStateContext'
 
 function SetupError({ reason }: { reason: string }) {
     return (
@@ -59,10 +59,6 @@ export default async function Home() {
         getUpcomingShows(),
     ])
 
-    const continueWatchingData: MediaListProps | null = cwItems.length > 0
-        ? { page: 1, total_pages: 1, total_results: cwItems.length, results: cwItems }
-        : null
-
     const results = [
         trendingDailyResult, trendingResult, newMoviesResult, newShowsResult,
         popularMoviesResult, popularShowsResult,
@@ -95,8 +91,8 @@ export default async function Home() {
                 {trendingDailyResult.data?.results?.length ? (
                     <HeroCarousel items={trendingDailyResult.data.results} />
                 ) : null}
-                <MediaSection title='Continue Watching' items={continueWatchingData} />
                 <MediaSection title='Top 10 Right Now'  items={trendingDailyResult.data}               ranked />
+                <MediaSection title='Continue Watching' items={cwItems.length > 0 ? cwItems : null} type='show' />
                 <MediaSection title='Trending'          items={trendingResult.data} />
                 <MediaSection title='New Movies'        items={newMoviesResult.data}       type={'movie'} />
                 <MediaSection title='New Shows'       items={newShowsResult.data}        type={'show'} />

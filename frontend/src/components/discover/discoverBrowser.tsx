@@ -8,8 +8,6 @@ import {
     Eye, Rocket, Clock, Flag, MapPin, Globe, Video, MessageCircle, Star,
 } from 'lucide-react'
 
-interface Genre { id: number; name: string }
-interface DiscoverBrowserProps { movieGenres: Genre[]; tvGenres: Genre[] }
 
 const GENRE_ICONS: Record<string, React.ElementType> = {
     'Action':             Zap,
@@ -41,10 +39,9 @@ const GENRE_ICONS: Record<string, React.ElementType> = {
     'War & Politics':     Flag,
 }
 
-export default function DiscoverBrowser({ movieGenres, tvGenres }: DiscoverBrowserProps) {
+export default function DiscoverBrowser({ movieGenres, tvGenres }: { movieGenres: Genre[]; tvGenres: Genre[] }) {
     const [tab, setTab] = useState<'movies' | 'shows'>('movies')
     const genres = tab === 'movies' ? movieGenres : tvGenres
-    const basePath = tab === 'movies' ? 'movies' : 'shows'
 
     return (
         <div className='flex flex-col gap-6 w-full'>
@@ -89,7 +86,7 @@ export default function DiscoverBrowser({ movieGenres, tvGenres }: DiscoverBrows
                         <Link
                             key={`${tab}-${genre.id}`}
                             href={
-                                `/discover/${basePath}/${genre.id}` +
+                                `/discover/${tab}/${genre.id}` +
                                 `?name=${encodeURIComponent(genre.name)}`
                             }
                             className={

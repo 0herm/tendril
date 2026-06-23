@@ -1,7 +1,7 @@
 export async function register() {
     if (process.env.NEXT_RUNTIME !== 'nodejs') return
 
-    const { runAllChecks } = await import('@/utils/notificationChecks')
+    const { runAllChecks } = await import('@/utils/notifications')
 
     function scheduleDaily(hour: number) {
         const now = new Date()

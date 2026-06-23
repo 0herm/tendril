@@ -1,17 +1,17 @@
 import React from 'react'
-import MediaCard from '@components/mediaCard/mediaCard'
-import SectionHeading from '@components/sectionHeading/sectionHeading'
+import MediaCard from '@/components/media/mediaCard'
+import SectionHeading from '@/components/media/sectionHeading'
 
 type SectionProps = {
     title: React.ReactNode
-    items: MediaListProps | null
+    items: MediaListProps | MediaItemProps[] | null
     type?: MediaType
     ranked?: boolean
     action?: React.ReactNode
 }
 
 export default function MediaSection({ title, items, type, ranked, action }: SectionProps) {
-    const all = items?.results ?? []
+    const all = Array.isArray(items) ? items : (items?.results ?? [])
     const results = ranked ? all.slice(0, 10) : all
 
     if (results.length === 0) return null
@@ -21,7 +21,10 @@ export default function MediaSection({ title, items, type, ranked, action }: Sec
             <SectionHeading count={!ranked ? results.length : undefined} action={action}>
                 {title}
             </SectionHeading>
-            <div className={`flex flex-row gap-3 w-full overflow-x-auto overscroll-x-contain noscroll pb-1${ranked ? ' pt-2 pl-2' : ''}`}>
+            <div className={ranked
+                ? 'flex flex-row gap-3 -mx-4 sm:-mx-5 pl-2 pr-4 sm:pr-5 pt-2 overflow-x-auto overscroll-x-contain touch-pan-x noscroll pb-1'
+                : 'flex flex-row gap-3 -mx-4 sm:-mx-5 px-4 sm:px-5 overflow-x-auto overscroll-x-contain touch-pan-x noscroll pb-1'
+            }>
                 {results.map((item, index) => (
                     <div
                         key={index}

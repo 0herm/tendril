@@ -26,9 +26,6 @@
       "@/*": [
         "./src/*"
       ],
-      "@db": [
-        "./src/utils/db.ts"
-      ],
       "@config": [
         "./constants.ts"
       ],

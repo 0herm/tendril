@@ -1,12 +1,12 @@
-import LoadMore from '@/components/loadMore/loadMore'
+import LoadMore from '@/components/media/loadMore'
 import { discoverMovies } from '@/utils/tmdbApi'
 import { getSessionUserId } from '@/utils/auth'
-import { getAllWatched, getDefaultListState } from '@/utils/api'
+import { getAllWatched, getDefaultListState } from '@/utils/queries'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { fetchMoreMovies } from './actions'
-import { MediaStateProvider } from '@/components/mediaState/mediaStateContext'
+import { fetchMoreMovies } from '../../actions'
+import { MediaStateProvider } from '@/components/watched/mediaStateContext'
 
 export default async function Page({ params, searchParams }: { params: Promise<{ genre: string }>; searchParams: Promise<{ name?: string }> }) {
     if (!await getSessionUserId()) redirect('/passkey/login')

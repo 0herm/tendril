@@ -1,8 +1,9 @@
-import { getAllWatched } from '@/utils/api'
+import { getAllWatched } from '@/utils/queries'
 import { getDetailsMovie, getDetailsShow } from '@/utils/tmdbApi'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import { Film, Tv, Clock, Tag, Calendar } from 'lucide-react'
+import { formatRuntime } from '@/utils/format'
 
 async function fetchAllDetails(watched: WatchedProps[]) {
     return Promise.all(
@@ -15,14 +16,6 @@ async function fetchAllDetails(watched: WatchedProps[]) {
             return data ? { item, details: data as ShowDetailsProps } : null
         })
     )
-}
-
-function formatHours(minutes: number) {
-    const h = Math.floor(minutes / 60)
-    const m = minutes % 60
-    if (h === 0) return `${m}m`
-    if (m === 0) return `${h}h`
-    return `${h}h ${m}m`
 }
 
 export default async function Page() {
@@ -106,78 +99,23 @@ export default async function Page() {
                         <StatCard
                             icon={<Clock className='h-3.5 w-3.5' />}
                             label='Watched'
-                            value={formatHours(totalMinutes)}
+                            value={formatRuntime(totalMinutes)}
                             mono
                         />
                     </div>
 
-                    {topGenres.length > 0 && (
-                        <div className='flex flex-col gap-3'>
-                            <div className='flex items-center gap-2'>
-                                <Tag className='h-3.5 w-3.5 text-muted-foreground' />
-                                <h2 className='text-sm font-semibold tracking-tight text-foreground'>Genres</h2>
-                            </div>
-                            <div className='rounded-xl border border-border bg-card overflow-hidden'>
-                                {topGenres.map(([genre, count], i) => (
-                                    <div
-                                        key={genre}
-                                        className={`flex items-center gap-3 px-4 py-2.5 ${i < topGenres.length - 1 ? 'border-b border-border' : ''}`}
-                                    >
-                                        <span className='text-sm text-foreground w-28 shrink-0 truncate'>{genre}</span>
-                                        <div className='flex items-center gap-3 flex-1 min-w-0'>
-                                            <div className='flex-1 h-2 rounded-full bg-muted overflow-hidden'>
-                                                <div
-                                                    className='h-full rounded-full bg-brand'
-                                                    style={{ width: `${(count / maxGenreCount) * 100}%` }}
-                                                />
-                                            </div>
-                                            <span className='text-xs text-muted-foreground w-5 text-right shrink-0 tabular-nums'>{count}</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {topYears.length > 0 && (
-                        <div className='flex flex-col gap-3'>
-                            <div className='flex items-center gap-2'>
-                                <Calendar className='h-3.5 w-3.5 text-muted-foreground' />
-                                <h2 className='text-sm font-semibold tracking-tight text-foreground'>Most Watched Year</h2>
-                            </div>
-                            <div className='rounded-xl border border-border bg-card overflow-hidden'>
-                                {topYears.map(([year, count], i) => (
-                                    <div
-                                        key={year}
-                                        className={`flex items-center gap-3 px-4 py-2.5 ${i < topYears.length - 1 ? 'border-b border-border' : ''}`}
-                                    >
-                                        <span className='text-sm font-medium text-foreground w-10 shrink-0 tabular-nums'>{year}</span>
-                                        <div className='flex items-center gap-3 flex-1 min-w-0'>
-                                            <div className='flex-1 h-2 rounded-full bg-muted overflow-hidden'>
-                                                <div
-                                                    className='h-full rounded-full bg-brand'
-                                                    style={{ width: `${(count / maxYearCount) * 100}%` }}
-                                                />
-                                            </div>
-                                            <span className='text-xs text-muted-foreground w-5 text-right shrink-0 tabular-nums'>{count}</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                    <BarList icon={Tag} title='Genres' items={topGenres} max={maxGenreCount} labelClassName='text-sm text-foreground w-28 shrink-0 truncate' />
+                    <BarList
+                        icon={Calendar} title='Most Watched Year' items={topYears}
+                        max={maxYearCount} labelClassName='text-sm font-medium text-foreground w-10 shrink-0 tabular-nums'
+                    />
                 </div>
             )}
         </div>
     )
 }
 
-function StatCard({
-    icon,
-    label,
-    value,
-    mono = false,
-}: {
+function StatCard({ icon, label, value, mono = false }: {
     icon: React.ReactNode
     label: string
     value: string | number
@@ -194,6 +132,37 @@ function StatCard({
             <span className={`text-2xl font-bold tracking-tight leading-none text-foreground ${mono ? 'tabular-nums' : ''}`}>
                 {value}
             </span>
+        </div>
+    )
+}
+
+function BarList({ icon: Icon, title, items, max, labelClassName }: {
+    icon: React.ElementType
+    title: string
+    items: [string, number][]
+    max: number
+    labelClassName: string
+}) {
+    if (!items.length) return null
+    return (
+        <div className='flex flex-col gap-3'>
+            <div className='flex items-center gap-2'>
+                <Icon className='h-3.5 w-3.5 text-muted-foreground' />
+                <h2 className='text-sm font-semibold tracking-tight text-foreground'>{title}</h2>
+            </div>
+            <div className='rounded-xl border border-border bg-card overflow-hidden'>
+                {items.map(([label, count], i) => (
+                    <div key={label} className={`flex items-center gap-3 px-4 py-2.5 ${i < items.length - 1 ? 'border-b border-border' : ''}`}>
+                        <span className={labelClassName}>{label}</span>
+                        <div className='flex items-center gap-3 flex-1 min-w-0'>
+                            <div className='flex-1 h-2 rounded-full bg-muted overflow-hidden'>
+                                <div className='h-full rounded-full bg-brand' style={{ width: `${(count / max) * 100}%` }} />
+                            </div>
+                            <span className='text-xs text-muted-foreground w-5 text-right shrink-0 tabular-nums'>{count}</span>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     )
 }

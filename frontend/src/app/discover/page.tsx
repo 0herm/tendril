@@ -1,7 +1,7 @@
 import { getMovieGenres, getTvGenres } from '@/utils/tmdbApi'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
-import DiscoverBrowser from './DiscoverBrowser'
+import DiscoverBrowser from '@/components/discover/discoverBrowser'
 
 export default async function DiscoverPage() {
     if (!await getSessionUserId()) redirect('/passkey/login')

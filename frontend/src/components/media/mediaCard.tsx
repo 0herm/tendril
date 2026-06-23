@@ -5,11 +5,11 @@ import config from '@config'
 import Link from 'next/link'
 import { Image as ImageIcon, Star, Bookmark, Eye, EyeOff } from 'lucide-react'
 import { useState } from 'react'
-import { addMedia, removeMedia, addWatched, removeWatched, getShowDetails } from '@/utils/api'
-import { useMediaState } from '@/components/mediaState/mediaStateContext'
+import { addMedia, removeMedia, addWatched, removeWatched, getShowDetails } from '@/utils/queries'
+import { useMediaState } from '@/components/watched/mediaStateContext'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
-import { WatchedProvider } from '@components/watched/watchedContext'
-import { WatchedSeasonsBody, WatchedSeasonsSkeleton } from '@components/watched/watchedSeasonsDialog'
+import { WatchedProvider } from '@/components/watched/watchedContext'
+import { WatchedSeasonsBody, WatchedSeasonsSkeleton } from '@/components/watched/watchedSeasonsDialog'
 
 interface MediaCardProps {
     item: MediaItemProps
@@ -106,13 +106,19 @@ export default function MediaCard({ item, type }: MediaCardProps) {
                         </div>
                     )}
                     {rating && (
-                        <div className='absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-black/80 [@media(hover:hover)]:bg-black/10 [@media(hover:hover)]:backdrop-blur-sm rounded-md px-1.5 py-0.5 z-10'>
+                        <div className={
+                            'absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-black/80' +
+                            ' [@media(hover:hover)]:bg-black/10 [@media(hover:hover)]:backdrop-blur-sm rounded-md px-1.5 py-0.5 z-10'
+                        }>
                             <Star className='h-2.5 w-2.5 fill-yellow-400 stroke-none' />
                             <span className='text-[10px] font-semibold text-white leading-none'>{rating}</span>
                         </div>
                     )}
                     <div className='absolute inset-0 bg-linear-to-t from-black/50 via-black/10 to-transparent pointer-events-none' />
-                    <div className='absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none' />
+                    <div className={
+                        'absolute inset-0 bg-linear-to-t from-black/80 via-black/30' +
+                        ' to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none'
+                    } />
                     <div className='absolute bottom-10 left-0 right-0 px-2 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300'>
                         {title && <p className='text-white text-xs font-semibold line-clamp-2 leading-tight [text-shadow:0_1px_4px_rgba(0,0,0,0.9)]'>{title}</p>}
                         {year && <p className='text-white/70 text-[10px] mt-0.5 [text-shadow:0_1px_3px_rgba(0,0,0,0.9)]'>{year}</p>}

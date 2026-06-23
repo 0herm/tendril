@@ -31,11 +31,11 @@ export function MediaStateProvider({
     const [listedSet, setListedSet] = useState(() => new Set(listedIds))
 
     function setWatched(id: number, on: boolean) {
-        setWatchedSet(prev => { const s = new Set(prev); on ? s.add(id) : s.delete(id); return s })
+        setWatchedSet(prev => { const s = new Set(prev); if (on) s.add(id); else s.delete(id); return s })
     }
 
     function setListed(id: number, on: boolean) {
-        setListedSet(prev => { const s = new Set(prev); on ? s.add(id) : s.delete(id); return s })
+        setListedSet(prev => { const s = new Set(prev); if (on) s.add(id); else s.delete(id); return s })
     }
 
     return (

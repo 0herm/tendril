@@ -1,4 +1,4 @@
-import LoadMore from '@/components/loadMore/loadMore'
+import LoadMore from '@/components/media/loadMore'
 import { getSearch } from '@/utils/tmdbApi'
 import Link from 'next/link'
 import { ArrowLeft, SearchX } from 'lucide-react'
@@ -57,8 +57,9 @@ export default async function Page({ params }: { params: Promise<{ search: strin
     )
 }
 
-function wilsonLowerBound(voteAverage: number, voteCount: number, z = 1.96): number {
+function wilsonLowerBound(voteAverage: number, voteCount: number): number {
     if (voteCount === 0) return 0
+    const z = 1.96
     const p = voteAverage / 10
     const denominator = 1 + (z ** 2) / voteCount
     const center = p + (z ** 2) / (2 * voteCount)

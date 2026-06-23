@@ -1,13 +1,13 @@
-import { getAllLists, getMediaByListId, getAllWatched } from '@/utils/api'
-import { MediaStateProvider } from '@/components/mediaState/mediaStateContext'
+import { getAllLists, getMediaByListId, getAllWatched } from '@/utils/queries'
+import { MediaStateProvider } from '@/components/watched/mediaStateContext'
 import { getFilteredContinueWatching } from '@/utils/continueWatching'
-import MediaSection from '@/components/mediaSection/mediasection'
+import MediaSection from '@/components/media/mediaSection'
 import { getDetailsShow, getDetailsMovie } from '@/utils/tmdbApi'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import { Library } from 'lucide-react'
 import Link from 'next/link'
-import { SurpriseButton } from '@/components/surpriseButton/surpriseButton'
+import { SurpriseButton } from '@/components/discover/surpriseButton'
 
 async function fetchDetails(media: MediaProps | WatchedProps) {
     if (media.type === 'show') {
@@ -54,7 +54,8 @@ export default async function Page() {
     const defaultListItems = defaultListId
         ? (listsMedia.find(l => l.list.id === defaultListId)?.data.results ?? [])
         : []
-    const watchedItemIds = (watchedResults.filter(Boolean) as (ShowDetailsProps | MovieDetailsProps)[]).map(w => w.id)
+    const watchedItems = watchedResults.filter(Boolean) as (ShowDetailsProps | MovieDetailsProps)[]
+    const watchedItemIds = watchedItems.map(w => w.id)
 
     return (
         <MediaStateProvider
@@ -62,60 +63,60 @@ export default async function Page() {
             watchedIds={watchedItemIds}
             listedIds={defaultListItems.map(r => r.id)}
         >
-        <div className='w-full flex flex-col gap-6'>
-            {hasMedia ? (
-                <div className='flex flex-col gap-6'>
-                    {surpriseCandidates.length > 0 && continueItems.length === 0 && (
-                        <div className='flex justify-end'>
-                            <SurpriseButton items={surpriseCandidates} />
-                        </div>
-                    )}
+            <div className='w-full flex flex-col gap-6'>
+                {hasMedia ? (
+                    <div className='flex flex-col gap-6'>
+                        {surpriseCandidates.length > 0 && continueItems.length === 0 && (
+                            <div className='flex justify-end'>
+                                <SurpriseButton items={surpriseCandidates} />
+                            </div>
+                        )}
 
-                    <MediaSection
-                        title='Continue Watching'
-                        items={{ page: 1, total_pages: 1, total_results: continueItems.length, results: continueItems }}
-                        action={surpriseCandidates.length > 0 ? <SurpriseButton items={surpriseCandidates} /> : undefined}
-                    />
-
-                    <MediaSection
-                        title='Watched'
-                        items={{
-                            page: 1, total_pages: 1,
-                            total_results: watchedResults.filter(Boolean).length,
-                            results: watchedResults.filter(Boolean) as (ShowDetailsProps | MovieDetailsProps)[]
-                        }}
-                    />
-                    {listsMedia.map((listMedia) => (
                         <MediaSection
-                            key={listMedia.list.id}
-                            title={listMedia.list.name}
-                            items={listMedia.data}
+                            title='Continue Watching'
+                            items={{ page: 1, total_pages: 1, total_results: continueItems.length, results: continueItems }}
+                            action={surpriseCandidates.length > 0 ? <SurpriseButton items={surpriseCandidates} /> : undefined}
                         />
-                    ))}
-                </div>
-            ) : (
-                <div className='flex flex-col items-center justify-center gap-5 py-20 text-center'>
-                    <div className='flex h-14 w-14 items-center justify-center rounded-2xl bg-muted ring-1 ring-border/60'>
-                        <Library className='h-7 w-7 text-muted-foreground' />
+
+                        <MediaSection
+                            title='Watched'
+                            items={{
+                                page: 1, total_pages: 1,
+                                total_results: watchedItems.length,
+                                results: watchedItems
+                            }}
+                        />
+                        {listsMedia.map((listMedia) => (
+                            <MediaSection
+                                key={listMedia.list.id}
+                                title={listMedia.list.name}
+                                items={listMedia.data}
+                            />
+                        ))}
                     </div>
-                    <div className='flex flex-col gap-2'>
-                        <p className='text-sm font-semibold'>Your library is empty</p>
-                        <p className='text-xs text-muted-foreground max-w-xs leading-relaxed'>
-                            Browse movies and shows and save them to your lists to see them here.
-                        </p>
-                    </div>
-                    <Link
-                        href='/'
-                        className={
-                            'inline-flex items-center gap-2 h-9 px-5 rounded-lg ' +
+                ) : (
+                    <div className='flex flex-col items-center justify-center gap-5 py-20 text-center'>
+                        <div className='flex h-14 w-14 items-center justify-center rounded-2xl bg-muted ring-1 ring-border/60'>
+                            <Library className='h-7 w-7 text-muted-foreground' />
+                        </div>
+                        <div className='flex flex-col gap-2'>
+                            <p className='text-sm font-semibold'>Your library is empty</p>
+                            <p className='text-xs text-muted-foreground max-w-xs leading-relaxed'>
+                                Browse movies and shows and save them to your lists to see them here.
+                            </p>
+                        </div>
+                        <Link
+                            href='/'
+                            className={
+                                'inline-flex items-center gap-2 h-9 px-5 rounded-lg ' +
                             'bg-brand hover:bg-brand-dim active:bg-brand-dimmer text-white text-sm font-medium transition-colors'
-                        }
-                    >
-                        Browse
-                    </Link>
-                </div>
-            )}
-        </div>
+                            }
+                        >
+                            Browse
+                        </Link>
+                    </div>
+                )}
+            </div>
         </MediaStateProvider>
     )
 }

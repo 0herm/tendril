@@ -1,10 +1,10 @@
 'use client'
 
 import config from '@config'
-import LoadImage from '@components/loadImage/loadimage'
-import SectionHeading from '@components/sectionHeading/sectionHeading'
-import { useWatched } from '@components/watched/watchedContext'
-import { Check } from 'lucide-react'
+import Image from 'next/image'
+import SectionHeading from '@/components/media/sectionHeading'
+import { useWatched } from '@/components/watched/watchedContext'
+import { Check, Image as ImageIcon } from 'lucide-react'
 import { useState } from 'react'
 
 type Props = {
@@ -17,8 +17,6 @@ export default function SeasonSection({ showId, seasons }: Props) {
     const [selectedSeason, setSelectedSeason] = useState<number | null>(null)
     const [episodes, setEpisodes] = useState<Episode[]>([])
     const [loading, setLoading] = useState(false)
-
-    const watchedUpTo = (seasonNumber: number) => ctx?.watchedUpTo(seasonNumber) ?? 0
 
     async function handleSeasonClick(seasonNumber: number) {
         if (selectedSeason === seasonNumber) {
@@ -52,12 +50,13 @@ export default function SeasonSection({ showId, seasons }: Props) {
                         }
                     >
                         <div className='relative aspect-[2/3] w-full bg-muted overflow-hidden'>
-                            <LoadImage
-                                source={season.poster_path ? `${config.url.IMAGE_URL}${season.poster_path}` : ''}
-                                error={season.poster_path}
-                                className='object-cover transition-transform duration-300 group-hover:scale-[1.03]'
-                                fill={true}
-                            />
+                            {season.poster_path
+                                ? <Image
+                                    src={`${config.url.IMAGE_URL}${season.poster_path}`}
+                                    alt={season.name} fill
+                                    className='object-cover transition-transform duration-300 group-hover:scale-[1.03]'
+                                />
+                                : <div className='flex items-center justify-center h-full w-full'><ImageIcon className='w-full h-full p-8' /></div>}
                         </div>
                         <div className='p-2.5 flex flex-col gap-0.5'>
                             <p className='font-medium text-xs leading-snug truncate'>{season.name}</p>
@@ -81,17 +80,12 @@ export default function SeasonSection({ showId, seasons }: Props) {
                     ) : (
                         <div className='divide-y divide-border'>
                             {episodes.map((ep) => {
-                                const isWatched = ep.episode_number <= watchedUpTo(selectedSeason)
+                                const isWatched = ep.episode_number <= (ctx?.watchedUpTo(selectedSeason) ?? 0)
                                 return (
                                     <div key={ep.episode_number} className='flex items-center gap-3 px-4 py-3'>
                                         {ep.still_path && (
                                             <div className='relative w-20 aspect-video rounded-md overflow-hidden shrink-0 bg-muted'>
-                                                <LoadImage
-                                                    source={`${config.url.IMAGE_URL}${ep.still_path}`}
-                                                    error={ep.still_path}
-                                                    className='object-cover'
-                                                    fill={true}
-                                                />
+                                                <Image src={`${config.url.IMAGE_URL}${ep.still_path}`} alt={ep.name} fill className='object-cover' />
                                             </div>
                                         )}
                                         <div className='flex-1 min-w-0'>

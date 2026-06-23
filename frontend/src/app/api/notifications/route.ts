@@ -1,4 +1,4 @@
-import { dbWrapper } from '@/utils/api'
+import { dbWrapper } from '@/utils/queries'
 import { NextResponse } from 'next/server'
 
 export async function GET() {

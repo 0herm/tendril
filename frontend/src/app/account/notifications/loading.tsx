@@ -31,12 +31,12 @@ function SkeletonAlertCard() {
             </div>
             <div className='divide-y divide-border'>
                 {[1, 2, 3].map((i) => (
-                    <div key={i} className='flex items-start gap-3 px-4 py-3'>
-                        <div className='h-4 w-4 bg-muted animate-pulse rounded mt-0.5 shrink-0' />
-                        <div className='flex flex-col gap-1.5 flex-1 min-w-0'>
+                    <div key={i} className='flex items-start gap-3 px-4 py-3.5'>
+                        <div className='h-7 w-7 rounded-md bg-muted animate-pulse mt-0.5 shrink-0' />
+                        <div className='flex flex-col gap-1 flex-1 min-w-0'>
                             <div className='h-3.5 w-40 bg-muted animate-pulse rounded' />
                             <div className='h-3 w-56 bg-muted/60 animate-pulse rounded' />
-                            <div className='h-3 w-20 bg-muted/40 animate-pulse rounded' />
+                            <div className='h-2.5 w-20 bg-muted/40 animate-pulse rounded mt-0.5' />
                         </div>
                     </div>
                 ))}
@@ -48,11 +48,10 @@ function SkeletonAlertCard() {
 export default function Loading() {
     return (
         <div className='w-full flex flex-col gap-4 max-w-xl'>
-            <div className='flex flex-col gap-1'>
+            <div className='flex flex-col gap-0.5'>
                 <div className='h-6 w-32 bg-muted animate-pulse rounded-md' />
                 <div className='h-3.5 w-60 bg-muted/60 animate-pulse rounded' />
             </div>
-            <SkeletonCard />
             <SkeletonCard />
             <SkeletonAlertCard />
         </div>

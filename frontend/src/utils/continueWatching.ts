@@ -1,4 +1,4 @@
-import { getContinueWatching } from '@/utils/api'
+import { getContinueWatching } from '@/utils/queries'
 import { getDetailsShow } from '@/utils/tmdbApi'
 
 export async function getFilteredContinueWatching(): Promise<ShowDetailsProps[]> {
@@ -48,5 +48,5 @@ export async function getFilteredContinueWatching(): Promise<ShowDetailsProps[]>
 
             return false
         })
-        .map((r) => ({ ...r.details, media_type: 'tv' } as unknown as ShowDetailsProps)) as ShowDetailsProps[]
+        .map((r) => r.details)
 }

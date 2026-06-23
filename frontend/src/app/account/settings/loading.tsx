@@ -2,7 +2,7 @@ export default function Loading() {
     return (
         <div className='w-full flex flex-col gap-4 max-w-xl'>
             {/* Page title */}
-            <div className='flex flex-col gap-1.5'>
+            <div className='flex flex-col gap-0.5'>
                 <div className='h-6 w-20 bg-muted animate-pulse rounded-md' />
                 <div className='h-3.5 w-56 bg-muted/60 animate-pulse rounded' />
             </div>
@@ -28,7 +28,7 @@ export default function Loading() {
                 {[0, 1].map((i) => (
                     <div key={i} className={`flex items-center justify-between px-4 min-h-12 ${i < 1 ? 'border-b border-border' : ''}`}>
                         <div className='h-3.5 w-36 bg-muted animate-pulse rounded' />
-                        <div className='h-4 w-4 bg-muted/60 animate-pulse rounded' />
+                        <div className='h-5 w-9 bg-muted/60 animate-pulse rounded-full' />
                     </div>
                 ))}
             </div>

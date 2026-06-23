@@ -1,23 +1,13 @@
 'use server'
 
-import run from './db'
+import pool from './db'
 import { getDetailsShow } from './tmdbApi'
-
-export async function getShowTotalSeasons(tmdbId: number): Promise<number> {
-    const { data } = await getDetailsShow(tmdbId)
-    return data?.number_of_seasons ?? 0
-}
-
-export async function getShowDetails(tmdbId: number): Promise<ShowDetailsProps | null> {
-    const { data } = await getDetailsShow(tmdbId)
-    return data ?? null
-}
 
 type DbParam = string | number | boolean | null | Buffer | string[]
 
 export async function dbWrapper<T>(query: string, params: DbParam[] = []): Promise<ApiResult<T[]>> {
     try {
-        const result = await run(query, params)
+        const result = await pool.query(query, params)
         return { data: result.rows as T[], error: null }
     } catch (err) {
         const msg = err instanceof Error ? err.message : 'Unknown error!'
@@ -87,9 +77,8 @@ export async function getMediaByListId(listId: number): Promise<ApiResult<MediaP
 }
 
 export async function checkMediaInList(tmdbId: number, listId: number): Promise<ApiResult<boolean>> {
-    const query = 'SELECT COUNT(*) as count FROM Media WHERE tmdb_id = $1 AND list_id = $2'
-    const { data, error } = await dbWrapper<{ count: string }>(query, [tmdbId, listId])
-    return { data: Number(data?.[0]?.count ?? 0) > 0, error }
+    const { data, error } = await dbWrapper<{ exists: boolean }>('SELECT EXISTS(SELECT 1 FROM Media WHERE tmdb_id = $1 AND list_id = $2)', [tmdbId, listId])
+    return { data: data?.[0]?.exists ?? false, error }
 }
 
 export async function addWatched(
@@ -151,6 +140,11 @@ export async function getDefaultListState(): Promise<{ listId: number | undefine
     if (!list?.id) return { listId: undefined, listedIds: [] }
     const { data: items } = await getMediaByListId(list.id)
     return { listId: list.id, listedIds: (items ?? []).map((i) => i.tmdb_id) }
+}
+
+export async function getShowDetails(tmdbId: number): Promise<ShowDetailsProps | null> {
+    const { data } = await getDetailsShow(tmdbId)
+    return data ?? null
 }
 
 export async function getContinueWatching(): Promise<ApiResult<WatchedProps[]>> {

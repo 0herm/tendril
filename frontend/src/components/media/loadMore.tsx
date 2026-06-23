@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition, useEffect, useRef } from 'react'
-import MediaCard from '@/components/mediaCard/mediaCard'
+import MediaCard from '@/components/media/mediaCard'
 
 type Props = {
     initialItems: MediaItemProps[]

@@ -1,6 +1,6 @@
 'use server'
 
-import { updateUser } from '@/utils/api'
+import { updateUser } from '@/utils/queries'
 import { getSessionUserId } from '@/utils/auth'
 
 export async function subscribeUser(sub: PushSubscription) {

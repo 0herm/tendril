@@ -6,7 +6,7 @@ function SkeletonRow({ titleW, count = 7, action = false }: { titleW: string; co
                 <div className='flex-1 h-px bg-border/60' />
                 {action && <div className='h-7 w-20 bg-muted animate-pulse rounded-lg shrink-0' />}
             </div>
-            <div className='flex gap-3 overflow-hidden'>
+            <div className='-mx-4 sm:-mx-5 px-4 sm:px-5 flex gap-3 overflow-hidden'>
                 {Array.from({ length: count }, (_, i) => (
                     <div
                         key={i}

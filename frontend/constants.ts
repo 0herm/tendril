@@ -3,7 +3,8 @@ import { version } from './package.json'
 const config = {
     url: {
         API_URL:    'https://api.themoviedb.org/',
-        IMAGE_URL:  'https://image.tmdb.org/t/p/w500'
+        IMAGE_URL:  'https://image.tmdb.org/t/p/w500',
+        BACKDROP_URL: 'https://image.tmdb.org/t/p/original'
     },
     setting: {
         REGION:        process.env.REGION    || 'GB',
