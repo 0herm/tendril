@@ -46,7 +46,7 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
             {/* scrollable track */}
             <div
                 ref={scrollRef}
-                className='flex w-full h-full overflow-x-auto overscroll-none touch-pan-x rounded-2xl noscroll'
+                className='flex w-full h-full overflow-x-auto overscroll-none rounded-2xl noscroll'
                 style={{ scrollSnapType: 'x mandatory' }}
                 onScroll={handleScroll}
             >
