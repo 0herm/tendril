@@ -5,16 +5,13 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { MediaStateProvider } from '@/components/watched/mediaStateContext'
-
-type DiscoverResult = { data?: { results?: unknown[]; total_pages?: number } | null }
-
 type Props = {
     genreId: number
     name?: string
     defaultName: string
     typeLabel: string
-    discover: (genreId: number) => Promise<DiscoverResult>
-    fetchMore: (genreId: number, page: number) => Promise<unknown>
+    discover: (genreId: number) => Promise<ApiResult<MediaListProps>>
+    fetchMore: (genreId: number, page: number) => Promise<MediaItemProps[]>
 }
 
 export default async function GenrePage({ genreId, name, defaultName, typeLabel, discover, fetchMore: fetchMoreFn }: Props) {
