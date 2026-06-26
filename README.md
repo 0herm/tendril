@@ -44,6 +44,26 @@
 - **Install it like an app.** It's a PWA, so it lives on your home screen and works like a native app.
 - **Yours, on your box.** Fully self-hosted. One `docker compose up` and it's running on your own server.
 
+### 📸 Screenshots
+
+<table>
+  <tr>
+    <td colspan="2"><img src="frontend/public/images/screenshots/home.png" alt="Home" width="100%" /></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="frontend/public/images/screenshots/continue_watching.png" alt="Continue Watching" width="100%" /></td>
+    <td width="50%"><img src="frontend/public/images/screenshots/search.png" alt="Search" width="100%" /></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="frontend/public/images/screenshots/show_stranger_things.png" alt="Show detail" width="100%" /></td>
+    <td width="50%"><img src="frontend/public/images/screenshots/discover.png" alt="Discover" width="100%" /></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="frontend/public/images/screenshots/discover_action.png" alt="Browse by genre" width="100%" /></td>
+    <td width="50%"><img src="frontend/public/images/screenshots/stats.png" alt="Watching stats" width="100%" /></td>
+  </tr>
+</table>
+
 ### ⚙️ Environment Variables
 
 | Name              | Notes                                                                                                                            |

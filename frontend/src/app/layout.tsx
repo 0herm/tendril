@@ -4,7 +4,6 @@ import './globals.css'
 import NavBar from '@/components/nav/nav'
 import BottomNav from '@/components/nav/bottomNav'
 import Footer from '@/components/nav/footer'
-import { PageTransition } from '@/components/PageTransition'
 
 export const metadata: Metadata = {
     title: 'Tendril',
@@ -45,7 +44,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                         className='grow w-full bg-background px-5 sm:px-6 pb-28 sm:pb-8'
                         style={{ paddingTop: 'calc(3.5rem + env(safe-area-inset-top, 0px) + 1.25rem)' }}
                     >
-                        <PageTransition>{children}</PageTransition>
+                        {children}
                     </main>
                     <footer className='border-t border-border hidden sm:block'>
                         <Footer />

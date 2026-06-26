@@ -80,7 +80,7 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
                 </nav>
 
                 {/* Sign out */}
-                <div className='mt-auto pt-3'>
+                <div className='mt-auto pt-3 mb-4'>
                     <form action={logoutAction} className='rounded-2xl bg-card border border-border/50 p-1.5'>
                         <button
                             type='submit'

@@ -7,7 +7,7 @@ export default function AuthPageShell({ title, description, children }: {
     children: ReactNode
 }) {
     return (
-        <div className='fixed inset-0 z-[200] bg-background flex flex-col items-center justify-center px-6'>
+        <div className='w-full h-full flex flex-col items-center justify-center px-6'>
             <div className='absolute inset-0 pointer-events-none overflow-hidden'>
                 <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[56rem] h-[56rem] rounded-full bg-brand blur-[160px] opacity-[0.045]' />
             </div>
