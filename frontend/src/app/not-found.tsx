@@ -14,7 +14,7 @@ export default function Custom404() {
             </div>
             <Link
                 href='/'
-                className='inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-brand hover:bg-brand-dim active:bg-brand-dimmer text-white text-sm font-medium transition-colors'
+                className='inline-flex items-center gap-2 h-9 px-4 rounded-xl bg-brand hover:bg-brand-dim active:bg-brand-dimmer text-white text-sm font-medium transition-colors'
             >
                 Go home
             </Link>

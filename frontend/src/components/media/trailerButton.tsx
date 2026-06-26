@@ -17,10 +17,7 @@ export function TrailerButton({ videos }: { videos: VideoItem[] }) {
         <>
             <button
                 onClick={() => setOpen(true)}
-                className={
-                    'inline-flex items-center gap-1.5 h-10 px-3 rounded-lg ' +
-                    'border border-white/20 bg-white/5 text-white/75 hover:text-white hover:bg-white/12 text-sm font-medium transition-colors'
-                }
+                className='inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl border border-white/12 bg-white/5 text-white/70 hover:text-white hover:bg-white/10 text-sm font-medium transition-all'
             >
                 <Play className='h-3.5 w-3.5 shrink-0 fill-current' />
                 <span className='hidden xs:inline'>Trailer</span>

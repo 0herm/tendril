@@ -9,14 +9,14 @@ const toUint8 = (s: string) => Uint8Array.from(atob(s.replace(/-/g, '+').replace
 
 function CardPanel({ icon: Icon, title, subtitle, children }: { icon: ElementType; title: string; subtitle: string; children: ReactNode }) {
     return (
-        <div className='rounded-xl border border-border overflow-hidden bg-card'>
-            <div className='flex items-center gap-3 px-4 py-4 border-b border-border'>
-                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0'>
-                    <Icon className='h-4 w-4' />
+        <div className='rounded-2xl border border-border/60 overflow-hidden bg-card'>
+            <div className='flex items-center gap-3 px-4 py-4 border-b border-border/60'>
+                <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-muted/60 shrink-0'>
+                    <Icon className='h-4 w-4 text-muted-foreground/70' />
                 </div>
                 <div>
-                    <p className='text-sm font-medium'>{title}</p>
-                    <p className='text-xs text-muted-foreground mt-0.5'>{subtitle}</p>
+                    <p className='text-sm font-semibold'>{title}</p>
+                    <p className='text-xs text-muted-foreground/60 mt-0.5'>{subtitle}</p>
                 </div>
             </div>
             {children}
@@ -64,9 +64,9 @@ function PushNotificationManager() {
     }
 
     return (
-        <div className='rounded-xl border border-border overflow-hidden bg-card'>
-            <div className='flex items-center gap-3 px-4 py-4 border-b border-border'>
-                <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0'><Bell className='h-4 w-4' /></div>
+        <div className='rounded-2xl border border-border/60 overflow-hidden bg-card'>
+            <div className='flex items-center gap-3 px-4 py-4 border-b border-border/60'>
+                <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-muted/60 shrink-0'><Bell className='h-4 w-4 text-muted-foreground/70' /></div>
                 <div className='flex-1 min-w-0'>
                     <div className='flex items-center gap-2'>
                         <p className='text-sm font-medium'>Push Notifications</p>
@@ -112,7 +112,7 @@ function InstallPrompt() {
     if (isStandalone) return null
 
     return (
-        <div className='text-[13px] text-muted-foreground flex items-center gap-2.5 bg-muted/50 p-3 rounded-lg border border-border/50'>
+        <div className='text-[13px] text-muted-foreground/70 flex items-center gap-2.5 bg-muted/40 p-3.5 rounded-xl border border-border/50'>
             <Smartphone className='h-4 w-4 shrink-0' />
             <div className='leading-relaxed'>
                 <strong className='text-foreground font-medium'>Install App:</strong>{' '}
@@ -141,15 +141,15 @@ function RecentAlerts() {
 
     return (
         <CardPanel icon={Bell} title='Recent Alerts' subtitle='Notifications sent by Tendril'>
-            <div className='divide-y divide-border'>
+            <div className='divide-y divide-border/60'>
                 {entries.length === 0 ? (
                     <div className='flex flex-col items-center gap-2 px-4 py-8 text-center'>
-                        <Bell className='h-5 w-5 text-muted-foreground/40' />
-                        <p className='text-sm text-muted-foreground'>No notifications sent yet.</p>
+                        <Bell className='h-5 w-5 text-muted-foreground/30' />
+                        <p className='text-sm text-muted-foreground/60'>No notifications sent yet.</p>
                     </div>
                 ) : entries.map(e => (
                     <div key={e.id} className='flex items-start gap-3 px-4 py-3.5'>
-                        <div className='mt-0.5 flex h-7 w-7 items-center justify-center rounded-md bg-muted text-muted-foreground shrink-0'>
+                        <div className='mt-0.5 flex h-7 w-7 items-center justify-center rounded-lg bg-muted/60 text-muted-foreground/60 shrink-0'>
                             {e.type.includes('movie') || e.type.includes('collection') ? <Film className='h-3.5 w-3.5' />
                                 : e.type.includes('show') || e.type.includes('season') || e.type.includes('episode') ? <Tv className='h-3.5 w-3.5' />
                                     : <Bell className='h-3.5 w-3.5' />}
@@ -170,10 +170,10 @@ function RecentAlerts() {
 
 export default function Page() {
     return (
-        <div className='w-full flex flex-col gap-4 max-w-xl'>
-            <div className='flex flex-col gap-0.5'>
-                <h1 className='text-lg font-semibold'>Notifications</h1>
-                <p className='text-xs text-muted-foreground'>Push notifications and app installation.</p>
+        <div className='w-full flex flex-col gap-6 max-w-xl'>
+            <div className='flex flex-col gap-1'>
+                <h1 className='text-2xl font-black tracking-tight'>Notifications</h1>
+                <p className='text-xs text-muted-foreground/70'>Push notifications and app installation.</p>
             </div>
             <InstallPrompt />
             <PushNotificationManager />

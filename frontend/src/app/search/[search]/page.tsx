@@ -24,31 +24,31 @@ export default async function Page({ params }: { params: Promise<{ search: strin
     const fetchMore = fetchMoreSearch.bind(null, param)
 
     return (
-        <div className='w-full flex flex-col gap-4'>
+        <div className='w-full flex flex-col gap-6'>
             <div className='flex items-center gap-3'>
                 <Link
                     href='/search'
-                    className='flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors text-sm shrink-0'
+                    className='flex items-center justify-center w-8 h-8 rounded-xl hover:bg-white/8 text-muted-foreground/60 hover:text-foreground transition-all shrink-0'
                 >
                     <ArrowLeft className='h-4 w-4' />
-                    <span className='hidden xs:inline'>Search</span>
                 </Link>
-                <h1 className='text-base font-semibold truncate'>
-                    {results.length > 0 ? `Results for "${query}"` : `No results for "${query}"`}
-                </h1>
+                <div className='flex flex-col gap-0.5 min-w-0'>
+                    <h1 className='text-base font-black tracking-tight truncate'>&ldquo;{query}&rdquo;</h1>
+                    {results.length > 0 && <p className='text-[11px] text-muted-foreground/50'>{results.length} results</p>}
+                </div>
             </div>
 
             {results.length > 0 ? (
                 <LoadMore initialItems={results} totalPages={totalPages} fetchMore={fetchMore} />
             ) : (
                 <div className='flex flex-col items-center justify-center gap-4 py-20 text-center'>
-                    <div className='flex h-14 w-14 items-center justify-center rounded-2xl bg-muted'>
-                        <SearchX className='h-7 w-7 text-muted-foreground' />
+                    <div className='flex h-14 w-14 items-center justify-center rounded-2xl bg-muted/60'>
+                        <SearchX className='h-6 w-6 text-muted-foreground/40' />
                     </div>
-                    <div className='flex flex-col gap-1'>
-                        <p className='text-sm font-medium'>No results found</p>
-                        <p className='text-xs text-muted-foreground max-w-xs'>
-                            Try a different search term or check your spelling.
+                    <div className='flex flex-col gap-1.5'>
+                        <p className='text-sm font-semibold'>No results found</p>
+                        <p className='text-xs text-muted-foreground/60 max-w-xs leading-relaxed'>
+                            Try a different spelling or a more general term.
                         </p>
                     </div>
                 </div>

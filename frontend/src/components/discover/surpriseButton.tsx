@@ -24,11 +24,8 @@ const TIME_FILTERS = [
 
 function FilterGroup({ label, children }: { label: string; children: ReactNode }) {
     return (
-        <div className='flex flex-col gap-3'>
-            <div className='flex items-center gap-3'>
-                <p className='text-xs font-medium text-muted-foreground shrink-0'>{label}</p>
-                <div className='flex-1 h-px bg-border/60' />
-            </div>
+        <div className='flex flex-col gap-2.5'>
+            <p className='text-[10px] font-bold tracking-[0.1em] uppercase text-muted-foreground/50'>{label}</p>
             <div className='flex flex-wrap gap-1.5'>{children}</div>
         </div>
     )
@@ -38,11 +35,11 @@ function Pill({ active, onClick, children }: { active: boolean; onClick: () => v
     return (
         <button
             onClick={onClick}
-            className={`relative px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                active ? 'text-brand border-brand/30' : 'border-border/60 bg-card text-muted-foreground hover:text-foreground hover:border-border'
+            className={`relative px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors ${
+                active ? 'text-brand border-brand/30' : 'border-border/60 bg-card text-muted-foreground/70 hover:text-foreground hover:border-border'
             }`}
         >
-            {active && <span className='absolute inset-0 bg-brand/10 rounded-lg' />}
+            {active && <span className='absolute inset-0 bg-brand/10 rounded-xl' />}
             <span className='relative'>{children}</span>
         </button>
     )
@@ -94,8 +91,8 @@ export function SurpriseButton({ items }: { items: Candidate[] }) {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <button className={
-                    'inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border' +
-                    ' bg-card text-muted-foreground hover:text-foreground hover:bg-muted text-xs font-medium transition-colors'
+                    'inline-flex items-center gap-1.5 h-8 px-3 rounded-xl border border-border/60' +
+                    ' bg-card text-muted-foreground/70 hover:text-foreground hover:bg-muted text-xs font-medium transition-colors'
                 }>
                     <Shuffle className='h-3.5 w-3.5 shrink-0' />Surprise me
                 </button>

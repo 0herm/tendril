@@ -25,8 +25,14 @@ function Dialog({ open: ctrl, onOpenChange, defaultOpen = false, children }: {
     React.useEffect(() => {
         const el = ref.current
         if (!el) return
-        if (isOpen && !el.open) el.showModal()
-        else if (!isOpen && el.open) el.close()
+        if (isOpen && !el.open) {
+            el.showModal()
+            document.body.style.overflow = 'hidden'
+        } else if (!isOpen && el.open) {
+            el.close()
+            document.body.style.overflow = ''
+        }
+        return () => { document.body.style.overflow = '' }
     }, [isOpen])
 
     React.useEffect(() => {
@@ -63,7 +69,7 @@ function DialogContent({ className = '', children, showCloseButton = true }: {
             ref={ref}
             className={
                 'relative m-auto w-full max-w-[calc(100%-2rem)] sm:max-w-lg ' +
-                'bg-card border border-border rounded-2xl shadow-2xl overflow-hidden p-0 ' +
+                'bg-card border border-border/60 rounded-2xl shadow-2xl overflow-hidden p-0 ' +
                 className
             }
             onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}
@@ -74,7 +80,7 @@ function DialogContent({ className = '', children, showCloseButton = true }: {
                     onClick={() => setOpen(false)}
                     className={
                         'absolute top-4 right-4 flex items-center justify-center w-7 h-7' +
-                        ' rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors'
+                        ' rounded-xl text-muted-foreground/60 hover:text-foreground hover:bg-white/8 transition-colors'
                     }
                     aria-label='Close'
                 >
@@ -86,7 +92,7 @@ function DialogContent({ className = '', children, showCloseButton = true }: {
 }
 
 function DialogHeader({ className = '', ...props }: React.ComponentProps<'div'>) {
-    return <div className={`flex flex-col gap-1 px-5 pt-5 pb-4 border-b border-border ${className}`} {...props} />
+    return <div className={`flex flex-col gap-1 px-5 pt-5 pb-4 border-b border-border/60 ${className}`} {...props} />
 }
 
 function DialogTitle({ className = '', ...props }: React.ComponentProps<'h2'>) {

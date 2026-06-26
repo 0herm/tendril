@@ -81,27 +81,56 @@ export default async function Home() {
         )
     }
 
+    const progressMap = new Map<number, number>()
+    for (const show of cwItems) {
+        const watched = watchedResult.data?.find(w => w.tmdb_id === show.id)
+        if (!watched) continue
+        const today = new Date()
+        const airedSeasons = show.seasons.filter(s =>
+            s.season_number > 0 && s.episode_count > 0 &&
+            !!s.air_date && new Date(s.air_date) <= today
+        )
+        const totalAired = airedSeasons.reduce((sum, s) => sum + s.episode_count, 0)
+        if (!totalAired) continue
+        let watchedEps = 0
+        const watchedSeasons = watched.watched_seasons ?? []
+        const episodeCounts = watched.episode_counts ?? []
+        for (const season of airedSeasons) {
+            const idx = watchedSeasons.indexOf(season.season_number)
+            if (idx === -1) continue
+            const count = episodeCounts[idx]
+            watchedEps += count != null ? count : season.episode_count
+        }
+        progressMap.set(show.id, Math.min(watchedEps / totalAired, 0.97))
+    }
+
     return (
         <MediaStateProvider
             listId={listState.listId}
             watchedIds={(watchedResult.data ?? []).map(w => w.tmdb_id)}
             listedIds={listState.listedIds}
         >
-            <div className='flex flex-col gap-6 w-full overflow-hidden'>
+            <div className='flex flex-col gap-8 w-full overflow-hidden'>
                 {trendingDailyResult.data?.results?.length ? (
                     <HeroCarousel items={trendingDailyResult.data.results} />
                 ) : null}
-                <MediaSection title='Top 10 Right Now'  items={trendingDailyResult.data}               ranked />
-                <MediaSection title='Continue Watching' items={cwItems.length > 0 ? cwItems : null} type='show' />
-                <MediaSection title='Trending'          items={trendingResult.data} />
-                <MediaSection title='New Movies'        items={newMoviesResult.data}       type={'movie'} />
-                <MediaSection title='New Shows'       items={newShowsResult.data}        type={'show'} />
-                <MediaSection title='Popular Movies'  items={popularMoviesResult.data}   type={'movie'} />
-                <MediaSection title='Popular Shows'   items={popularShowsResult.data}    type={'show'} />
-                <MediaSection title='Top Rated Movies' items={topRatedMoviesResult.data} type={'movie'} />
-                <MediaSection title='Top Rated Shows'  items={topRatedShowsResult.data}  type={'show'} />
-                <MediaSection title='Upcoming Movies' items={upcomingMoviesResult.data}  type={'movie'} />
-                <MediaSection title='Upcoming Shows'  items={upcomingShowsResult.data}   type={'show'} />
+                <MediaSection title='Top 10 Right Now' items={trendingDailyResult.data} ranked />
+                {cwItems.length > 0 && (
+                    <MediaSection title='Continue Watching' items={cwItems} type='show' progressMap={progressMap} />
+                )}
+                <MediaSection title='Trending' items={trendingResult.data} />
+
+                <div className='flex flex-col gap-6'>
+                    <div className='-mx-5 sm:-mx-6 h-px bg-white/[0.04]' />
+                    <MediaSection title='New Movies'       items={newMoviesResult.data}      type='movie' />
+                    <MediaSection title='New Shows'        items={newShowsResult.data}       type='show' />
+                    <MediaSection title='Popular Movies'   items={popularMoviesResult.data}  type='movie' />
+                    <MediaSection title='Popular Shows'    items={popularShowsResult.data}   type='show' />
+                    <MediaSection title='Top Rated Movies' items={topRatedMoviesResult.data} type='movie' />
+                    <MediaSection title='Top Rated Shows'  items={topRatedShowsResult.data}  type='show' />
+                    <MediaSection title='Upcoming Movies'  items={upcomingMoviesResult.data} type='movie' />
+                    <MediaSection title='Upcoming Shows'   items={upcomingShowsResult.data}  type='show' />
+                </div>
             </div>
         </MediaStateProvider>
     )

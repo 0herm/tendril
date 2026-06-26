@@ -13,10 +13,10 @@ const variantClasses: Record<ButtonVariant, string> = {
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
-    default: 'h-9 px-4 py-2 rounded-lg',
-    sm:      'h-8 px-3 text-xs rounded-md gap-1.5',
+    default: 'h-9 px-4 py-2 rounded-xl',
+    sm:      'h-8 px-3 text-xs rounded-lg gap-1.5',
     lg:      'h-11 px-5 rounded-xl',
-    icon:    'size-9 rounded-lg',
+    icon:    'size-9 rounded-xl',
 }
 
 interface ButtonProps extends React.ComponentProps<'button'> {

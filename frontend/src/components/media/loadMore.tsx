@@ -44,8 +44,10 @@ export default function LoadMore({ initialItems, totalPages, fetchMore }: Props)
                 ))}
             </div>
             {page < totalPages && (
-                <div ref={sentinelRef} className='flex justify-center py-6'>
-                    {isPending && <span className='text-sm text-muted-foreground'>Loading...</span>}
+                <div ref={sentinelRef} className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3'>
+                    {isPending && Array.from({ length: 7 }).map((_, i) => (
+                        <div key={i} className='aspect-[2/3] rounded-xl bg-muted/60 animate-pulse' style={{ animationDelay: `${i * 50}ms` }} />
+                    ))}
                 </div>
             )}
         </>

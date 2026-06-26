@@ -21,7 +21,7 @@ export default function Error({ reset }: { reset: () => void }) {
                 <Link
                     href='/'
                     className={
-                        'inline-flex items-center gap-2 h-9 px-4 rounded-lg border border-border ' +
+                        'inline-flex items-center gap-2 h-9 px-4 rounded-xl border border-border/60 ' +
                         'bg-transparent hover:bg-muted active:bg-muted/70 text-foreground text-sm font-medium transition-colors shadow-xs'
                     }
                 >

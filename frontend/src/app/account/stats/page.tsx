@@ -75,39 +75,39 @@ export default async function Page() {
     const isEmpty = watched.length === 0
 
     return (
-        <div className='w-full flex flex-col gap-6 max-w-xl'>
-            <div className='flex flex-col gap-0.5'>
-                <h1 className='text-lg font-semibold'>Stats</h1>
-                <p className='text-xs text-muted-foreground'>Your watching history at a glance.</p>
+        <div className='w-full flex flex-col gap-8 max-w-xl'>
+            <div className='flex flex-col gap-1'>
+                <h1 className='text-2xl font-black tracking-tight'>Stats</h1>
+                <p className='text-xs text-muted-foreground/70'>Your watching history at a glance.</p>
             </div>
 
             {isEmpty ? (
-                <div className='flex flex-col items-center justify-center gap-4 py-16 text-center rounded-xl border border-border bg-card'>
-                    <div className='flex h-12 w-12 items-center justify-center rounded-2xl bg-muted'>
-                        <Film className='h-6 w-6 text-muted-foreground' />
+                <div className='flex flex-col items-center justify-center gap-4 py-20 text-center'>
+                    <div className='flex h-14 w-14 items-center justify-center rounded-2xl bg-muted/60'>
+                        <Film className='h-6 w-6 text-muted-foreground/40' />
                     </div>
-                    <div className='flex flex-col gap-1'>
-                        <p className='text-sm font-medium'>No watch history yet</p>
-                        <p className='text-xs text-muted-foreground'>Mark titles as watched to see your stats here.</p>
+                    <div className='flex flex-col gap-1.5'>
+                        <p className='text-sm font-semibold'>No watch history yet</p>
+                        <p className='text-xs text-muted-foreground/60 max-w-xs leading-relaxed'>Mark titles as watched to see your stats here.</p>
                     </div>
                 </div>
             ) : (
-                <div className='flex flex-col gap-6'>
+                <div className='flex flex-col gap-8'>
                     <div className='grid grid-cols-3 gap-3'>
-                        <StatCard icon={<Film className='h-3.5 w-3.5' />} label='Movies' value={movies.length} />
-                        <StatCard icon={<Tv className='h-3.5 w-3.5' />} label='Shows' value={shows.length} />
+                        <StatCard icon={<Film className='h-4 w-4' />} label='Movies' value={movies.length} />
+                        <StatCard icon={<Tv className='h-4 w-4' />} label='Shows' value={shows.length} />
                         <StatCard
-                            icon={<Clock className='h-3.5 w-3.5' />}
-                            label='Watched'
+                            icon={<Clock className='h-4 w-4' />}
+                            label='Time Watched'
                             value={formatRuntime(totalMinutes)}
                             mono
                         />
                     </div>
 
-                    <BarList icon={Tag} title='Genres' items={topGenres} max={maxGenreCount} labelClassName='text-sm text-foreground w-28 shrink-0 truncate' />
+                    <BarList icon={Tag} title='Top Genres' items={topGenres} max={maxGenreCount} labelClassName='text-sm text-foreground/80 w-28 shrink-0 truncate' />
                     <BarList
-                        icon={Calendar} title='Most Watched Year' items={topYears}
-                        max={maxYearCount} labelClassName='text-sm font-medium text-foreground w-10 shrink-0 tabular-nums'
+                        icon={Calendar} title='By Year' items={topYears}
+                        max={maxYearCount} labelClassName='text-sm font-medium text-foreground/80 w-10 shrink-0 tabular-nums'
                     />
                 </div>
             )}
@@ -122,14 +122,12 @@ function StatCard({ icon, label, value, mono = false }: {
     mono?: boolean
 }) {
     return (
-        <div className='flex flex-col gap-3 rounded-xl border border-border bg-card p-4 shadow-sm'>
-            <div className='flex items-center justify-between'>
-                <span className='text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60'>{label}</span>
-                <div className='flex h-6 w-6 items-center justify-center rounded-md bg-brand/10 text-brand shrink-0'>
-                    {icon}
-                </div>
+        <div className='flex flex-col gap-4 rounded-2xl bg-card border border-border/60 p-4 sm:p-5'>
+            <div className='flex items-start justify-between gap-2'>
+                <span className='text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground/50 leading-tight'>{label}</span>
+                <div className='text-brand/50 shrink-0 mt-0.5'>{icon}</div>
             </div>
-            <span className={`text-2xl font-bold tracking-tight leading-none text-foreground ${mono ? 'tabular-nums' : ''}`}>
+            <span className={`text-3xl font-black tracking-tight leading-none text-foreground ${mono ? 'tabular-nums' : ''}`}>
                 {value}
             </span>
         </div>
@@ -147,18 +145,18 @@ function BarList({ icon: Icon, title, items, max, labelClassName }: {
     return (
         <div className='flex flex-col gap-3'>
             <div className='flex items-center gap-2'>
-                <Icon className='h-3.5 w-3.5 text-muted-foreground' />
-                <h2 className='text-sm font-semibold tracking-tight text-foreground'>{title}</h2>
+                <Icon className='h-3 w-3 text-brand/60' />
+                <h2 className='text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground'>{title}</h2>
             </div>
-            <div className='rounded-xl border border-border bg-card overflow-hidden'>
-                {items.map(([label, count], i) => (
-                    <div key={label} className={`flex items-center gap-3 px-4 py-2.5 ${i < items.length - 1 ? 'border-b border-border' : ''}`}>
+            <div className='divide-y divide-border/60'>
+                {items.map(([label, count]) => (
+                    <div key={label} className='flex items-center gap-3 py-2.5'>
                         <span className={labelClassName}>{label}</span>
                         <div className='flex items-center gap-3 flex-1 min-w-0'>
-                            <div className='flex-1 h-2 rounded-full bg-muted overflow-hidden'>
-                                <div className='h-full rounded-full bg-brand' style={{ width: `${(count / max) * 100}%` }} />
+                            <div className='flex-1 h-1.5 rounded-full bg-muted/80 overflow-hidden'>
+                                <div className='h-full rounded-full bg-brand/60' style={{ width: `${(count / max) * 100}%` }} />
                             </div>
-                            <span className='text-xs text-muted-foreground w-5 text-right shrink-0 tabular-nums'>{count}</span>
+                            <span className='text-xs text-muted-foreground/60 w-5 text-right shrink-0 tabular-nums'>{count}</span>
                         </div>
                     </div>
                 ))}

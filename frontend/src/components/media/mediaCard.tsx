@@ -14,9 +14,10 @@ import { WatchedSeasonsBody, WatchedSeasonsSkeleton } from '@/components/watched
 interface MediaCardProps {
     item: MediaItemProps
     type?: MediaType
+    progress?: number
 }
 
-export default function MediaCard({ item, type }: MediaCardProps) {
+export default function MediaCard({ item, type, progress }: MediaCardProps) {
     const ms = useMediaState()
     const mediaType: MediaType = type ?? (item.media_type === 'tv' ? 'show' : 'movie')
     const listId = ms?.listId
@@ -91,13 +92,13 @@ export default function MediaCard({ item, type }: MediaCardProps) {
     return (
         <div className='group relative w-full' onMouseEnter={loadShowDetails} onFocus={loadShowDetails}>
             <Link href={`/${mediaType}/${item.id}`}>
-                <div className='relative aspect-2/3 w-full overflow-hidden rounded-xl shadow-md ring-1 ring-border/40'>
+                <div className='relative aspect-2/3 w-full overflow-hidden rounded-lg shadow-md ring-1 ring-white/8 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.7)] group-hover:ring-white/15'>
                     {item.poster_path ? (
                         <Image
                             src={`${config.url.IMAGE_URL}${item.poster_path}`}
                             alt={title || 'poster'}
                             fill
-                            className='object-cover transition-transform duration-300 group-hover:scale-105'
+                            className='object-cover transition-transform duration-300 group-hover:scale-[1.03]'
                             sizes='(max-width: 640px) 45vw, (max-width: 1024px) 20vw, 11rem'
                         />
                     ) : (
@@ -106,18 +107,23 @@ export default function MediaCard({ item, type }: MediaCardProps) {
                         </div>
                     )}
                     {rating && (
-                        <div className={
-                            'absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-black/80' +
-                            ' [@media(hover:hover)]:bg-black/10 [@media(hover:hover)]:backdrop-blur-sm rounded-md px-1.5 py-0.5 z-10'
-                        }>
+                        <div className='absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-black/65 backdrop-blur-sm rounded-md px-1.5 py-0.5 z-10'>
                             <Star className='h-2.5 w-2.5 fill-yellow-400 stroke-none' />
                             <span className='text-[10px] font-semibold text-white leading-none'>{rating}</span>
                         </div>
                     )}
                     <div className='absolute inset-0 bg-linear-to-t from-black/50 via-black/10 to-transparent pointer-events-none' />
+                    <span className='absolute top-1.5 left-1.5 text-[9px] font-bold tracking-[0.06em] uppercase text-white/55 bg-black/45 backdrop-blur-sm px-1.5 py-0.5 rounded-md leading-none pointer-events-none'>
+                        {mediaType === 'movie' ? 'Film' : 'TV'}
+                    </span>
+                    {progress != null && progress > 0 && (
+                        <div className='absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 pointer-events-none'>
+                            <div className='h-full bg-brand transition-all duration-500 rounded-r-full' style={{ width: `${Math.round(progress * 100)}%` }} />
+                        </div>
+                    )}
                     <div className={
-                        'absolute inset-0 bg-linear-to-t from-black/80 via-black/30' +
-                        ' to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none'
+                        'absolute inset-0 bg-linear-to-t from-black/90 via-black/40' +
+                        ' to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-250 pointer-events-none'
                     } />
                     <div className='absolute bottom-10 left-0 right-0 px-2 translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300'>
                         {title && <p className='text-white text-xs font-semibold line-clamp-2 leading-tight [text-shadow:0_1px_4px_rgba(0,0,0,0.9)]'>{title}</p>}
@@ -127,7 +133,7 @@ export default function MediaCard({ item, type }: MediaCardProps) {
             </Link>
 
             <div className='absolute bottom-0 left-0 right-0 px-1.5 pb-1.5 hidden sm:block sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 z-10'>
-                <div className='flex rounded-lg overflow-hidden bg-black/10 backdrop-blur-sm border border-white/10'>
+                <div className='flex rounded-xl overflow-hidden bg-black/15 backdrop-blur-sm border border-white/8'>
                     <button
                         onClick={handleSave}
                         className={'flex flex-1 items-center justify-center gap-1.5 py-1.5 text-xs ' +

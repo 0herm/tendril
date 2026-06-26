@@ -42,11 +42,11 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
     if (!slides.length) return null
 
     return (
-        <div className='relative w-full' style={{ height: 'clamp(190px, 42vw, 400px)' }}>
+        <div className='relative w-full rounded-2xl overflow-hidden' style={{ height: 'clamp(240px, 50vw, 520px)' }}>
             {/* scrollable track */}
             <div
                 ref={scrollRef}
-                className='flex w-full h-full overflow-x-auto overscroll-none rounded-2xl noscroll'
+                className='flex w-full h-full overflow-x-auto overscroll-none noscroll'
                 style={{ scrollSnapType: 'x mandatory' }}
                 onScroll={handleScroll}
             >
@@ -73,14 +73,14 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
                                 quality={90}
                             />
 
-                            <div className='absolute inset-0 bg-linear-to-t from-background via-background/55 to-transparent' />
-                            <div className='absolute inset-0 bg-linear-to-r from-background/75 via-background/20 to-transparent' />
+                            <div className='absolute inset-0 bg-linear-to-t from-background from-[15%] via-background/70 via-[55%] to-transparent' />
+                            <div className='absolute inset-0 bg-linear-to-r from-background/55 via-background/15 to-transparent hidden sm:block' />
 
                             <div className='absolute bottom-0 left-0 p-4 sm:p-6 max-w-[55%]'>
-                                <h2 className='text-lg sm:text-2xl md:text-3xl font-bold text-white leading-tight mb-1.5 line-clamp-2'>
+                                <h2 className='text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight mb-2 line-clamp-2 [text-shadow:0_2px_20px_rgba(0,0,0,0.8)]'>
                                     {title}
                                 </h2>
-                                <div className='flex items-center gap-2 text-[11px] sm:text-xs text-white/55 mb-3'>
+                                <div className='flex items-center gap-2 text-[11px] font-medium tracking-wide text-white/50 mb-3'>
                                     {rating && (
                                         <span className='flex items-center gap-1 text-white/80'>
                                             <Star className='h-3 w-3 fill-yellow-400 stroke-none' />
@@ -92,12 +92,9 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
                                 </div>
                                 <Link
                                     href={`/${mediaType}/${item.id}`}
-                                    className={
-                                        'inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2' +
-                                        ' rounded-lg bg-brand hover:bg-brand-dim text-white text-xs sm:text-sm font-semibold transition-colors'
-                                    }
+                                    className='inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 backdrop-blur-sm text-white text-sm font-semibold transition-all'
                                 >
-                                    <Play className='h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current shrink-0' />
+                                    <Play className='h-3 w-3 fill-current shrink-0' />
                                     View
                                 </Link>
                             </div>
@@ -107,14 +104,14 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
             </div>
 
             {/* dot indicators */}
-            <div className='absolute bottom-4 right-4 flex items-center gap-1.5 z-10'>
+            <div className='absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10'>
                 {slides.map((_, i) => (
                     <button
                         key={i}
                         onClick={() => goTo(i)}
                         aria-label={`Slide ${i + 1}`}
-                        className={`h-1 rounded-full transition-all duration-300 ${
-                            i === current ? 'w-6 bg-white' : 'w-1.5 bg-white/30 hover:bg-white/55'
+                        className={`rounded-full transition-all duration-300 ${
+                            i === current ? 'w-5 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/25 hover:bg-white/45'
                         }`}
                     />
                 ))}

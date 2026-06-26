@@ -36,7 +36,7 @@ export default function SeasonSection({ showId, seasons }: Props) {
         <section className='flex flex-col gap-3'>
             <SectionHeading count={seasons.length}>Seasons</SectionHeading>
 
-            <div className='-mx-4 sm:-mx-5 px-4 sm:px-5 flex gap-3 overflow-x-auto noscroll pb-1'>
+            <div className='-mx-5 sm:-mx-6 px-5 sm:px-6 flex gap-3 overflow-x-auto noscroll pb-1'>
                 {seasons.map((season) => (
                     <button
                         key={season.id}

@@ -8,9 +8,10 @@ type SectionProps = {
     type?: MediaType
     ranked?: boolean
     action?: React.ReactNode
+    progressMap?: Map<number, number>
 }
 
-export default function MediaSection({ title, items, type, ranked, action }: SectionProps) {
+export default function MediaSection({ title, items, type, ranked, action, progressMap }: SectionProps) {
     const all = Array.isArray(items) ? items : (items?.results ?? [])
     const results = ranked ? all.slice(0, 10) : all
 
@@ -22,8 +23,8 @@ export default function MediaSection({ title, items, type, ranked, action }: Sec
                 {title}
             </SectionHeading>
             <div className={ranked
-                ? 'flex flex-row gap-3 -mx-4 sm:-mx-5 pl-2 pr-4 sm:pr-5 pt-2 overflow-x-auto overscroll-x-contain noscroll pb-1'
-                : 'flex flex-row gap-3 -mx-4 sm:-mx-5 px-4 sm:px-5 overflow-x-auto overscroll-x-contain noscroll pb-1'
+                ? 'flex flex-row gap-3 -mx-5 sm:-mx-6 pl-5 sm:pl-6 pr-5 sm:pr-6 pt-2 overflow-x-auto overscroll-x-contain noscroll pb-1'
+                : 'flex flex-row gap-3 -mx-5 sm:-mx-6 px-5 sm:px-6 overflow-x-auto overscroll-x-contain noscroll pb-1'
             }>
                 {results.map((item, index) => (
                     <div
@@ -50,7 +51,7 @@ export default function MediaSection({ title, items, type, ranked, action }: Sec
                             </span>
                         )}
                         <div className={ranked ? 'ml-10 relative z-20' : ''}>
-                            <MediaCard item={item} type={type} />
+                            <MediaCard item={item} type={type} progress={progressMap?.get(item.id)} />
                         </div>
                     </div>
                 ))}

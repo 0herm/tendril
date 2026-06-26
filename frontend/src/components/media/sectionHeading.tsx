@@ -8,22 +8,20 @@ type Props = {
 
 export default function SectionHeading({ children, count, action }: Props) {
     return (
-        <div className='flex items-center gap-3'>
-            <h2 className='text-sm font-semibold tracking-tight text-foreground shrink-0'>{children}</h2>
-            <div className='flex-1 h-px bg-border/60' />
+        <div className='flex items-center gap-2'>
+            <h2 className='text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground shrink-0'>{children}</h2>
             {count != null && (
-                <span className='text-xs text-muted-foreground tabular-nums shrink-0'>{count}</span>
+                <span className='text-[11px] text-muted-foreground/50 tabular-nums font-medium shrink-0'>{count}</span>
             )}
-            {action}
+            {action && <div className='ml-auto'>{action}</div>}
         </div>
     )
 }
 
 export function SkeletonHeading({ width }: { width: string }) {
     return (
-        <div className='flex items-center gap-3'>
-            <div className={`h-3.5 ${width} bg-muted animate-pulse rounded shrink-0`} />
-            <div className='flex-1 h-px bg-border/40' />
+        <div className='flex items-center gap-2'>
+            <div className={`h-2.5 ${width} bg-muted animate-pulse rounded shrink-0`} />
         </div>
     )
 }

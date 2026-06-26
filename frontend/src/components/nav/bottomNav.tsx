@@ -28,7 +28,7 @@ export default function BottomNav() {
             style={{ paddingBottom: 'max(0px, calc(env(safe-area-inset-bottom, 0px) - 24px))' }}
         >
             <div className='mx-5'>
-                <div className='flex items-stretch bg-card/95 backdrop-blur-xl border border-border/60 rounded-2xl shadow-lg overflow-hidden h-16'>
+                <div className='flex items-stretch bg-card/90 backdrop-blur-2xl border border-white/8 rounded-2xl shadow-xl shadow-black/40 overflow-hidden h-[3.75rem]'>
                     {tabs.map((tab) => {
                         const { href, icon: Icon, label } = tab
                         const active = isActive(tab)
@@ -37,13 +37,13 @@ export default function BottomNav() {
                                 key={href}
                                 href={href}
                                 className={`relative flex flex-1 flex-col items-center justify-center gap-1 transition-colors ${
-                                    active ? 'text-brand' : 'text-muted-foreground hover:text-foreground'
+                                    active ? 'text-brand' : 'text-muted-foreground/60 hover:text-foreground'
                                 }`}
                             >
                                 {active && (
-                                    <span className='absolute inset-x-3 inset-y-2 bg-brand/10 rounded-xl' />
+                                    <span className='absolute bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-brand' />
                                 )}
-                                <Icon className={`relative h-5 w-5 transition-transform ${active ? 'scale-110' : ''}`} />
+                                <Icon className={`relative h-5 w-5 transition-transform ${active ? 'scale-105' : ''}`} />
                                 <span className='relative text-[10px] font-medium leading-none'>{label}</span>
                             </Link>
                         )

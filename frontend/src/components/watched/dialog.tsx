@@ -33,7 +33,7 @@ export default function ListTool({ tmdbId, mediaType }: ListToolProps) {
         <Button
             variant={inList ? 'default' : 'secondary'}
             size='icon'
-            className='size-10'
+            className='size-9 rounded-xl'
             onClick={handleToggle}
         >
             <Bookmark className={`size-5${inList ? ' fill-current' : ''}`} />

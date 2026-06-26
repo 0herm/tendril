@@ -49,7 +49,7 @@ export default function WatchedTool({ tmdbID, mediaType, media }: ListToolProps)
 
     if (mediaType === 'movie') {
         return (
-            <Button variant='secondary' size='icon' className='size-10' onClick={handleToggleMovie}>
+            <Button variant='secondary' size='icon' className='size-9 rounded-xl' onClick={handleToggleMovie}>
                 {seen ? <Eye className='size-5' /> : <EyeOff className='size-5' />}
             </Button>
         )
@@ -60,7 +60,7 @@ export default function WatchedTool({ tmdbID, mediaType, media }: ListToolProps)
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant='secondary' size='icon' className='size-10'>
+                <Button variant='secondary' size='icon' className='size-9 rounded-xl'>
                     {ctx.allWatched ? <Eye className='size-5' /> : <EyeOff className='size-5' />}
                 </Button>
             </DialogTrigger>

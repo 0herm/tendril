@@ -5,10 +5,10 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navItems = [
-    { href: '/account', icon: LayoutDashboard, label: 'Overview', exact: true },
-    { href: '/account/stats', icon: BarChart2, label: 'Stats', exact: false },
-    { href: '/account/settings', icon: Settings, label: 'Settings', exact: false },
-    { href: '/account/notifications', icon: Bell, label: 'Notifications', exact: false },
+    { href: '/account',               icon: LayoutDashboard, label: 'Overview',      exact: true },
+    { href: '/account/stats',         icon: BarChart2,       label: 'Stats',         exact: false },
+    { href: '/account/settings',      icon: Settings,        label: 'Settings',      exact: false },
+    { href: '/account/notifications', icon: Bell,            label: 'Notifications', exact: false },
 ]
 
 export default function AccountSidebar({ logoutAction }: { logoutAction: () => Promise<void> }) {
@@ -16,7 +16,8 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
 
     return (
         <>
-            <nav className='sm:hidden -mx-4 bg-background border-b border-border/60'>
+            {/* Mobile — horizontal scroll tab bar */}
+            <nav className='sm:hidden -mx-5 border-b border-border/40 bg-background'>
                 <div className='flex overflow-x-auto noscroll px-3 py-1.5 gap-1'>
                     {navItems.map(({ href, icon: Icon, label, exact }) => {
                         const active = exact ? pathname === href : pathname.startsWith(href)
@@ -24,8 +25,8 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
                             <Link
                                 key={href}
                                 href={href}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap shrink-0 transition-colors ${
-                                    active ? 'bg-brand/10 text-brand' : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium whitespace-nowrap shrink-0 transition-all ${
+                                    active ? 'bg-brand/8 text-brand' : 'text-muted-foreground/60 hover:text-foreground hover:bg-white/5'
                                 }`}
                             >
                                 <Icon className='h-3.5 w-3.5 shrink-0' />
@@ -33,16 +34,11 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
                             </Link>
                         )
                     })}
-
-                    <div className='w-px bg-border/60 my-1 mx-0.5 shrink-0' />
-
+                    <div className='w-px bg-border/50 my-1 mx-0.5 shrink-0' />
                     <form action={logoutAction} className='flex shrink-0'>
                         <button
                             type='submit'
-                            className={
-                                'flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ' +
-                                'text-muted-foreground hover:text-destructive hover:bg-destructive/10'
-                            }
+                            className='flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all text-muted-foreground/50 hover:text-destructive hover:bg-destructive/8'
                         >
                             <LogOut className='h-3.5 w-3.5 shrink-0' />
                             Sign out
@@ -51,31 +47,30 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
                 </div>
             </nav>
 
+            {/* Desktop — sticky sidebar */}
             <aside
-                className='hidden sm:flex flex-col w-44 shrink-0 sticky overflow-y-auto'
+                className='hidden sm:flex flex-col w-52 shrink-0 sticky overflow-y-auto noscroll'
                 style={{
-                    top: 'calc(3rem + env(safe-area-inset-top, 0px))',
-                    height: 'calc(100vh - 3rem - env(safe-area-inset-top, 0px) - 1.25rem)',
+                    top: 'calc(3.5rem + env(safe-area-inset-top, 0px))',
+                    height: 'calc(100vh - 3.5rem - env(safe-area-inset-top, 0px) - 1.25rem)',
                 }}
             >
-                <p className='text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50 px-3 pb-2 pt-0.5'>
-                    Account
-                </p>
-                <nav className='flex flex-col gap-0.5'>
+                {/* Nav */}
+                <nav className='flex flex-col gap-0.5 rounded-2xl bg-card border border-border/50 p-1.5'>
                     {navItems.map(({ href, icon: Icon, label, exact }) => {
                         const active = exact ? pathname === href : pathname.startsWith(href)
                         return (
                             <Link
                                 key={href}
                                 href={href}
-                                className={`relative flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all overflow-hidden ${
+                                className={`relative flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all overflow-hidden ${
                                     active
-                                        ? 'bg-brand-subtle text-foreground font-medium'
-                                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
+                                        ? 'bg-white/8 text-foreground font-medium'
+                                        : 'text-muted-foreground/55 hover:text-foreground hover:bg-white/5'
                                 }`}
                             >
                                 {active && (
-                                    <span className='absolute left-0 inset-y-1 w-[3px] bg-brand rounded-r-full' />
+                                    <span className='absolute left-0 inset-y-2 w-[2.5px] bg-brand rounded-r-full' />
                                 )}
                                 <Icon className={`h-3.5 w-3.5 shrink-0 transition-colors ${active ? 'text-brand' : ''}`} />
                                 {label}
@@ -84,14 +79,12 @@ export default function AccountSidebar({ logoutAction }: { logoutAction: () => P
                     })}
                 </nav>
 
-                <div className='mt-auto pt-4 pb-4 border-t border-border/60'>
-                    <form action={logoutAction}>
+                {/* Sign out */}
+                <div className='mt-auto pt-3'>
+                    <form action={logoutAction} className='rounded-2xl bg-card border border-border/50 p-1.5'>
                         <button
                             type='submit'
-                            className={
-                                'flex w-full items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all ' +
-                                'text-muted-foreground hover:text-destructive hover:bg-destructive/10'
-                            }
+                            className='flex w-full items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all text-muted-foreground/40 hover:text-destructive hover:bg-destructive/8'
                         >
                             <LogOut className='h-3.5 w-3.5 shrink-0' />
                             Sign out

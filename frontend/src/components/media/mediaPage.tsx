@@ -38,69 +38,66 @@ export default function MediaPage({ item, media, similar, region, collection, wa
     const seasons = show?.seasons.filter((s) => s.season_number > 0) ?? []
 
     const content = (
-        <div className='relative w-full flex flex-col gap-6 -mt-4'>
+        <div className='relative w-full flex flex-col gap-8 -mt-4'>
 
             {item.backdrop_path && (
-                <div className='absolute inset-x-0 top-0 bottom-0 -z-10 pointer-events-none overflow-hidden'>
-                    <Image src={`${config.url.IMAGE_URL}${item.backdrop_path}`} alt='' fill className='object-cover object-top w-full h-full blur-3xl opacity-18 scale-110' />
-                    <div className='absolute inset-0 bg-linear-to-b from-background/20 from-[20%] via-background/55 via-[55%] to-background/85' />
+                <div className='fixed inset-0 -z-10 pointer-events-none overflow-hidden'>
+                    <Image src={`${config.url.IMAGE_URL}${item.backdrop_path}`} alt='' fill className='object-cover object-top w-full h-full blur-3xl opacity-[0.08] scale-125' />
+                    <div className='absolute inset-0 bg-linear-to-b from-background/30 via-background/75 to-background/95' />
                 </div>
             )}
 
-            <div className='relative -mx-4 sm:-mx-5 overflow-hidden min-h-72 sm:min-h-[26rem] flex flex-col justify-end'>
+            <div className='relative -mx-5 sm:-mx-6 overflow-hidden min-h-72 sm:min-h-[26rem] flex flex-col justify-end'>
                 <div className='absolute inset-0'>
                     {item.backdrop_path && (
                         <Image
                             src={`${config.url.IMAGE_URL}${item.backdrop_path}`}
-                            alt='' fill className='object-cover w-full h-full blur-sm opacity-20 scale-110'
+                            alt='' fill className='object-cover w-full h-full opacity-25 scale-105'
                         />
                     )}
-                    <div className='absolute inset-0 bg-black/25' />
-                    <div className='absolute inset-0 bg-linear-to-b from-transparent from-10% via-background/35 via-70% to-background/80' />
-                    <div className='absolute inset-0 bg-linear-to-r from-background/10 to-transparent hidden sm:block' />
+                    <div className='absolute inset-0 bg-linear-to-b from-transparent from-[5%] via-background/50 via-[65%] to-background/90' />
+                    <div className='absolute inset-0 bg-linear-to-r from-background/20 to-transparent hidden sm:block' />
                 </div>
-                <div className='relative z-10 px-4 sm:px-5 pb-8 pt-6'>
+                <div className='relative z-10 px-5 sm:px-6 pb-8 pt-6'>
                     <div className='flex flex-col items-center sm:flex-row sm:items-end gap-5 sm:gap-8'>
-                        <div className='relative aspect-[2/3] w-32 sm:w-44 md:w-52 rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/20 shrink-0'>
+                        <div className='relative aspect-[2/3] w-32 sm:w-44 md:w-52 rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] ring-1 ring-white/15 shrink-0'>
                             {item.poster_path
                                 ? <Image src={`${config.url.IMAGE_URL}${item.poster_path}`} alt={title} fill className='object-cover' />
                                 : <div className='flex items-center justify-center h-full w-full'><ImageIcon className='w-full h-full p-8' /></div>}
                         </div>
-                        <div className='flex flex-col gap-3 sm:pb-1 text-center sm:text-left flex-1 min-w-0'>
-                            <div className='flex justify-center sm:justify-start'>
+                        <div className='flex flex-col gap-3.5 sm:pb-1 text-center sm:text-left flex-1 min-w-0'>
+                            <div className='flex items-center justify-center sm:justify-start gap-2.5 flex-wrap'>
                                 <span className='inline-flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-brand uppercase'>
                                     {movie ? <><Film className='h-3 w-3' />Movie</> : <><Tv className='h-3 w-3' />TV Series</>}
                                 </span>
-                            </div>
-                            <div className='flex flex-col gap-1'>
-                                <h1 className='text-3xl sm:text-4xl font-bold leading-tight text-white drop-shadow-sm'>{title}</h1>
-                                {originalTitle !== title && <p className='text-sm text-white/50'>{originalTitle}</p>}
-                            </div>
-                            <div className='flex flex-wrap items-center justify-center sm:justify-start gap-x-2.5 gap-y-1 text-sm'>
-                                <span className='text-white/65'>{releaseDate}</span>
-                                {runtime != null && runtime > 0 && (
-                                    <><span className='text-white/25 text-xs'>·</span><span className='text-white/65'>{formatRuntime(runtime)}</span></>
-                                )}
                                 {item.vote_average > 0 && (
-                                    <><span className='text-white/25 text-xs'>·</span>
-                                        <span className='flex items-center gap-1'>
-                                            <Star className='h-3.5 w-3.5 fill-yellow-400 stroke-none shrink-0' />
-                                            <span className='font-semibold text-white'>{item.vote_average.toFixed(1)}</span>
-                                            <span className='text-white/40 text-xs'>/10</span>
-                                            {voteCount > 0 && <span className='text-white/30 text-xs'>({formatVotes(voteCount)})</span>}
-                                        </span></>
+                                    <span className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-yellow-400/10 border border-yellow-400/20 text-[10px] font-bold text-yellow-400'>
+                                        <Star className='h-2.5 w-2.5 fill-current stroke-none' />
+                                        {item.vote_average.toFixed(1)}
+                                        {voteCount > 0 && <span className='font-normal text-yellow-400/50 ml-0.5'>· {formatVotes(voteCount)}</span>}
+                                    </span>
                                 )}
                             </div>
-                            {item.tagline && <p className='text-sm italic text-white/45 leading-snug'>&ldquo;{item.tagline}&rdquo;</p>}
+                            <div className='flex flex-col gap-1.5'>
+                                <h1 className='text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-none sm:leading-tight text-white'>{title}</h1>
+                                {originalTitle !== title && <p className='text-sm text-white/35 font-light'>{originalTitle}</p>}
+                            </div>
+                            <div className='flex flex-wrap items-center justify-center sm:justify-start gap-x-2 gap-y-0.5 text-xs text-white/40'>
+                                <span>{releaseDate}</span>
+                                {runtime != null && runtime > 0 && (
+                                    <><span className='text-white/20'>·</span><span>{formatRuntime(runtime)}</span></>
+                                )}
+                                {show && show.number_of_seasons > 0 && (
+                                    <><span className='text-white/20'>·</span><span>{show.number_of_seasons} season{show.number_of_seasons !== 1 ? 's' : ''}</span></>
+                                )}
+                            </div>
+                            {item.tagline && <p className='text-[13px] italic text-white/32 leading-snug font-light tracking-wide'>&ldquo;{item.tagline}&rdquo;</p>}
                             {item.genres.length > 0 && (
                                 <div className='flex flex-wrap justify-center sm:justify-start gap-1.5'>
                                     {item.genres.map((genre) => (
                                         <span
                                             key={genre.id}
-                                            className={
-                                                'px-2.5 py-0.5 bg-white/8 border border-white/12 rounded-full' +
-                                                ' text-xs text-white/75 hover:bg-white/15 transition-colors cursor-default'
-                                            }
+                                            className='px-2.5 py-0.5 bg-white/6 rounded-md text-[11px] font-medium text-white/60 hover:bg-white/10 transition-colors cursor-default'
                                         >
                                             {genre.name}
                                         </span>
@@ -113,10 +110,7 @@ export default function MediaPage({ item, media, similar, region, collection, wa
                                 <TrailerButton videos={item.videos?.results ?? []} />
                                 {item.homepage && (
                                     <Link href={item.homepage} target='_blank' rel='noopener noreferrer'
-                                        className={
-                                            'inline-flex items-center gap-1.5 h-10 px-3 rounded-lg border border-white/20' +
-                                            ' bg-white/5 text-white/75 hover:text-white hover:bg-white/12 text-sm font-medium transition-colors'
-                                        }>
+                                        className='inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl border border-white/12 bg-white/5 text-white/70 hover:text-white hover:bg-white/10 text-sm font-medium transition-all'>
                                         <Globe className='h-3.5 w-3.5 shrink-0' />
                                         <span className='hidden xs:inline'>Website</span>
                                     </Link>
@@ -130,30 +124,28 @@ export default function MediaPage({ item, media, similar, region, collection, wa
             {item.overview && (
                 <section className='flex flex-col gap-3'>
                     <SectionHeading>Overview</SectionHeading>
-                    <div className='bg-card border border-border rounded-xl p-4 shadow-sm'>
-                        <p className='text-sm leading-relaxed text-muted-foreground'>{item.overview}</p>
-                    </div>
+                    <p className='text-sm leading-relaxed text-muted-foreground'>{item.overview}</p>
                 </section>
             )}
 
-            <section className='flex flex-col gap-3'>
+            <section className='flex flex-col gap-4'>
                 <SectionHeading>Where to Watch</SectionHeading>
                 {Object.keys(sortedProviders).length > 0 ? (
-                    <div className='bg-card border border-border rounded-xl overflow-hidden shadow-sm'>
-                        {Object.entries(sortedProviders).map(([key, value], idx, arr) => (
-                            <div key={key} className={`px-4 py-3.5 ${idx < arr.length - 1 ? 'border-b border-border' : ''}`}>
-                                <p className='text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-3'>
+                    <div className='flex flex-col gap-5'>
+                        {Object.entries(sortedProviders).map(([key, value]) => (
+                            <div key={key} className='flex flex-col gap-3'>
+                                <p className='text-[10px] font-bold text-muted-foreground/50 uppercase tracking-[0.1em]'>
                                     {key === 'flatrate' ? 'Stream' : key === 'buy' ? 'Buy' : 'Rent'}
                                 </p>
                                 <div className='flex flex-row gap-3 overflow-x-auto noscroll pb-0.5'>
                                     {Array.isArray(value) && value.map((provider, i) => (
-                                        <div key={i} className='flex flex-col items-center gap-1.5 shrink-0'>
-                                            <div className='relative w-11 h-11 rounded-xl overflow-hidden ring-1 ring-border/50 shadow-sm'>
+                                        <div key={i} className='flex flex-col items-center gap-2 shrink-0'>
+                                            <div className='relative w-12 h-12 rounded-2xl overflow-hidden ring-1 ring-border/60 shadow-md'>
                                                 {provider.logo_path
                                                     ? <Image src={`${config.url.IMAGE_URL}${provider.logo_path}`} alt={provider.provider_name} fill className='object-cover' />
-                                                    : <div className='flex items-center justify-center h-full w-full'><ImageIcon className='w-full h-full p-8' /></div>}
+                                                    : <div className='flex items-center justify-center h-full w-full bg-muted'><ImageIcon className='h-5 w-5 text-muted-foreground' /></div>}
                                             </div>
-                                            <span className='text-[10px] text-muted-foreground/80 max-w-14 truncate text-center leading-tight'>{provider.provider_name}</span>
+                                            <span className='text-[10px] text-muted-foreground/60 max-w-16 truncate text-center leading-tight'>{provider.provider_name}</span>
                                         </div>
                                     ))}
                                 </div>
@@ -161,53 +153,45 @@ export default function MediaPage({ item, media, similar, region, collection, wa
                         ))}
                     </div>
                 ) : (
-                    <div className='bg-card border border-border rounded-xl p-4 shadow-sm'>
-                        <p className='text-sm text-muted-foreground'>Not available for your region.</p>
-                    </div>
+                    <p className='text-sm text-muted-foreground/60'>Not available for your region.</p>
                 )}
             </section>
 
             {seasons.length > 0 && <SeasonSection showId={item.id} seasons={seasons} />}
 
-            <section className='flex flex-col gap-3'>
+            <section className='flex flex-col gap-4'>
                 <SectionHeading>Details</SectionHeading>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
-                    <div className='bg-card border border-border rounded-xl overflow-hidden shadow-sm'>
-                        <p className='px-4 pt-3 pb-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border'>General</p>
-                        <div className='px-4 divide-y divide-border'>
-                            <DetailRow label='Status'><StatusBadge status={item.status} /></DetailRow>
-                            <DetailRow label='Language' value={item.original_language.toUpperCase()} />
-                            <DetailRow label='Popularity' value={item.popularity.toFixed(0)} />
-                            {movie ? (<>
-                                {runtime != null && runtime > 0 && <DetailRow label='Runtime' value={formatRuntime(runtime)} />}
-                                {movie.budget > 0 && <DetailRow label='Budget' value={`$${movie.budget.toLocaleString(config.setting.LANGUAGE)}`} />}
-                                {movie.revenue > 0 && <DetailRow label='Revenue' value={`$${movie.revenue.toLocaleString(config.setting.LANGUAGE)}`} />}
-                                {movie.imdb_id && (
-                                    <DetailRow label='IMDB'>
-                                        <a href={`https://www.imdb.com/title/${movie.imdb_id}`} target='_blank' rel='noopener noreferrer' className='text-xs font-medium text-brand hover:text-brand-dim transition-colors'>{movie.imdb_id}</a>
-                                    </DetailRow>
-                                )}
-                            </>) : show ? (<>
-                                <DetailRow label='Seasons' value={show.number_of_seasons} />
-                                <DetailRow label='Episodes' value={show.number_of_episodes} />
-                                <DetailRow label='First Air' value={new Date(show.first_air_date).toLocaleDateString(config.setting.LANGUAGE)} />
-                                <DetailRow label='Last Air' value={new Date(show.last_air_date).toLocaleDateString(config.setting.LANGUAGE)} />
-                                {show.episode_run_time?.length > 0 && <DetailRow label='Runtime' value={`${show.episode_run_time.join(', ')} min`} />}
-                                <DetailRow label='Type' value={show.type} />
-                            </>) : null}
-                        </div>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-x-10'>
+                    <div className='divide-y divide-border/60'>
+                        <DetailRow label='Status'><StatusBadge status={item.status} /></DetailRow>
+                        <DetailRow label='Language' value={item.original_language.toUpperCase()} />
+                        <DetailRow label='Popularity' value={item.popularity.toFixed(0)} />
+                        {movie ? (<>
+                            {runtime != null && runtime > 0 && <DetailRow label='Runtime' value={formatRuntime(runtime)} />}
+                            {movie.budget > 0 && <DetailRow label='Budget' value={`$${movie.budget.toLocaleString(config.setting.LANGUAGE)}`} />}
+                            {movie.revenue > 0 && <DetailRow label='Revenue' value={`$${movie.revenue.toLocaleString(config.setting.LANGUAGE)}`} />}
+                            {movie.imdb_id && (
+                                <DetailRow label='IMDB'>
+                                    <a href={`https://www.imdb.com/title/${movie.imdb_id}`} target='_blank' rel='noopener noreferrer' className='text-xs font-medium text-brand hover:text-brand-dim transition-colors'>{movie.imdb_id}</a>
+                                </DetailRow>
+                            )}
+                        </>) : show ? (<>
+                            <DetailRow label='Seasons' value={show.number_of_seasons} />
+                            <DetailRow label='Episodes' value={show.number_of_episodes} />
+                            <DetailRow label='First Air' value={new Date(show.first_air_date).toLocaleDateString(config.setting.LANGUAGE)} />
+                            <DetailRow label='Last Air' value={new Date(show.last_air_date).toLocaleDateString(config.setting.LANGUAGE)} />
+                            {show.episode_run_time?.length > 0 && <DetailRow label='Runtime' value={`${show.episode_run_time.join(', ')} min`} />}
+                            <DetailRow label='Type' value={show.type} />
+                        </>) : null}
                     </div>
-                    <div className='bg-card border border-border rounded-xl overflow-hidden shadow-sm'>
-                        <p className='px-4 pt-3 pb-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider border-b border-border'>Production</p>
-                        <div className='px-4 py-3 flex flex-col gap-4'>
-                            <InfoSection title='Companies' items={item.production_companies} />
-                            <InfoSection title='Countries' items={item.production_countries} />
-                            <InfoSection title='Languages' items={item.spoken_languages.map((l) => ({ id: l.iso_639_1, name: l.english_name }))} />
-                            {show && (<>
-                                <InfoSection title='Networks' items={show.networks} />
-                                {show.created_by.length > 0 && <InfoSection title='Created By' items={show.created_by} />}
-                            </>)}
-                        </div>
+                    <div className='divide-y divide-border/60 mt-0 sm:mt-0 border-t border-border/60 sm:border-t-0 pt-0 sm:pt-0'>
+                        <InfoDetailRow label='Companies' items={item.production_companies} />
+                        <InfoDetailRow label='Countries' items={item.production_countries} />
+                        <InfoDetailRow label='Languages' items={item.spoken_languages.map((l) => ({ id: l.iso_639_1, name: l.english_name }))} />
+                        {show && (<>
+                            <InfoDetailRow label='Networks' items={show.networks} />
+                            {show.created_by.length > 0 && <InfoDetailRow label='Created By' items={show.created_by} />}
+                        </>)}
                     </div>
                 </div>
             </section>
@@ -258,25 +242,23 @@ function StatusBadge({ status }: { status: string }) {
 function DetailRow({ label, value, children }: { label: string; value?: string | number | null; children?: React.ReactNode }) {
     if (!children && (value == null || value === '')) return null
     return (
-        <div className='flex items-center justify-between py-2.5 min-h-10 gap-4'>
-            <span className='text-xs text-muted-foreground shrink-0'>{label}</span>
+        <div className='flex items-center justify-between py-3 gap-4'>
+            <span className='text-xs text-muted-foreground/70 shrink-0'>{label}</span>
             <div className='text-right'>
-                {children ?? <span className='text-xs font-medium text-foreground/90'>{String(value)}</span>}
+                {children ?? <span className='text-xs font-medium text-foreground/85'>{String(value)}</span>}
             </div>
         </div>
     )
 }
 
-function InfoSection({ title, items }: { title: string; items: Array<{ id?: number | string; name: string }> | undefined }) {
+function InfoDetailRow({ label, items }: { label: string; items: Array<{ id?: number | string; name: string }> | undefined }) {
     if (!items?.length) return null
     return (
-        <div className='flex flex-col gap-1.5'>
-            <p className='text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-wider'>{title}</p>
-            <div className='flex flex-wrap gap-1'>
-                {items.map((item, i) => (
-                    <span key={item.id ?? i} className='text-xs bg-muted/50 border border-border/50 text-foreground/75 px-2 py-0.5 rounded-md'>{item.name}</span>
-                ))}
-            </div>
+        <div className='flex items-start justify-between py-3 gap-4'>
+            <span className='text-xs text-muted-foreground/70 shrink-0'>{label}</span>
+            <span className='text-xs font-medium text-foreground/85 text-right leading-relaxed'>
+                {items.map(i => i.name).join(', ')}
+            </span>
         </div>
     )
 }

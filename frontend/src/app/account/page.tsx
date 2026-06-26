@@ -63,9 +63,9 @@ export default async function Page() {
             watchedIds={watchedItemIds}
             listedIds={defaultListItems.map(r => r.id)}
         >
-            <div className='w-full flex flex-col gap-6'>
+            <div className='w-full flex flex-col gap-8'>
                 {hasMedia ? (
-                    <div className='flex flex-col gap-6'>
+                    <div className='flex flex-col gap-8'>
                         {surpriseCandidates.length > 0 && continueItems.length === 0 && (
                             <div className='flex justify-end'>
                                 <SurpriseButton items={surpriseCandidates} />
@@ -95,22 +95,19 @@ export default async function Page() {
                         ))}
                     </div>
                 ) : (
-                    <div className='flex flex-col items-center justify-center gap-5 py-20 text-center'>
-                        <div className='flex h-14 w-14 items-center justify-center rounded-2xl bg-muted ring-1 ring-border/60'>
-                            <Library className='h-7 w-7 text-muted-foreground' />
+                    <div className='flex flex-col items-center justify-center gap-5 py-24 text-center'>
+                        <div className='flex h-16 w-16 items-center justify-center rounded-2xl bg-muted/60'>
+                            <Library className='h-7 w-7 text-muted-foreground/40' />
                         </div>
                         <div className='flex flex-col gap-2'>
                             <p className='text-sm font-semibold'>Your library is empty</p>
-                            <p className='text-xs text-muted-foreground max-w-xs leading-relaxed'>
+                            <p className='text-xs text-muted-foreground/60 max-w-xs leading-relaxed'>
                                 Browse movies and shows and save them to your lists to see them here.
                             </p>
                         </div>
                         <Link
                             href='/'
-                            className={
-                                'inline-flex items-center gap-2 h-9 px-5 rounded-lg ' +
-                            'bg-brand hover:bg-brand-dim active:bg-brand-dimmer text-white text-sm font-medium transition-colors'
-                            }
+                            className='inline-flex items-center gap-2 h-9 px-5 rounded-xl bg-brand hover:bg-brand-dim active:bg-brand-dimmer text-white text-sm font-medium transition-colors'
                         >
                             Browse
                         </Link>

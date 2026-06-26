@@ -10,7 +10,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     }
 
     return (
-        <div className='flex flex-col sm:flex-row w-full gap-6'>
+        <div className='flex flex-col sm:flex-row w-full gap-8'>
             <AccountSidebar logoutAction={handleLogout} />
             <div className='flex-1 min-w-0'>
                 {children}

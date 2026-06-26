@@ -35,14 +35,14 @@ export default async function SettingsPage() {
     }
 
     return (
-        <div className='w-full flex flex-col gap-4 max-w-xl'>
-            <div className='flex flex-col gap-0.5'>
-                <h1 className='text-lg font-semibold'>Settings</h1>
-                <p className='text-xs text-muted-foreground'>Content preferences and display options.</p>
+        <div className='w-full flex flex-col gap-8 max-w-xl'>
+            <div className='flex flex-col gap-1'>
+                <h1 className='text-2xl font-black tracking-tight'>Settings</h1>
+                <p className='text-xs text-muted-foreground/70'>Content preferences and display options.</p>
             </div>
             <Form action={updateSettings} className='w-full flex flex-col gap-3'>
-                <div className='rounded-xl border border-border overflow-hidden bg-card'>
-                    <p className='text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider px-4 pt-3 pb-1'>
+                <div className='rounded-2xl border border-border/60 overflow-hidden bg-card'>
+                    <p className='text-[10px] font-bold text-muted-foreground/50 uppercase tracking-[0.1em] px-4 pt-4 pb-1'>
                         Content
                     </p>
                     <SettingRow label='Language'>
@@ -84,8 +84,8 @@ export default async function SettingsPage() {
                     </SettingRow>
                 </div>
 
-                <div className='rounded-xl border border-border overflow-hidden bg-card'>
-                    <p className='text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider px-4 pt-3 pb-1'>
+                <div className='rounded-2xl border border-border/60 overflow-hidden bg-card'>
+                    <p className='text-[10px] font-bold text-muted-foreground/50 uppercase tracking-[0.1em] px-4 pt-4 pb-1'>
                         Preferences
                     </p>
                     <ToggleRow
@@ -115,8 +115,8 @@ function SettingRow({ label, children, last = false }: {
     last?: boolean
 }) {
     return (
-        <div className={`flex items-center justify-between px-4 min-h-12 ${!last ? 'border-b border-border' : ''}`}>
-            <span className='text-sm font-medium'>{label}</span>
+        <div className={`flex items-center justify-between px-4 min-h-[3.25rem] ${!last ? 'border-b border-border/60' : ''}`}>
+            <span className='text-sm text-foreground/80'>{label}</span>
             {children}
         </div>
     )
@@ -129,8 +129,8 @@ function ToggleRow({ label, name, defaultChecked, last = false }: {
     last?: boolean
 }) {
     return (
-        <label className={`flex items-center justify-between px-4 min-h-12 cursor-pointer select-none ${!last ? 'border-b border-border' : ''}`}>
-            <span className='text-sm font-medium'>{label}</span>
+        <label className={`flex items-center justify-between px-4 min-h-[3.25rem] cursor-pointer select-none ${!last ? 'border-b border-border/60' : ''}`}>
+            <span className='text-sm text-foreground/80'>{label}</span>
             <span className='relative inline-flex h-5 w-9 shrink-0 items-center'>
                 <input
                     type='checkbox'
@@ -139,12 +139,12 @@ function ToggleRow({ label, name, defaultChecked, last = false }: {
                     className='peer sr-only'
                 />
                 <span className={
-                    'block h-5 w-9 rounded-full border border-border/60 bg-muted ' +
+                    'block h-5 w-9 rounded-full border border-border/60 bg-muted/80 ' +
                     'transition-colors duration-200 peer-checked:border-brand peer-checked:bg-brand'
                 } />
                 <span className={
                     'pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full ' +
-                    'bg-foreground/30 shadow-sm transition-transform duration-200 peer-checked:translate-x-4 peer-checked:bg-white'
+                    'bg-muted-foreground/30 shadow-sm transition-transform duration-200 peer-checked:translate-x-4 peer-checked:bg-white'
                 } />
             </span>
         </label>

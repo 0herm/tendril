@@ -32,7 +32,7 @@
 
 ### ✨ Features
 
-- **Find something to watch.** Browse trending, popular, top rated, new, and upcoming titles for both movies and TV shows, or just search for the one you already have in mind.
+- **Find something to watch.** A hero carousel puts trending and featured titles front and centre. Browse trending, popular, top rated, new, and upcoming titles for both movies and TV shows, or just search for the one you already have in mind.
 - **Dig into the details.** Every title gets its own page with the trailer, cast and crew, the studios and networks behind it, and a "More Like This" rail for when one good film turns into a whole evening.
 - **Keep track of what you've seen.** Mark things watched, and for shows it goes season by season and episode by episode, so "Continue Watching" actually knows where you left off.
 - **Make it yours.** Build your own lists and organize titles however makes sense to you.

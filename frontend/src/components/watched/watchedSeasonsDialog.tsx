@@ -13,7 +13,7 @@ export function WatchedSeasonsBody() {
 
     return (
         <>
-            <div className='px-5 pt-4 grid grid-cols-2 xs:grid-cols-3 gap-2 max-h-64 overflow-y-auto'>
+            <div className='px-5 pt-4 grid grid-cols-2 xs:grid-cols-3 gap-2 max-h-64 overflow-y-auto noscroll'>
                 {ctx.seasons.map((season) => (
                     <Button
                         key={season.id}
@@ -26,11 +26,11 @@ export function WatchedSeasonsBody() {
             </div>
             {pickerSeason > 0 && (
                 <div className='px-5 pt-4'>
-                    <p className='text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2'>
+                    <p className='text-[10px] font-bold text-muted-foreground/50 uppercase tracking-[0.1em] mb-2'>
                         Season {pickerSeason} episodes
                     </p>
                     {ctx.airedEpisodeCount(pickerSeason) > 0 ? (
-                        <div className='flex flex-wrap gap-1.5 max-h-32 overflow-y-auto'>
+                        <div className='flex flex-wrap gap-1.5 max-h-32 overflow-y-auto noscroll'>
                             {Array.from({ length: ctx.airedEpisodeCount(pickerSeason) }, (_, i) => i + 1).map((ep) => {
                                 const watched = ep <= ctx.watchedUpTo(pickerSeason)
                                 return (
@@ -56,7 +56,7 @@ export function WatchedSeasonsBody() {
                     )}
                 </div>
             )}
-            <div className='px-5 py-4 flex gap-2 border-t border-border mt-2'>
+            <div className='px-5 py-4 flex gap-2 border-t border-border/60 mt-2'>
                 <Button variant='outline' className='flex-1' onClick={() => ctx.setAllSeasons()}>
                     All Seasons
                 </Button>
@@ -85,7 +85,7 @@ export function WatchedSeasonsSkeleton() {
                     ))}
                 </div>
             </div>
-            <div className='px-5 py-4 flex gap-2 border-t border-border mt-2'>
+            <div className='px-5 py-4 flex gap-2 border-t border-border/60 mt-2'>
                 <div className='h-9 flex-1 bg-muted animate-pulse rounded-md' />
                 <div className='h-9 flex-1 bg-muted animate-pulse rounded-md' />
             </div>
