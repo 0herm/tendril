@@ -28,7 +28,7 @@ export default async function SettingsPage() {
             include_adult: formData.get('include_adult') === 'on',
             timezone: formData.get('timezone') as string,
         })
-        revalidateTag('app-settings')
+        revalidateTag('app-settings', {})
         redirect('/account/settings')
     }
 
