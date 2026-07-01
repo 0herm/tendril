@@ -1,9 +1,9 @@
 import webpush from 'web-push'
 import { dbWrapper } from '@/utils/queries'
 import config from '@config'
+import { getAppSettings } from '@/utils/settings'
 
 const TMDB_TOKEN = process.env.TMDB_ACCESS_TOKEN || process.env.ACCESS_TOKEN
-const LANGUAGE   = config.setting.LANGUAGE
 
 type PushPayload = {
     title: string
@@ -49,8 +49,10 @@ type TmdbShow  = {
 
 async function tmdb<T>(path: string): Promise<T | null> {
     if (!TMDB_TOKEN) return null
+    const { language } = await getAppSettings()
+    const sep = path.includes('?') ? '&' : '?'
     try {
-        const res = await fetch(`${config.url.API_URL}${path}`, { headers: { Authorization: `Bearer ${TMDB_TOKEN}` }, cache: 'no-store' })
+        const res = await fetch(`${config.url.API_URL}${path}${sep}language=${language}`, { headers: { Authorization: `Bearer ${TMDB_TOKEN}` }, cache: 'no-store' })
         return res.ok ? (res.json() as Promise<T>) : null
     } catch { return null }
 }
@@ -87,7 +89,7 @@ export async function checkMovieReleased(): Promise<number> {
     let sent = 0
     for (const { tmdb_id } of items) {
         if (await alreadySent('movie_released', tmdb_id)) continue
-        const movie = await tmdb<TmdbMovie>(`3/movie/${tmdb_id}?language=${LANGUAGE}`)
+        const movie = await tmdb<TmdbMovie>(`3/movie/${tmdb_id}`)
         if (!movie || movie.status !== 'Released') continue
         const age = daysFromNow(movie.release_date)
         if (age < 0 || age > 7) continue
@@ -104,10 +106,10 @@ export async function checkUpcomingRelease(): Promise<number> {
     for (const { tmdb_id, type } of items) {
         let dateStr: string | undefined, label: string | undefined, url: string
         if (type === 'movie') {
-            const movie = await tmdb<TmdbMovie>(`3/movie/${tmdb_id}?language=${LANGUAGE}`)
+            const movie = await tmdb<TmdbMovie>(`3/movie/${tmdb_id}`)
             dateStr = movie?.release_date; label = movie?.title; url = `/movie/${tmdb_id}`
         } else {
-            const show = await tmdb<TmdbShow>(`3/tv/${tmdb_id}?language=${LANGUAGE}`)
+            const show = await tmdb<TmdbShow>(`3/tv/${tmdb_id}`)
             dateStr = show?.next_episode_to_air?.air_date; label = show?.name; url = `/show/${tmdb_id}`
         }
         if (!dateStr || !label) continue
@@ -135,8 +137,8 @@ export async function checkWatchlistReminder(): Promise<number> {
     if (unsent.length === 1) {
         const { tmdb_id, type } = unsent[0]
         const data = type === 'movie'
-            ? await tmdb<TmdbMovie>(`3/movie/${tmdb_id}?language=${LANGUAGE}`)
-            : await tmdb<TmdbShow>(`3/tv/${tmdb_id}?language=${LANGUAGE}`)
+            ? await tmdb<TmdbMovie>(`3/movie/${tmdb_id}`)
+            : await tmdb<TmdbShow>(`3/tv/${tmdb_id}`)
         const name = data ? ((data as TmdbMovie).title ?? (data as TmdbShow).name) : `#${tmdb_id}`
         p = { title: 'Still on your list…', body: `${name} has been waiting over a month.`, url: `/${type === 'movie' ? 'movie' : 'show'}/${tmdb_id}` }
     } else {
@@ -164,7 +166,7 @@ export async function checkNewSeason(): Promise<number> {
     if (!shows?.length) return 0
     let sent = 0
     for (const { tmdb_id, name, total_seasons } of shows) {
-        const show = await tmdb<TmdbShow>(`3/tv/${tmdb_id}?language=${LANGUAGE}`)
+        const show = await tmdb<TmdbShow>(`3/tv/${tmdb_id}`)
         if (!show || show.number_of_seasons <= total_seasons) continue
         const newSeasonNum = String(show.number_of_seasons)
         const newSeason = show.seasons.find((s) => s.season_number === show.number_of_seasons)
@@ -183,7 +185,7 @@ export async function checkNewEpisodes(): Promise<number> {
     if (!shows?.length) return 0
     let sent = 0
     for (const { tmdb_id, name, watched_seasons, episode_counts } of shows) {
-        const show = await tmdb<TmdbShow>(`3/tv/${tmdb_id}?language=${LANGUAGE}`)
+        const show = await tmdb<TmdbShow>(`3/tv/${tmdb_id}`)
         if (!show) continue
         for (let i = 0; i < watched_seasons.length; i++) {
             const seasonNum = watched_seasons[i], storedCount = episode_counts[i]
@@ -214,7 +216,7 @@ export async function checkShowEnded(): Promise<number> {
     if (!shows?.length) return 0
     let sent = 0
     for (const { tmdb_id, name, show_status } of shows) {
-        const show = await tmdb<TmdbShow>(`3/tv/${tmdb_id}?language=${LANGUAGE}`)
+        const show = await tmdb<TmdbShow>(`3/tv/${tmdb_id}`)
         if (!show || (show.status !== 'Ended' && show.status !== 'Canceled') || show.status === show_status) continue
         if (await alreadySent('show_ended', tmdb_id)) continue
         const cancelled = show.status === 'Canceled'
@@ -238,12 +240,12 @@ export async function checkNewCollectionMovie(): Promise<number> {
     const checkedCollections = new Set<number>()
     let sent = 0
     for (const tmdb_id of allIds) {
-        const movie = await tmdb<TmdbMovie>(`3/movie/${tmdb_id}?language=${LANGUAGE}`)
+        const movie = await tmdb<TmdbMovie>(`3/movie/${tmdb_id}`)
         if (!movie?.belongs_to_collection) continue
         const collectionId = movie.belongs_to_collection.id
         if (checkedCollections.has(collectionId)) continue
         checkedCollections.add(collectionId)
-        const collection = await tmdb<TmdbCollection>(`3/collection/${collectionId}?language=${LANGUAGE}`)
+        const collection = await tmdb<TmdbCollection>(`3/collection/${collectionId}`)
         if (!collection) continue
         for (const part of collection.parts) {
             if (allIds.has(part.id) || !part.release_date) continue

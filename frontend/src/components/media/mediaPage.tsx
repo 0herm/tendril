@@ -16,21 +16,23 @@ type MediaPageProps = {
     media: 'movie' | 'show'
     similar?: MediaListProps | null
     region?: string | null
+    language?: string | null
     collection?: CollectionProps | null
     watchedInSimilar?: number
 }
 
-export default function MediaPage({ item, media, similar, region, collection, watchedInSimilar }: MediaPageProps) {
+export default function MediaPage({ item, media, similar, region, language, collection, watchedInSimilar }: MediaPageProps) {
     const movie = media === 'movie' ? item as MovieDetailsProps : null
     const show  = media === 'show'  ? item as ShowDetailsProps  : null
 
-    const activeRegion = region || config.setting.REGION
+    const activeRegion   = region   || 'GB'
+    const activeLanguage = language || 'en-GB'
     const regionProviders = (item['watch/providers']?.results[activeRegion] ?? {}) as Record<string, unknown>
     const sortedProviders = Object.fromEntries(
         ['flatrate', 'rent', 'buy'].filter((k) => k in regionProviders).map((k) => [k, regionProviders[k]])
     )
 
-    const releaseDate = new Date(movie?.release_date ?? show?.first_air_date ?? '').toLocaleDateString(config.setting.LANGUAGE)
+    const releaseDate = new Date(movie?.release_date ?? show?.first_air_date ?? '').toLocaleDateString(activeLanguage)
     const title = movie?.title ?? show?.name ?? ''
     const originalTitle = movie?.original_title ?? show?.original_name
     const runtime = movie?.runtime ?? null
@@ -168,8 +170,8 @@ export default function MediaPage({ item, media, similar, region, collection, wa
                         <DetailRow label='Popularity' value={item.popularity.toFixed(0)} />
                         {movie ? (<>
                             {runtime != null && runtime > 0 && <DetailRow label='Runtime' value={formatRuntime(runtime)} />}
-                            {movie.budget > 0 && <DetailRow label='Budget' value={`$${movie.budget.toLocaleString(config.setting.LANGUAGE)}`} />}
-                            {movie.revenue > 0 && <DetailRow label='Revenue' value={`$${movie.revenue.toLocaleString(config.setting.LANGUAGE)}`} />}
+                            {movie.budget > 0 && <DetailRow label='Budget' value={`$${movie.budget.toLocaleString(activeLanguage)}`} />}
+                            {movie.revenue > 0 && <DetailRow label='Revenue' value={`$${movie.revenue.toLocaleString(activeLanguage)}`} />}
                             {movie.imdb_id && (
                                 <DetailRow label='IMDB'>
                                     <a href={`https://www.imdb.com/title/${movie.imdb_id}`} target='_blank' rel='noopener noreferrer' className='text-xs font-medium text-brand hover:text-brand-dim transition-colors'>{movie.imdb_id}</a>
@@ -178,8 +180,8 @@ export default function MediaPage({ item, media, similar, region, collection, wa
                         </>) : show ? (<>
                             <DetailRow label='Seasons' value={show.number_of_seasons} />
                             <DetailRow label='Episodes' value={show.number_of_episodes} />
-                            <DetailRow label='First Air' value={new Date(show.first_air_date).toLocaleDateString(config.setting.LANGUAGE)} />
-                            <DetailRow label='Last Air' value={new Date(show.last_air_date).toLocaleDateString(config.setting.LANGUAGE)} />
+                            <DetailRow label='First Air' value={new Date(show.first_air_date).toLocaleDateString(activeLanguage)} />
+                            <DetailRow label='Last Air' value={new Date(show.last_air_date).toLocaleDateString(activeLanguage)} />
                             {show.episode_run_time?.length > 0 && <DetailRow label='Runtime' value={`${show.episode_run_time.join(', ')} min`} />}
                             <DetailRow label='Type' value={show.type} />
                         </>) : null}

@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: Promise<{ id: number }>
             watchedIds={watchedIdList}
             listedIds={listState.listedIds}
         >
-            <MediaPage item={data} media='show' similar={similar} region={settings?.region} watchedInSimilar={watchedInSimilar} />
+            <MediaPage item={data} media='show' similar={similar} region={settings?.region} language={settings?.language} watchedInSimilar={watchedInSimilar} />
         </MediaStateProvider>
     )
 }

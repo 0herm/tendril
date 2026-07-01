@@ -6,12 +6,6 @@ const config = {
         IMAGE_URL:  'https://image.tmdb.org/t/p/w500',
         BACKDROP_URL: 'https://image.tmdb.org/t/p/original'
     },
-    setting: {
-        REGION:        process.env.REGION    || 'GB',
-        LANGUAGE:      process.env.LANGUAGE  || 'en-GB',
-        INCLUDE_ADULT: process.env.INCLUDE_ADULT === 'true',
-        TIMEZONE:      process.env.TIMEZONE  || 'Europe/London',
-    },
     database: {
         HOST: process.env.POSTGRES_HOST,
         PORT: process.env.POSTGRES_PORT,

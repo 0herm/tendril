@@ -2,6 +2,7 @@ import { getUserSettings, updateUser } from '@/utils/queries'
 import { getCountries, getLanguages, getTimezones } from '@/utils/tmdbApi'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
+import { revalidateTag } from 'next/cache'
 import Form from 'next/form'
 import { Button } from '@/ui/button'
 import { Select } from '@/ui/select'
@@ -27,6 +28,7 @@ export default async function SettingsPage() {
             include_adult: formData.get('include_adult') === 'on',
             timezone: formData.get('timezone') as string,
         })
+        revalidateTag('app-settings')
         redirect('/account/settings')
     }
 
