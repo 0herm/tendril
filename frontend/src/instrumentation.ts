@@ -3,19 +3,5 @@ export async function register() {
 
     const { runAllChecks } = await import('@/utils/notifications')
 
-    function scheduleDaily(hour: number) {
-        const now = new Date()
-        const next = new Date()
-        next.setHours(hour, 0, 0, 0)
-        if (next <= now) next.setDate(next.getDate() + 1)
-
-        setTimeout(async () => {
-            await runAllChecks()
-            scheduleDaily(hour)
-        }, next.getTime() - now.getTime())
-
-        console.log(`[notifications] next check scheduled for ${next.toISOString()}`)
-    }
-
-    scheduleDaily(9)
+    Bun.cron('0 */6 * * *', runAllChecks)
 }
