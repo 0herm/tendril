@@ -23,8 +23,8 @@ export default function MediaSection({ title, items, type, ranked, action, progr
                 {title}
             </SectionHeading>
             <div className={ranked
-                ? 'flex flex-row gap-3 -mx-5 sm:-mx-6 pl-5 sm:pl-6 pr-5 sm:pr-6 pt-2 overflow-x-auto overscroll-x-contain noscroll pb-1 will-change-transform touch-pan-x'
-                : 'flex flex-row gap-3 -mx-5 sm:-mx-6 px-5 sm:px-6 overflow-x-auto overscroll-x-contain noscroll pb-1 will-change-transform touch-pan-x'
+                ? 'flex flex-row gap-3 -mx-5 sm:-mx-6 pl-5 sm:pl-6 pr-5 sm:pr-6 pt-2 overflow-x-auto overscroll-x-contain noscroll pb-1 will-change-transform'
+                : 'flex flex-row gap-3 -mx-5 sm:-mx-6 px-5 sm:px-6 overflow-x-auto overscroll-x-contain noscroll pb-1 will-change-transform'
             }>
                 {results.map((item, index) => (
                     <div
