@@ -107,6 +107,24 @@ export default async function SettingsPage() {
                     Save Changes
                 </Button>
             </Form>
+
+            <div className='rounded-2xl border border-border/60 overflow-hidden bg-card'>
+                <p className='text-[10px] font-bold text-muted-foreground/50 uppercase tracking-[0.1em] px-4 pt-4 pb-1'>
+                    Data
+                </p>
+                <div className='flex items-center justify-between px-4 min-h-[3.25rem]'>
+                    <div className='flex flex-col gap-0.5'>
+                        <span className='text-sm text-foreground/80'>Export Watch History</span>
+                        <span className='text-xs text-muted-foreground/60'>Download your watched list as CSV</span>
+                    </div>
+                    <a
+                        href='/api/export'
+                        className='inline-flex items-center h-8 px-3 rounded-lg bg-muted hover:bg-muted/80 text-xs font-medium transition-colors'
+                    >
+                        Export
+                    </a>
+                </div>
+            </div>
         </div>
     )
 }

@@ -6,9 +6,11 @@ import {
     getPopularMovies, getPopularShows,
     getTopRatedMovies, getTopRatedShows,
     getUpcomingMovies, getUpcomingShows,
+    getThisWeekMovies, getThisWeekShows,
+    getDetailsShow, getDetailsMovie,
 } from '@/utils/tmdbApi'
 import { getFilteredContinueWatching } from '@/utils/continueWatching'
-import { getAllWatched, getDefaultListState } from '@/utils/queries'
+import { getAllWatched, getDefaultList, getMediaByListId } from '@/utils/queries'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import { MediaStateProvider } from '@/components/watched/mediaStateContext'
@@ -23,6 +25,15 @@ function SetupError({ reason }: { reason: string }) {
     )
 }
 
+async function fetchDetail(item: { tmdb_id: number; type: 'movie' | 'show' }) {
+    if (item.type === 'show') {
+        const { data } = await getDetailsShow(item.tmdb_id)
+        return data ? { ...data, media_type: 'tv' as const } : null
+    }
+    const { data } = await getDetailsMovie(item.tmdb_id)
+    return data ? { ...data, media_type: 'movie' as const } : null
+}
+
 export default async function Home() {
     if (!await getSessionUserId()) redirect('/passkey/login')
 
@@ -31,7 +42,7 @@ export default async function Home() {
 
     const [
         cwItems,
-        listState,
+        watchlistResult,
         watchedResult,
         trendingDailyResult,
         trendingResult,
@@ -43,9 +54,19 @@ export default async function Home() {
         topRatedShowsResult,
         upcomingMoviesResult,
         upcomingShowsResult,
+        thisWeekMoviesResult,
+        thisWeekShowsResult,
     ] = await Promise.all([
         getFilteredContinueWatching(),
-        getDefaultListState(),
+        (async () => {
+            const { data: list } = await getDefaultList()
+            if (!list?.id) return { listId: undefined as number | undefined, listedIds: [] as number[], details: [] as (ShowDetailsProps | MovieDetailsProps)[] }
+            const { data: items } = await getMediaByListId(list.id)
+            const listedIds = (items ?? []).map(i => i.tmdb_id)
+            if (!listedIds.length) return { listId: list.id, listedIds, details: [] as (ShowDetailsProps | MovieDetailsProps)[] }
+            const details = (await Promise.all((items ?? []).map(fetchDetail))).filter(Boolean) as (ShowDetailsProps | MovieDetailsProps)[]
+            return { listId: list.id, listedIds, details }
+        })(),
         getAllWatched(),
         getTrendingDaily(),
         getTrending(),
@@ -57,6 +78,8 @@ export default async function Home() {
         getTopRatedShows(),
         getUpcomingMovies(),
         getUpcomingShows(),
+        getThisWeekMovies(),
+        getThisWeekShows(),
     ])
 
     const results = [
@@ -64,6 +87,7 @@ export default async function Home() {
         popularMoviesResult, popularShowsResult,
         topRatedMoviesResult, topRatedShowsResult,
         upcomingMoviesResult, upcomingShowsResult,
+        thisWeekMoviesResult, thisWeekShowsResult,
     ]
     const hasContent = results.some((r) => (r.data as MediaListProps | null)?.results?.length)
 
@@ -86,11 +110,17 @@ export default async function Home() {
         const watched = watchedResult.data?.find(w => w.tmdb_id === show.id)
         if (!watched) continue
         const today = new Date()
+        const lastEp = show.last_episode_to_air
         const airedSeasons = show.seasons.filter(s =>
             s.season_number > 0 && s.episode_count > 0 &&
             !!s.air_date && new Date(s.air_date) <= today
         )
-        const totalAired = airedSeasons.reduce((sum, s) => sum + s.episode_count, 0)
+        let totalAired = 0
+        for (const s of airedSeasons) {
+            totalAired += lastEp?.season_number === s.season_number
+                ? lastEp.episode_number
+                : s.episode_count
+        }
         if (!totalAired) continue
         let watchedEps = 0
         const watchedSeasons = watched.watched_seasons ?? []
@@ -99,16 +129,19 @@ export default async function Home() {
             const idx = watchedSeasons.indexOf(season.season_number)
             if (idx === -1) continue
             const count = episodeCounts[idx]
-            watchedEps += count != null ? count : season.episode_count
+            const airedInSeason = lastEp?.season_number === season.season_number
+                ? lastEp.episode_number
+                : season.episode_count
+            watchedEps += count != null ? count : airedInSeason
         }
         progressMap.set(show.id, Math.min(watchedEps / totalAired, 0.97))
     }
 
     return (
         <MediaStateProvider
-            listId={listState.listId}
+            listId={watchlistResult.listId}
             watchedIds={(watchedResult.data ?? []).map(w => w.tmdb_id)}
-            listedIds={listState.listedIds}
+            listedIds={watchlistResult.listedIds}
         >
             <div className='flex flex-col gap-8 w-full overflow-hidden'>
                 {trendingDailyResult.data?.results?.length ? (
@@ -118,6 +151,16 @@ export default async function Home() {
                 {cwItems.length > 0 && (
                     <MediaSection title='Continue Watching' items={cwItems} type='show' progressMap={progressMap} />
                 )}
+                {watchlistResult.details.length > 0 && (
+                    <MediaSection title='Want to Watch' items={watchlistResult.details} />
+                )}
+                <MediaSection
+                    title='New This Week'
+                    items={[
+                        ...(thisWeekMoviesResult.data?.results ?? []),
+                        ...(thisWeekShowsResult.data?.results ?? []),
+                    ].sort((a, b) => b.popularity - a.popularity)}
+                />
                 <MediaSection title='Trending' items={trendingResult.data} />
 
                 <div className='flex flex-col gap-6'>

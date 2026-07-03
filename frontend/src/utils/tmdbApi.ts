@@ -93,6 +93,28 @@ export async function getUpcomingShows(): Promise<ApiResult<TrendingProps>> {
     return getWrapper<TrendingProps>(`3/tv/on_the_air?${qs({ language, timezone })}`, REVALIDATE_LISTS)
 }
 
+export async function getThisWeekMovies(): Promise<ApiResult<TrendingProps>> {
+    const { language } = await getAppSettings()
+    const today = new Date()
+    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const fmt = (d: Date) => d.toISOString().slice(0, 10)
+    return getWrapper<TrendingProps>(
+        `3/discover/movie?${qs({ language, 'primary_release_date.gte': fmt(weekAgo), 'primary_release_date.lte': fmt(today), sort_by: 'popularity.desc', 'vote_count.gte': '10' })}`,
+        REVALIDATE_LISTS
+    )
+}
+
+export async function getThisWeekShows(): Promise<ApiResult<TrendingProps>> {
+    const { language } = await getAppSettings()
+    const today = new Date()
+    const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+    const fmt = (d: Date) => d.toISOString().slice(0, 10)
+    return getWrapper<TrendingProps>(
+        `3/discover/tv?${qs({ language, 'first_air_date.gte': fmt(weekAgo), 'first_air_date.lte': fmt(today), sort_by: 'popularity.desc', 'vote_count.gte': '10' })}`,
+        REVALIDATE_LISTS
+    )
+}
+
 export async function getDetailsShow(id: number): Promise<ApiResult<ShowDetailsProps>> {
     const { language } = await getAppSettings()
     return getWrapper<ShowDetailsProps>(`3/tv/${id}?${qs({ language, append_to_response: 'watch/providers,videos' })}`, REVALIDATE_DETAILS)
