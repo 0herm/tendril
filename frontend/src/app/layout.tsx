@@ -1,9 +1,12 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import { Inter } from 'next/font/google'
 
 import NavBar from '@/components/nav/nav'
 import BottomNav from '@/components/nav/bottomNav'
 import Footer from '@/components/nav/footer'
+
+const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' })
 
 export const metadata: Metadata = {
     title: 'Tendril',
@@ -28,12 +31,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <html lang='en' className='dark bg-background'>
+        <html lang='en' className={`dark bg-background ${inter.variable}`}>
             <head />
-            <body className='w-screen min-h-screen m-0 p-0 font-[Inter] antialiased wrap-break-word leading-normal tracking-normal'>
+            <body className='w-screen min-h-screen m-0 p-0 font-[var(--font-inter)] antialiased wrap-break-word leading-normal tracking-normal'>
                 <div className='flex flex-col w-full min-h-screen'>
                     <header
-                        className='fixed top-0 left-0 right-0 z-50 print:hidden bg-background/80 backdrop-blur-2xl shadow-[0_1px_0_oklch(1_0_0_/_6%)]'
+                        className='fixed top-0 left-0 right-0 z-50 print:hidden bg-background/85 backdrop-blur-lg shadow-[0_1px_0_oklch(1_0_0_/_6%)]'
                         style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
                     >
                         <div className='h-14'>

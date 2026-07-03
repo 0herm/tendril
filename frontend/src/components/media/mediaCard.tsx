@@ -92,7 +92,7 @@ export default function MediaCard({ item, type, progress }: MediaCardProps) {
     return (
         <div className='group relative w-full' onMouseEnter={loadShowDetails} onFocus={loadShowDetails}>
             <Link href={`/${mediaType}/${item.id}`}>
-                <div className='relative aspect-2/3 w-full overflow-hidden rounded-lg shadow-md ring-1 ring-white/8 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.7)] group-hover:ring-white/15'>
+                <div className='relative aspect-2/3 w-full overflow-hidden rounded-lg shadow-md ring-1 ring-white/8 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg group-hover:ring-white/25'>
                     {item.poster_path ? (
                         <Image
                             src={`${config.url.IMAGE_URL}${item.poster_path}`}
@@ -113,9 +113,6 @@ export default function MediaCard({ item, type, progress }: MediaCardProps) {
                         </div>
                     )}
                     <div className='absolute inset-0 bg-linear-to-t from-black/50 via-black/10 to-transparent pointer-events-none' />
-                    <span className='absolute top-1.5 left-1.5 text-[9px] font-bold tracking-[0.06em] uppercase text-white/55 bg-black/45 backdrop-blur-sm px-1.5 py-0.5 rounded-md leading-none pointer-events-none'>
-                        {mediaType === 'movie' ? 'Film' : 'TV'}
-                    </span>
                     {progress != null && progress > 0 && (
                         <div className='absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 pointer-events-none'>
                             <div className='h-full bg-brand transition-all duration-500 rounded-r-full' style={{ width: `${Math.round(progress * 100)}%` }} />

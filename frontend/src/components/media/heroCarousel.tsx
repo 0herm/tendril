@@ -12,6 +12,7 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
     const slides = items.filter(i => i.backdrop_path).slice(0, 7)
     const [current, setCurrent] = useState(0)
     const scrollRef = useRef<HTMLDivElement>(null)
+    const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
     function scrollTo(index: number) {
         scrollRef.current?.scrollTo({ left: index * (scrollRef.current.offsetWidth), behavior: 'smooth' })
@@ -29,9 +30,12 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
     }, [slides.length])
 
     function handleScroll() {
-        if (!scrollRef.current) return
-        const index = Math.round(scrollRef.current.scrollLeft / scrollRef.current.offsetWidth)
-        setCurrent(index)
+        if (scrollTimer.current) clearTimeout(scrollTimer.current)
+        scrollTimer.current = setTimeout(() => {
+            if (!scrollRef.current) return
+            const index = Math.round(scrollRef.current.scrollLeft / scrollRef.current.offsetWidth)
+            setCurrent(index)
+        }, 50)
     }
 
     function goTo(index: number) {
@@ -69,8 +73,9 @@ export default function HeroCarousel({ items }: { items: TrendingItemProps[] }) 
                                 className='object-cover'
                                 style={{ objectPosition: 'center 30%' }}
                                 priority={i === 0}
+                                fetchPriority={i === 0 ? 'high' : 'low'}
                                 sizes='100vw'
-                                quality={90}
+                                quality={75}
                             />
 
                             <div className='absolute inset-0 bg-linear-to-t from-background from-[15%] via-background/70 via-[55%] to-transparent' />
