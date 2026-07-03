@@ -29,33 +29,33 @@ export async function getTimezones(): Promise<ApiResult<Timezone[]>> {
 }
 
 export async function getTrending(): Promise<ApiResult<TrendingProps>> {
-    const { language } = await getAppSettings()
-    return getWrapper<TrendingProps>(`3/trending/all/week?${qs({ language })}`, REVALIDATE_LISTS)
+    const { language, region } = await getAppSettings()
+    return getWrapper<TrendingProps>(`3/trending/all/week?${qs({ language, region })}`, REVALIDATE_LISTS)
 }
 
 export async function getTrendingDaily(): Promise<ApiResult<TrendingProps>> {
-    const { language } = await getAppSettings()
-    return getWrapper<TrendingProps>(`3/trending/all/day?${qs({ language })}`, REVALIDATE_LISTS)
+    const { language, region } = await getAppSettings()
+    return getWrapper<TrendingProps>(`3/trending/all/day?${qs({ language, region })}`, REVALIDATE_LISTS)
 }
 
 export async function getNewMovies(): Promise<ApiResult<TrendingProps>> {
-    const { language } = await getAppSettings()
-    return getWrapper<TrendingProps>(`3/movie/now_playing?${qs({ language })}`, REVALIDATE_LISTS)
+    const { language, region } = await getAppSettings()
+    return getWrapper<TrendingProps>(`3/movie/now_playing?${qs({ language, region })}`, REVALIDATE_LISTS)
 }
 
 export async function getPopularMovies(): Promise<ApiResult<TrendingProps>> {
-    const { language } = await getAppSettings()
-    return getWrapper<TrendingProps>(`3/movie/popular?${qs({ language })}`, REVALIDATE_LISTS)
+    const { language, region } = await getAppSettings()
+    return getWrapper<TrendingProps>(`3/movie/popular?${qs({ language, region })}`, REVALIDATE_LISTS)
 }
 
 export async function getTopRatedMovies(): Promise<ApiResult<TrendingProps>> {
-    const { language } = await getAppSettings()
-    return getWrapper<TrendingProps>(`3/movie/top_rated?${qs({ language })}`, REVALIDATE_LISTS)
+    const { language, region } = await getAppSettings()
+    return getWrapper<TrendingProps>(`3/movie/top_rated?${qs({ language, region })}`, REVALIDATE_LISTS)
 }
 
 export async function getUpcomingMovies(): Promise<ApiResult<TrendingProps>> {
-    const { language } = await getAppSettings()
-    return getWrapper<TrendingProps>(`3/movie/upcoming?${qs({ language })}`, REVALIDATE_LISTS)
+    const { language, region } = await getAppSettings()
+    return getWrapper<TrendingProps>(`3/movie/upcoming?${qs({ language, region })}`, REVALIDATE_LISTS)
 }
 
 export async function getDetailsMovie(id: number): Promise<ApiResult<MovieDetailsProps>> {
@@ -74,43 +74,43 @@ export async function getSimilarMovies(id: number): Promise<ApiResult<MediaListP
 }
 
 export async function getNewShows(): Promise<ApiResult<TrendingProps>> {
-    const { language, timezone } = await getAppSettings()
-    return getWrapper<TrendingProps>(`3/tv/airing_today?${qs({ language, timezone })}`, REVALIDATE_LISTS)
+    const { language, region, timezone } = await getAppSettings()
+    return getWrapper<TrendingProps>(`3/tv/airing_today?${qs({ language, region, timezone })}`, REVALIDATE_LISTS)
 }
 
 export async function getPopularShows(): Promise<ApiResult<TrendingProps>> {
-    const { language } = await getAppSettings()
-    return getWrapper<TrendingProps>(`3/tv/popular?${qs({ language })}`, REVALIDATE_LISTS)
+    const { language, region } = await getAppSettings()
+    return getWrapper<TrendingProps>(`3/tv/popular?${qs({ language, region })}`, REVALIDATE_LISTS)
 }
 
 export async function getTopRatedShows(): Promise<ApiResult<TrendingProps>> {
-    const { language } = await getAppSettings()
-    return getWrapper<TrendingProps>(`3/tv/top_rated?${qs({ language })}`, REVALIDATE_LISTS)
+    const { language, region } = await getAppSettings()
+    return getWrapper<TrendingProps>(`3/tv/top_rated?${qs({ language, region })}`, REVALIDATE_LISTS)
 }
 
 export async function getUpcomingShows(): Promise<ApiResult<TrendingProps>> {
-    const { language, timezone } = await getAppSettings()
-    return getWrapper<TrendingProps>(`3/tv/on_the_air?${qs({ language, timezone })}`, REVALIDATE_LISTS)
+    const { language, region, timezone } = await getAppSettings()
+    return getWrapper<TrendingProps>(`3/tv/on_the_air?${qs({ language, region, timezone })}`, REVALIDATE_LISTS)
 }
 
 export async function getThisWeekMovies(): Promise<ApiResult<TrendingProps>> {
-    const { language } = await getAppSettings()
+    const { language, region } = await getAppSettings()
     const today = new Date()
     const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
     const fmt = (d: Date) => d.toISOString().slice(0, 10)
     return getWrapper<TrendingProps>(
-        `3/discover/movie?${qs({ language, 'primary_release_date.gte': fmt(weekAgo), 'primary_release_date.lte': fmt(today), sort_by: 'popularity.desc', 'vote_count.gte': '10' })}`,
+        `3/discover/movie?${qs({ language, region, 'primary_release_date.gte': fmt(weekAgo), 'primary_release_date.lte': fmt(today), sort_by: 'popularity.desc', 'vote_count.gte': '10' })}`,
         REVALIDATE_LISTS
     )
 }
 
 export async function getThisWeekShows(): Promise<ApiResult<TrendingProps>> {
-    const { language } = await getAppSettings()
+    const { language, region } = await getAppSettings()
     const today = new Date()
     const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
     const fmt = (d: Date) => d.toISOString().slice(0, 10)
     return getWrapper<TrendingProps>(
-        `3/discover/tv?${qs({ language, 'first_air_date.gte': fmt(weekAgo), 'first_air_date.lte': fmt(today), sort_by: 'popularity.desc', 'vote_count.gte': '10' })}`,
+        `3/discover/tv?${qs({ language, region, 'first_air_date.gte': fmt(weekAgo), 'first_air_date.lte': fmt(today), sort_by: 'popularity.desc', 'vote_count.gte': '10' })}`,
         REVALIDATE_LISTS
     )
 }
@@ -141,16 +141,16 @@ export async function getTvGenres(): Promise<ApiResult<{ genres: Genre[] }>> {
 }
 
 export async function discoverMovies(genreId: number, page = 1): Promise<ApiResult<MediaListProps>> {
-    const { language, include_adult } = await getAppSettings()
+    const { language, region, include_adult } = await getAppSettings()
     const adult = include_adult ? 'true' : null
-    const params = qs({ language, include_adult: adult, sort_by: 'popularity.desc', with_genres: String(genreId), page: String(page) })
+    const params = qs({ language, region, include_adult: adult, sort_by: 'popularity.desc', with_genres: String(genreId), page: String(page) })
     return getWrapper<MediaListProps>(`3/discover/movie?${params}`, REVALIDATE_LISTS)
 }
 
 export async function discoverShows(genreId: number, page = 1): Promise<ApiResult<MediaListProps>> {
-    const { language, include_adult } = await getAppSettings()
+    const { language, region, include_adult } = await getAppSettings()
     const adult = include_adult ? 'true' : null
-    const params = qs({ language, include_adult: adult, sort_by: 'popularity.desc', with_genres: String(genreId), page: String(page) })
+    const params = qs({ language, region, include_adult: adult, sort_by: 'popularity.desc', with_genres: String(genreId), page: String(page) })
     return getWrapper<MediaListProps>(`3/discover/tv?${params}`, REVALIDATE_LISTS)
 }
 
