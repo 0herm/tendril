@@ -22,6 +22,15 @@ export default function MediaCard({ item, type, progress }: MediaCardProps) {
     const mediaType: MediaType = type ?? (item.media_type === 'tv' ? 'show' : 'movie')
     const listId = ms?.listId
 
+    const streamingProviders = ms?.streamingProviders ?? []
+    const region = ms?.region ?? 'GB'
+    const flatrate = ('watch/providers' in item)
+        ? ((item['watch/providers'] as WatchProviders)?.results?.[region]?.flatrate ?? [])
+        : []
+    const matchedProviders = streamingProviders.length > 0
+        ? flatrate.filter(p => streamingProviders.includes(p.provider_id))
+        : []
+
     const title = ('title' in item ? item.title : null) ?? ('name' in item ? item.name : null) ?? ''
 
     const dates = item as { release_date?: string; first_air_date?: string }
@@ -92,7 +101,7 @@ export default function MediaCard({ item, type, progress }: MediaCardProps) {
     return (
         <div className='group relative w-full' onMouseEnter={loadShowDetails} onFocus={loadShowDetails}>
             <Link href={`/${mediaType}/${item.id}`}>
-                <div className='relative aspect-2/3 w-full overflow-hidden rounded-lg shadow-md ring-1 ring-white/8 transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg group-hover:ring-white/25'>
+                <div className='relative aspect-2/3 w-full overflow-hidden rounded-lg shadow-md ring-1 ring-white/8 transition-all duration-300 group-hover:shadow-lg group-hover:ring-white/25'>
                     {item.poster_path ? (
                         <Image
                             src={`${config.url.IMAGE_URL}${item.poster_path}`}
@@ -113,6 +122,25 @@ export default function MediaCard({ item, type, progress }: MediaCardProps) {
                         </div>
                     )}
                     <div className='absolute inset-0 bg-linear-to-t from-black/50 via-black/10 to-transparent pointer-events-none' />
+                    {matchedProviders.length > 0 && (
+                        <div className='absolute top-1.5 left-1.5 flex items-center gap-0.5 bg-black/60 backdrop-blur-sm rounded-md px-1 py-1 z-10'>
+                            {/* eslint-disable @next/next/no-img-element */}
+                            {matchedProviders.slice(0, 2).map((p) => (
+                                <img
+                                    key={p.provider_id}
+                                    src={`https://image.tmdb.org/t/p/w92${p.logo_path}`}
+                                    alt={p.provider_name}
+                                    title={p.provider_name}
+                                    className='h-[1.125rem] w-[1.125rem] rounded-[3px] object-cover'
+                                />
+                            ))}
+                            {matchedProviders.length > 2 && (
+                                <span className='text-[8px] font-bold text-white/80 leading-none px-0.5'>
+                                    +{matchedProviders.length - 2}
+                                </span>
+                            )}
+                        </div>
+                    )}
                     {progress != null && progress > 0 && (
                         <div className='absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 pointer-events-none'>
                             <div className='h-full bg-brand transition-all duration-500 rounded-r-full' style={{ width: `${Math.round(progress * 100)}%` }} />

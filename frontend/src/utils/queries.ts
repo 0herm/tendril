@@ -17,7 +17,7 @@ export async function dbWrapper<T>(query: string, params: DbParam[] = []): Promi
 }
 
 export async function getUserSettings(userId: number): Promise<ApiResult<UserSettingsProps | null>> {
-    const query = 'SELECT region, language, original_title, include_adult, timezone FROM Users WHERE id = $1'
+    const query = 'SELECT region, language, original_title, include_adult, timezone, streaming_providers FROM Users WHERE id = $1'
     const { data, error } = await dbWrapper<UserSettingsProps>(query, [userId])
     return { data: data?.[0] ?? null, error }
 }
@@ -28,7 +28,8 @@ export async function updateUser(userId: number, updates: {
     original_title?: boolean,
     include_adult?: boolean,
     timezone?: string,
-    subscription?: string | null
+    subscription?: string | null,
+    streaming_providers?: number[],
 }): Promise<ApiResult<UserProps | null>> {
     const fields: string[] = []
     const values: DbParam[] = []
@@ -37,7 +38,11 @@ export async function updateUser(userId: number, updates: {
     for (const [key, value] of Object.entries(updates)) {
         if (value !== undefined) {
             fields.push(`${key} = $${paramIndex++}`)
-            values.push(value)
+            if (key === 'streaming_providers' && Array.isArray(value)) {
+                values.push(`{${value.join(',')}}`)
+            } else {
+                values.push(value as DbParam)
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-import { getAllLists, getMediaByListId, getAllWatched } from '@/utils/queries'
+import { getAllLists, getMediaByListId, getAllWatched, getUserSettings } from '@/utils/queries'
 import { MediaStateProvider } from '@/components/watched/mediaStateContext'
 import { getFilteredContinueWatching } from '@/utils/continueWatching'
 import MediaSection from '@/components/media/mediaSection'
@@ -25,7 +25,8 @@ export default async function Page() {
     const { data: listsData } = await getAllLists()
     const lists: ListProps[] = listsData ?? []
 
-    const [listsMedia, watchedResults, continueWatchingFiltered] = await Promise.all([
+    const [settingsResult, listsMedia, watchedResults, continueWatchingFiltered] = await Promise.all([
+        getUserSettings(userId),
         Promise.all(lists.map(async (list) => {
             const { data: mediaItems } = await getMediaByListId(list.id)
             const items = mediaItems ?? []
@@ -62,35 +63,30 @@ export default async function Page() {
             listId={defaultListId}
             watchedIds={watchedItemIds}
             listedIds={defaultListItems.map(r => r.id)}
+            streamingProviders={settingsResult.data?.streaming_providers ?? []}
+            region={settingsResult.data?.region ?? 'GB'}
         >
             <div className='w-full flex flex-col gap-8'>
                 {hasMedia ? (
                     <div className='flex flex-col gap-8'>
-                        {surpriseCandidates.length > 0 && continueItems.length === 0 && (
-                            <div className='flex justify-end'>
-                                <SurpriseButton items={surpriseCandidates} />
-                            </div>
-                        )}
-
                         <MediaSection
                             title='Continue Watching'
                             items={{ page: 1, total_pages: 1, total_results: continueItems.length, results: continueItems }}
-                            action={surpriseCandidates.length > 0 ? <SurpriseButton items={surpriseCandidates} /> : undefined}
+                            filterable
                         />
 
                         <MediaSection
                             title='Watched'
-                            items={{
-                                page: 1, total_pages: 1,
-                                total_results: watchedItems.length,
-                                results: watchedItems
-                            }}
+                            items={{ page: 1, total_pages: 1, total_results: watchedItems.length, results: watchedItems }}
+                            filterable
                         />
-                        {listsMedia.map((listMedia) => (
+                        {listsMedia.map((listMedia, i) => (
                             <MediaSection
                                 key={listMedia.list.id}
                                 title={listMedia.list.name}
                                 items={listMedia.data}
+                                filterable
+                                action={i === 0 && surpriseCandidates.length > 0 ? <SurpriseButton items={surpriseCandidates} /> : undefined}
                             />
                         ))}
                     </div>

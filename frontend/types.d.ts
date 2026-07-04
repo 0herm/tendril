@@ -26,7 +26,7 @@ type UserProps = {
     subscription?: string | null
 }
 
-type UserSettingsProps = Pick<UserProps, 'region' | 'language' | 'original_title' | 'include_adult' | 'timezone'>
+type UserSettingsProps = Pick<UserProps, 'region' | 'language' | 'original_title' | 'include_adult' | 'timezone'> & { streaming_providers?: number[] | null }
 
 type MediaProps = { id: number; tmdb_id: number; type: 'movie' | 'show'; added_at: string; list_id: number }
 
@@ -64,14 +64,9 @@ type Genre = { id: number; name: string }
 type NamedEntity = { id: number; logo_path: string | null; name: string; origin_country: string }
 type ProductionCountry = { iso_3166_1: string; name: string }
 type SpokenLanguage = { english_name: string; iso_639_1: string; name: string }
-type WatchProviders = {
-    results: {
-        [region: string]: {
-            link: string
-            [key in 'flatrate' | 'buy' | 'rent']?: { display_priority: number; logo_path: string; provider_id: number; provider_name: string }[]
-        }
-    }
-} | null
+type WatchProviderEntry = { display_priority: number; logo_path: string; provider_id: number; provider_name: string }
+type WatchRegionData = { link: string; flatrate?: WatchProviderEntry[]; buy?: WatchProviderEntry[]; rent?: WatchProviderEntry[] }
+type WatchProviders = { results: { [region: string]: WatchRegionData } } | null
 
 type VideoItem = {
     id: string; iso_639_1: string; iso_3166_1: string; key: string; name: string
@@ -167,6 +162,8 @@ type CollectionProps = {
     id: number; name: string; overview: string
     poster_path: string | null; backdrop_path: string | null; parts: TrendingItemProps[]
 }
+
+type WatchProvider = { provider_id: number; provider_name: string; logo_path: string; display_priority: number }
 
 type Country = { iso_3166_1: string; english_name: string; native_name: string }
 type Language = { iso_639_1: string; english_name: string; name: string }

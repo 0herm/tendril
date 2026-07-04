@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS Users (
     original_title BOOLEAN NOT NULL DEFAULT FALSE,
     include_adult BOOLEAN NOT NULL DEFAULT FALSE,
     timezone TEXT NOT NULL DEFAULT 'Europe/London',
-    subscription TEXT DEFAULT NULL
+    subscription TEXT DEFAULT NULL,
+    streaming_providers INTEGER[] DEFAULT ARRAY[]::INTEGER[]
 );
 
 -- Passkey credentials table

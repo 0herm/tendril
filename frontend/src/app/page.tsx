@@ -10,7 +10,7 @@ import {
     getDetailsShow, getDetailsMovie,
 } from '@/utils/tmdbApi'
 import { getFilteredContinueWatching } from '@/utils/continueWatching'
-import { getAllWatched, getDefaultList, getMediaByListId } from '@/utils/queries'
+import { getAllWatched, getDefaultList, getMediaByListId, getUserSettings } from '@/utils/queries'
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import { MediaStateProvider } from '@/components/watched/mediaStateContext'
@@ -35,12 +35,14 @@ async function fetchDetail(item: { tmdb_id: number; type: 'movie' | 'show' }) {
 }
 
 export default async function Home() {
-    if (!await getSessionUserId()) redirect('/passkey/login')
+    const userId = await getSessionUserId()
+    if (!userId) redirect('/passkey/login')
 
     const hasToken = !!(process.env.TMDB_ACCESS_TOKEN || process.env.ACCESS_TOKEN)
     if (!hasToken) return <SetupError reason='TMDB API key is not configured.' />
 
     const [
+        settingsResult,
         cwItems,
         watchlistResult,
         watchedResult,
@@ -57,6 +59,7 @@ export default async function Home() {
         thisWeekMoviesResult,
         thisWeekShowsResult,
     ] = await Promise.all([
+        getUserSettings(userId),
         getFilteredContinueWatching(),
         (async () => {
             const { data: list } = await getDefaultList()
@@ -142,6 +145,8 @@ export default async function Home() {
             listId={watchlistResult.listId}
             watchedIds={(watchedResult.data ?? []).map(w => w.tmdb_id)}
             listedIds={watchlistResult.listedIds}
+            streamingProviders={settingsResult.data?.streaming_providers ?? []}
+            region={settingsResult.data?.region ?? 'GB'}
         >
             <div className='flex flex-col gap-8 w-full overflow-hidden'>
                 {trendingDailyResult.data?.results?.length ? (
@@ -149,10 +154,10 @@ export default async function Home() {
                 ) : null}
                 <MediaSection title='Top 10 Right Now' items={trendingDailyResult.data} ranked />
                 {cwItems.length > 0 && (
-                    <MediaSection title='Continue Watching' items={cwItems} type='show' progressMap={progressMap} />
+                    <MediaSection title='Continue Watching' items={cwItems} type='show' progressMap={progressMap} filterable />
                 )}
                 {watchlistResult.details.length > 0 && (
-                    <MediaSection title='Want to Watch' items={watchlistResult.details} />
+                    <MediaSection title='Want to Watch' items={watchlistResult.details} filterable />
                 )}
                 <MediaSection
                     title='New This Week'

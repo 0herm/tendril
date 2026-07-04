@@ -154,6 +154,15 @@ export async function discoverShows(genreId: number, page = 1): Promise<ApiResul
     return getWrapper<MediaListProps>(`3/discover/tv?${params}`, REVALIDATE_LISTS)
 }
 
+export async function getWatchProviders(type: 'movie' | 'tv'): Promise<ApiResult<WatchProvider[]>> {
+    const { language, region } = await getAppSettings()
+    const result = await getWrapper<{ results: WatchProvider[] }>(
+        `3/watch/providers/${type}?${qs({ language, watch_region: region })}`,
+        REVALIDATE_CONFIG
+    )
+    return { data: result.data?.results ?? null, error: result.error }
+}
+
 export async function getSearch(query: string, page = 1): Promise<ApiResult<SearchProps>> {
     const { language, include_adult } = await getAppSettings()
     const adult = include_adult ? 'true' : null

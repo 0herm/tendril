@@ -4,6 +4,8 @@ import { createContext, useContext, useState, type ReactNode } from 'react'
 
 type MediaStateValue = {
     listId: number | undefined
+    streamingProviders: number[]
+    region: string
     isWatched: (id: number) => boolean
     isListed: (id: number) => boolean
     setWatched: (id: number, on: boolean) => void
@@ -20,11 +22,15 @@ export function MediaStateProvider({
     listId,
     watchedIds,
     listedIds,
+    streamingProviders = [],
+    region = 'GB',
     children,
 }: {
     listId: number | undefined
     watchedIds: number[]
     listedIds: number[]
+    streamingProviders?: number[]
+    region?: string
     children: ReactNode
 }) {
     const [watchedSet, setWatchedSet] = useState(() => new Set(watchedIds))
@@ -41,6 +47,8 @@ export function MediaStateProvider({
     return (
         <MediaStateContext.Provider value={{
             listId,
+            streamingProviders,
+            region,
             isWatched: (id) => watchedSet.has(id),
             isListed: (id) => listedSet.has(id),
             setWatched,
