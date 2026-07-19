@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { Button } from '@/ui/button'
+import PageContainer from '@/components/pageContainer'
 import { AlertCircle } from 'lucide-react'
 
 export default function Error({ reset }: { reset: () => void }) {
     return (
-        <div className='w-full flex flex-col items-center justify-center gap-5 py-24 text-center'>
+        <PageContainer className='flex flex-col items-center justify-center gap-5 py-24 text-center'>
             <div className='flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10'>
                 <AlertCircle className='h-7 w-7 text-destructive' />
             </div>
@@ -28,6 +29,6 @@ export default function Error({ reset }: { reset: () => void }) {
                     Go home
                 </Link>
             </div>
-        </div>
+        </PageContainer>
     )
 }

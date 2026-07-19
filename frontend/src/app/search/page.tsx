@@ -4,6 +4,9 @@ import { Search } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 
+import PageContainer from '@/components/pageContainer'
+import { Chip } from '@/ui/chip'
+
 const SUGGESTIONS = ['Inception', 'Breaking Bad', 'The Bear', 'Dune', 'Severance', 'Oppenheimer']
 
 export default function SearchPage() {
@@ -17,37 +20,37 @@ export default function SearchPage() {
     }
 
     return (
-        <div className='w-full flex flex-col gap-8 pt-2 max-w-xl mx-auto'>
-            <div className='relative flex items-center'>
-                <Search className='absolute left-3.5 h-4 w-4 text-muted-foreground/50 pointer-events-none z-10' />
-                <input
-                    ref={inputRef}
-                    className={
-                        'w-full h-12 pl-11 pr-4 rounded-2xl text-base ' +
-                        'bg-muted/40 border border-border/60 text-foreground ' +
-                        'placeholder:text-muted-foreground/40 ' +
-                        'outline-none focus:border-border focus:bg-muted/60 transition-colors'
-                    }
-                    placeholder='Search movies and shows…'
-                    autoFocus
-                    onKeyDown={(e) => { if (e.key === 'Enter') handleSearch() }}
-                />
+        <PageContainer className='flex flex-col gap-8 max-w-xl mx-auto'>
+            <div className='flex flex-col gap-5'>
+                <h1 className='display text-2xl sm:text-3xl font-bold'>Search</h1>
+                <div className='relative flex items-center'>
+                    <Search className='absolute left-4 h-4 w-4 text-muted-foreground/50 pointer-events-none z-10' />
+                    <input
+                        ref={inputRef}
+                        className={
+                            'w-full h-12 pl-11 pr-4 rounded-2xl text-base ' +
+                            'bg-white/4 border border-border text-foreground ' +
+                            'shadow-[inset_0_1px_0_oklch(1_0_0/0.05)] ' +
+                            'placeholder:text-muted-foreground/40 ' +
+                            'outline-none focus:border-ambient/50 focus:ring-2 focus:ring-ambient/15 focus:bg-white/6 transition-colors'
+                        }
+                        placeholder='Search movies and shows…'
+                        autoFocus
+                        onKeyDown={(e) => { if (e.key === 'Enter') handleSearch() }}
+                    />
+                </div>
             </div>
 
             <div className='flex flex-col gap-3'>
                 <p className='text-[10px] font-bold tracking-[0.1em] uppercase text-muted-foreground/50'>Suggestions</p>
                 <div className='flex flex-wrap gap-2'>
                     {SUGGESTIONS.map((s) => (
-                        <button
-                            key={s}
-                            onClick={() => handleSearch(s)}
-                            className='px-3 py-1.5 rounded-xl bg-muted/40 border border-border/50 text-sm text-muted-foreground/70 hover:text-foreground hover:border-border/80 hover:bg-muted/60 transition-all'
-                        >
+                        <Chip key={s} onClick={() => handleSearch(s)}>
                             {s}
-                        </button>
+                        </Chip>
                     ))}
                 </div>
             </div>
-        </div>
+        </PageContainer>
     )
 }

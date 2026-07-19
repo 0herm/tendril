@@ -39,11 +39,11 @@ export default async function SettingsPage() {
     return (
         <div className='w-full flex flex-col gap-8 max-w-xl'>
             <div className='flex flex-col gap-1'>
-                <h1 className='text-2xl font-black tracking-tight'>Settings</h1>
+                <h1 className='display text-2xl sm:text-3xl font-bold'>Settings</h1>
                 <p className='text-xs text-muted-foreground/70'>Content preferences and display options.</p>
             </div>
             <Form action={updateSettings} className='w-full flex flex-col gap-3'>
-                <div className='rounded-2xl border border-border/60 overflow-hidden bg-card'>
+                <div className='rounded-2xl border border-border/60 overflow-hidden bg-surface-1'>
                     <p className='text-[10px] font-bold text-muted-foreground/50 uppercase tracking-[0.1em] px-4 pt-4 pb-1'>
                         Content
                     </p>
@@ -86,7 +86,7 @@ export default async function SettingsPage() {
                     </SettingRow>
                 </div>
 
-                <div className='rounded-2xl border border-border/60 overflow-hidden bg-card'>
+                <div className='rounded-2xl border border-border/60 overflow-hidden bg-surface-1'>
                     <p className='text-[10px] font-bold text-muted-foreground/50 uppercase tracking-[0.1em] px-4 pt-4 pb-1'>
                         Preferences
                     </p>
@@ -108,7 +108,7 @@ export default async function SettingsPage() {
                 </Button>
             </Form>
 
-            <div className='rounded-2xl border border-border/60 overflow-hidden bg-card'>
+            <div className='rounded-2xl border border-border/60 overflow-hidden bg-surface-1'>
                 <p className='text-[10px] font-bold text-muted-foreground/50 uppercase tracking-[0.1em] px-4 pt-4 pb-1'>
                     Data
                 </p>
@@ -160,7 +160,7 @@ function ToggleRow({ label, name, defaultChecked, last = false }: {
                 />
                 <span className={
                     'block h-5 w-9 rounded-full border border-border/60 bg-muted/80 ' +
-                    'transition-colors duration-200 peer-checked:border-brand peer-checked:bg-brand'
+                    'transition-colors duration-200 peer-checked:border-ambient peer-checked:bg-ambient'
                 } />
                 <span className={
                     'pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full ' +

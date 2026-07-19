@@ -3,9 +3,8 @@
 import { useState } from 'react'
 import { getRegistrationOptions, verifyRegistration } from '@/utils/auth'
 import { startRegistration } from '@simplewebauthn/browser'
-import { Fingerprint } from 'lucide-react'
 import Link from 'next/link'
-import AuthPageShell from '../authPageShell'
+import AuthPageShell, { PasskeyButton } from '../authPageShell'
 
 export default function RegisterClient() {
     const [loading, setLoading] = useState(false)
@@ -37,14 +36,9 @@ export default function RegisterClient() {
                     {error}
                 </p>
             )}
-            <button
-                onClick={handleRegister}
-                disabled={loading}
-                className='group w-full h-[3.25rem] flex items-center justify-center gap-2.5 rounded-2xl bg-brand hover:bg-brand-dim active:bg-brand-dimmer text-white text-sm font-semibold transition-all duration-200 shadow-[0_8px_32px_oklch(0.68_0.18_155/25%)] disabled:opacity-60 disabled:pointer-events-none'
-            >
-                <Fingerprint className='h-[1.125rem] w-[1.125rem] transition-transform group-hover:scale-105' />
+            <PasskeyButton onClick={handleRegister} loading={loading}>
                 {loading ? 'Creating passkey…' : 'Create Passkey'}
-            </button>
+            </PasskeyButton>
             <Link
                 href='/passkey/login'
                 className='text-center text-xs text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors py-1'

@@ -13,6 +13,7 @@
   "dependencies": {
     "@simplewebauthn/browser": "^13.3.0",
     "@simplewebauthn/server": "^13.3.0",
+    "jpeg-js": "^0.4.4",
     "lucide-react": "^1.14.0",
     "next": "16.2.6",
     "pg": "^8.20.0",

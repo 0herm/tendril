@@ -1,5 +1,6 @@
 import MediaPage from '@/components/media/mediaPage'
 import { getDetailsShow, getSimilarShows } from '@/utils/tmdbApi'
+import { getAmbientColor } from '@/utils/ambient'
 import { getSessionUserId } from '@/utils/auth'
 import { getUserSettings, getAllWatched, getDefaultListState } from '@/utils/queries'
 import { MediaStateProvider } from '@/components/watched/mediaStateContext'
@@ -17,6 +18,8 @@ export default async function Page({ params }: { params: Promise<{ id: number }>
 
     if (error || !data) throw new Error('Error loading TV show')
 
+    const ambient = await getAmbientColor(data.poster_path)
+
     const watchedIdList = (watchedData ?? []).map(w => w.tmdb_id)
     const watchedIds = new Set(watchedIdList)
     const watchedInSimilar = similar?.results.filter(r => watchedIds.has(r.id)).length ?? 0
@@ -27,7 +30,11 @@ export default async function Page({ params }: { params: Promise<{ id: number }>
             watchedIds={watchedIdList}
             listedIds={listState.listedIds}
         >
-            <MediaPage item={data} media='show' similar={similar} region={settings?.region} language={settings?.language} watchedInSimilar={watchedInSimilar} />
+            <MediaPage
+                item={data} media='show' similar={similar} region={settings?.region}
+                language={settings?.language} watchedInSimilar={watchedInSimilar}
+                ambient={ambient}
+            />
         </MediaStateProvider>
     )
 }

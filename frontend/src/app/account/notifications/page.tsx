@@ -9,7 +9,7 @@ const toUint8 = (s: string) => Uint8Array.from(atob(s.replace(/-/g, '+').replace
 
 function CardPanel({ icon: Icon, title, subtitle, children }: { icon: ElementType; title: string; subtitle: string; children: ReactNode }) {
     return (
-        <div className='rounded-2xl border border-border/60 overflow-hidden bg-card'>
+        <div className='rounded-2xl border border-border/60 overflow-hidden bg-surface-1'>
             <div className='flex items-center gap-3 px-4 py-4 border-b border-border/60'>
                 <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-muted/60 shrink-0'>
                     <Icon className='h-4 w-4 text-muted-foreground/70' />
@@ -64,7 +64,7 @@ function PushNotificationManager() {
     }
 
     return (
-        <div className='rounded-2xl border border-border/60 overflow-hidden bg-card'>
+        <div className='rounded-2xl border border-border/60 overflow-hidden bg-surface-1'>
             <div className='flex items-center gap-3 px-4 py-4 border-b border-border/60'>
                 <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-muted/60 shrink-0'><Bell className='h-4 w-4 text-muted-foreground/70' /></div>
                 <div className='flex-1 min-w-0'>
@@ -72,7 +72,7 @@ function PushNotificationManager() {
                         <p className='text-sm font-medium'>Push Notifications</p>
                         {isSupported && (
                             <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full leading-none ${
-                                subscription ? 'bg-brand/15 text-brand' : 'bg-muted text-muted-foreground'
+                                subscription ? 'bg-ambient/15 text-ambient' : 'bg-muted text-muted-foreground'
                             }`}>
                                 {subscription ? 'Active' : 'Off'}
                             </span>
@@ -172,7 +172,7 @@ export default function Page() {
     return (
         <div className='w-full flex flex-col gap-6 max-w-xl'>
             <div className='flex flex-col gap-1'>
-                <h1 className='text-2xl font-black tracking-tight'>Notifications</h1>
+                <h1 className='display text-2xl sm:text-3xl font-bold'>Notifications</h1>
                 <p className='text-xs text-muted-foreground/70'>Push notifications and app installation.</p>
             </div>
             <InstallPrompt />

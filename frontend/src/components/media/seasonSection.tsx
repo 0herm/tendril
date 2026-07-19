@@ -42,11 +42,11 @@ export default function SeasonSection({ showId, seasons }: Props) {
                         key={season.id}
                         onClick={() => handleSeasonClick(season.season_number)}
                         className={
-                            'flex-none w-28 sm:w-32 bg-card border rounded-xl ' +
-                            'overflow-hidden shadow-sm hover:shadow-md transition-all group text-left ' +
+                            'flex-none w-28 sm:w-32 bg-surface-1 border rounded-xl cursor-pointer ' +
+                            'overflow-hidden shadow-sm hover:shadow-md transition-[box-shadow,border-color] group text-left ' +
                             (selectedSeason === season.season_number
-                                ? 'border-brand/60 ring-1 ring-brand/30'
-                                : 'border-border hover:border-brand/40')
+                                ? 'border-ambient/60 ring-1 ring-ambient/40'
+                                : 'border-border hover:border-ambient/40')
                         }
                     >
                         <div className='relative aspect-[2/3] w-full bg-muted overflow-hidden'>
@@ -54,7 +54,9 @@ export default function SeasonSection({ showId, seasons }: Props) {
                                 ? <Image
                                     src={`${config.url.IMAGE_URL}${season.poster_path}`}
                                     alt={season.name} fill
-                                    className='object-cover transition-transform duration-300 group-hover:scale-[1.03]'
+                                    sizes='(max-width: 640px) 28vw, 8rem'
+                                    className={'object-cover transition-transform duration-300 group-hover:scale-[1.03] ' +
+                                        'flex items-center justify-center text-center text-xs text-muted-foreground'}
                                 />
                                 : <div className='flex items-center justify-center h-full w-full'><ImageIcon className='w-full h-full p-8' /></div>}
                         </div>
@@ -70,7 +72,7 @@ export default function SeasonSection({ showId, seasons }: Props) {
             </div>
 
             {selectedSeason !== null && (
-                <div className='bg-card border border-border rounded-xl overflow-hidden shadow-sm'>
+                <div className='bg-surface-1 border border-border rounded-xl overflow-hidden shadow-sm animate-[rise-in_300ms_var(--ease-out)_both]'>
                     {loading ? (
                         <div className='p-4 flex flex-col gap-2'>
                             {Array.from({ length: 4 }).map((_, i) => (
@@ -97,14 +99,17 @@ export default function SeasonSection({ showId, seasons }: Props) {
                                             )}
                                         </div>
                                         {isWatched ? (
-                                            <span className='shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-brand px-2 py-1'>
+                                            <span className='shrink-0 inline-flex items-center gap-1 text-[10px] font-medium text-ambient px-2 py-1'>
                                                 <Check className='h-3 w-3' />
                                                 Watched
                                             </span>
                                         ) : (
                                             <button
                                                 onClick={() => ctx?.setWatchedUpTo(selectedSeason, ep.episode_number)}
-                                                className='shrink-0 text-[10px] font-medium text-brand hover:text-brand-dim transition-colors px-2 py-1 rounded-md hover:bg-brand/8'
+                                                className={
+                                                    'shrink-0 text-[10px] font-medium text-ambient hover:opacity-80 transition-all ' +
+                                                    'px-2 py-1 rounded-md hover:bg-ambient/10 cursor-pointer'
+                                                }
                                             >
                                                 Watched up to here
                                             </button>

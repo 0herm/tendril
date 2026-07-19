@@ -6,10 +6,11 @@ function Select({ className = '', children, ...props }: React.ComponentProps<'se
         <div className='relative inline-flex items-center'>
             <select
                 className={
-                    'appearance-none h-9 rounded-xl border border-border/60 ' +
-                    'bg-muted/30 pl-3 pr-8 py-2 text-sm text-foreground ' +
+                    'appearance-none h-10 rounded-xl border border-border ' +
+                    'bg-white/4 pl-3.5 pr-8 py-2 text-sm text-foreground ' +
+                    'shadow-[inset_0_1px_0_oklch(1_0_0/0.05)] ' +
                     'transition-colors outline-none cursor-pointer ' +
-                    'focus-visible:border-brand/50 focus-visible:ring-2 focus-visible:ring-brand/10 ' +
+                    'focus-visible:border-ambient/50 focus-visible:ring-2 focus-visible:ring-ambient/15 ' +
                     'disabled:pointer-events-none disabled:opacity-50 ' +
                     `${className}`
                 }

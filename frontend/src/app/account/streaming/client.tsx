@@ -19,7 +19,8 @@ export default function StreamingClient({ providers, saved, saveAction }: Props)
     function toggle(id: number) {
         setSelected((prev) => {
             const next = new Set(prev)
-            next.has(id) ? next.delete(id) : next.add(id)
+            if (next.has(id)) next.delete(id)
+            else next.add(id)
             return next
         })
     }
@@ -31,11 +32,11 @@ export default function StreamingClient({ providers, saved, saveAction }: Props)
     return (
         <div className='w-full flex flex-col gap-8'>
             <div className='flex flex-col gap-1'>
-                <h1 className='text-2xl font-black tracking-tight'>Streaming Services</h1>
+                <h1 className='display text-2xl sm:text-3xl font-bold'>Streaming Services</h1>
                 <p className='text-xs text-muted-foreground/70'>Choose the services you subscribe to.</p>
             </div>
 
-            <div className='rounded-2xl border border-border/60 overflow-hidden bg-card'>
+            <div className='rounded-2xl border border-border/60 overflow-hidden bg-surface-1'>
                 <p className='text-[10px] font-bold text-muted-foreground/50 uppercase tracking-[0.1em] px-4 pt-4 pb-3'>
                     Available in your region
                 </p>
@@ -46,14 +47,15 @@ export default function StreamingClient({ providers, saved, saveAction }: Props)
                             <button
                                 key={p.provider_id}
                                 onClick={() => toggle(p.provider_id)}
-                                className={`relative flex flex-col items-center gap-2 p-3 rounded-xl border transition-all text-center
-                                    ${active
-                                        ? 'border-brand/60 bg-brand/8'
-                                        : 'border-border/50 bg-muted/30 hover:bg-muted/60 hover:border-border'
-                                    }`}
+                                className={
+                                    'relative flex flex-col items-center gap-2 p-3 rounded-xl border transition-all text-center cursor-pointer ' +
+                                    (active
+                                        ? 'border-ambient/60 bg-ambient/10 ring-1 ring-ambient/20'
+                                        : 'border-border/50 bg-white/4 hover:bg-white/8 hover:border-border-strong')
+                                }
                             >
                                 {active && (
-                                    <span className='absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand'>
+                                    <span className='absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-ambient'>
                                         <Check className='h-2.5 w-2.5 text-white' strokeWidth={3} />
                                     </span>
                                 )}

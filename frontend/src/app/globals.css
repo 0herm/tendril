@@ -2,10 +2,43 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@keyframes page-in {
-    from { opacity: 0; transform: translateY(6px); }
+/* Motion */
+
+@keyframes rise-in {
+    from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes fade-scale-in {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes genre-card-in {
+    from { opacity: 0; transform: translateY(14px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+@keyframes ambient-breathe {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50%      { opacity: 0.85; transform: scale(1.08); }
+}
+
+@keyframes hero-progress {
+    from { width: 0%; }
+    to   { width: 100%; }
+}
+
+@keyframes bar-grow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+
+.genre-card-animate {
+    animation: genre-card-in var(--dur-base) var(--ease-out) both;
+}
+
+/* Utilities */
 
 @utility noscroll {
     -ms-overflow-style: none;
@@ -15,21 +48,49 @@
     }
 }
 
+@utility glass {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+    box-shadow: inset 0 1px 0 var(--edge-highlight);
+}
+
+@utility display {
+    font-family: var(--font-archivo), ui-sans-serif, sans-serif;
+    font-variation-settings: 'wdth' 125;
+    letter-spacing: -0.02em;
+}
+
+/* Theme tokens */
+
 @theme {
     --breakpoint-xs: 30rem;
+
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    --shadow-poster: 0 2px 8px oklch(0 0 0 / 0.45), 0 10px 28px -8px oklch(0 0 0 / 0.65);
+    --shadow-float: 0 16px 48px -12px oklch(0 0 0 / 0.75);
+    --shadow-modal: 0 8px 24px oklch(0 0 0 / 0.5), 0 24px 80px -16px oklch(0 0 0 / 0.85);
 }
 
 @theme inline {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
-    --font-sans: 'Inter', sans-serif;
+    --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+    --font-display: var(--font-archivo), ui-sans-serif, sans-serif;
     --color-brand: var(--brand);
     --color-brand-dim: var(--brand-dim);
     --color-brand-dimmer: var(--brand-dimmer);
     --color-brand-subtle: var(--brand-subtle);
+    --color-ambient: var(--ambient);
+    --color-surface-1: var(--surface-1);
+    --color-surface-2: var(--surface-2);
+    --color-surface-3: var(--surface-3);
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
+    --color-border-strong: var(--border-strong);
     --color-destructive: var(--destructive);
     --color-accent-foreground: var(--accent-foreground);
     --color-accent: var(--accent);
@@ -47,45 +108,57 @@
     --radius-md: calc(var(--radius) - 2px);
     --radius-lg: var(--radius);
     --radius-xl: calc(var(--radius) + 4px);
+    --radius-2xl: calc(var(--radius) + 8px);
 }
 
 :root {
-    --radius: 0.625rem;
+    --radius: 0.75rem;
+
+    --dur-fast: 150ms;
+    --dur-base: 300ms;
+    --dur-slow: 600ms;
 }
 
 .dark {
-    --background: oklch(0.09 0 0);
-    --foreground: oklch(0.96 0 0);
-    --card: oklch(0.135 0 0);
-    --card-foreground: oklch(0.96 0 0);
-    --popover: oklch(0.135 0 0);
-    --popover-foreground: oklch(0.96 0 0);
+    --background: oklch(0.055 0 0);
+    --foreground: oklch(0.97 0 0);
+
+    --surface-1: oklch(0.105 0 0);
+    --surface-2: oklch(0.135 0 0);
+    --surface-3: oklch(0.17 0 0);
+
+    --card: var(--surface-1);
+    --card-foreground: var(--foreground);
+    --popover: var(--surface-2);
+    --popover-foreground: var(--foreground);
     --primary: oklch(0.94 0 0);
-    --primary-foreground: oklch(0.135 0 0);
-    --secondary: oklch(0.17 0 0);
-    --secondary-foreground: oklch(0.96 0 0);
-    --muted: oklch(0.155 0 0);
-    --muted-foreground: oklch(0.55 0 0);
-    --accent: oklch(0.18 0 0);
-    --accent-foreground: oklch(0.96 0 0);
+    --primary-foreground: oklch(0.105 0 0);
+    --secondary: var(--surface-3);
+    --secondary-foreground: var(--foreground);
+    --muted: var(--surface-2);
+    --muted-foreground: oklch(0.58 0 0);
+    --accent: var(--surface-3);
+    --accent-foreground: var(--foreground);
     --destructive: oklch(0.65 0.20 22);
-    --border: oklch(1 0 0 / 7%);
+
+    --border: oklch(1 0 0 / 8%);
+    --border-strong: oklch(1 0 0 / 14%);
+    --edge-highlight: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 12%);
     --ring: oklch(0.50 0 0);
-    --brand: oklch(0.68 0.18 155);
-    --brand-dim: oklch(0.60 0.16 155);
-    --brand-dimmer: oklch(0.52 0.14 155);
-    --brand-subtle: oklch(0.68 0.18 155 / 10%);
+
+    --brand: oklch(0.72 0.19 155);
+    --brand-dim: oklch(0.64 0.17 155);
+    --brand-dimmer: oklch(0.56 0.15 155);
+    --brand-subtle: oklch(0.72 0.19 155 / 10%);
+
+    --ambient: var(--brand);
+
+    --glass-bg: oklch(0.105 0 0 / 55%);
+    --glass-blur: 24px;
 }
 
-@keyframes genre-card-in {
-    from { opacity: 0; transform: translateY(14px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0)   scale(1); }
-}
-
-.genre-card-animate {
-    animation: genre-card-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
+/* Dialog */
 
 dialog {
     padding: 0;
@@ -95,19 +168,47 @@ dialog[open] {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scale(1);
     margin: 0;
     max-height: calc(100dvh - 2rem);
     overflow-y: auto;
+    opacity: 1;
+    transition:
+        opacity var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-spring),
+        overlay var(--dur-base) allow-discrete,
+        display var(--dur-base) allow-discrete;
+
+    @starting-style {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
 }
 dialog::backdrop {
-    background: rgb(0 0 0 / 0.65);
-    backdrop-filter: blur(6px);
+    background: oklch(0 0 0 / 0.72);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    transition:
+        opacity var(--dur-base) var(--ease-out),
+        overlay var(--dur-base) allow-discrete,
+        display var(--dur-base) allow-discrete;
+    opacity: 1;
 }
+dialog[open]::backdrop {
+    @starting-style {
+        opacity: 0;
+    }
+}
+
+/* Base */
 
 @layer base {
     * {
         @apply border-border outline-ring/50;
+    }
+    ::selection {
+        background-color: var(--brand);
+        color: oklch(0.1 0 0);
     }
     html, body {
         -ms-overflow-style: none;
@@ -118,13 +219,92 @@ dialog::backdrop {
     }
     body {
         @apply bg-background text-foreground;
-        transition: background-color 200ms ease, color 200ms ease;
+        transition: background-color var(--dur-base) ease, color var(--dur-base) ease;
     }
     button,
     a,
     input,
     select,
     textarea {
-        transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+        transition: color var(--dur-fast) ease, background-color var(--dur-fast) ease, border-color var(--dur-fast) ease, box-shadow var(--dur-fast) ease;
+    }
+}
+
+/* View transitions */
+
+::view-transition-group(*) {
+    animation-duration: var(--dur-base);
+    animation-timing-function: var(--ease-out);
+}
+
+::view-transition-old(root) {
+    animation: none;
+}
+::view-transition-new(root) {
+    animation: var(--dur-base) var(--ease-out) both fade-in;
+}
+
+html.vt-back::view-transition-old(root) {
+    animation: var(--dur-base) var(--ease-out) both fade-out;
+}
+html.vt-back::view-transition-new(root) {
+    animation: none;
+}
+
+@keyframes fade-out { to { opacity: 0 } }
+
+@keyframes fade-in { from { opacity: 0 } }
+
+::view-transition-group(active-poster) {
+    animation-duration: 400ms;
+    z-index: 10;
+}
+
+::view-transition-group(media-backdrop) {
+    animation-duration: 400ms;
+}
+::view-transition-old(media-backdrop) {
+    animation: none;
+}
+::view-transition-new(media-backdrop) {
+    animation: 400ms var(--ease-out) both fade-in;
+}
+html.vt-back::view-transition-old(media-backdrop) {
+    animation: var(--dur-base) var(--ease-out) both fade-out;
+}
+html.vt-back::view-transition-new(media-backdrop) {
+    animation: none;
+}
+
+::view-transition-group(site-header),
+::view-transition-group(bottom-nav) {
+    animation: none;
+    z-index: 20;
+}
+::view-transition-old(site-header),
+::view-transition-old(bottom-nav) {
+    display: none;
+}
+::view-transition-new(site-header),
+::view-transition-new(bottom-nav) {
+    animation: none;
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-image-pair(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

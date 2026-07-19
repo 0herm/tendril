@@ -2,32 +2,22 @@
 
 import { Bell, Clapperboard, Compass, Search, User } from 'lucide-react'
 import Link from 'next/link'
-import { useRef, useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
 
-import { Button } from '@/ui/button'
-import { Input } from '@/ui/input'
+import SearchPalette from '@/components/nav/searchPalette'
+
+const iconLinkClasses =
+    'hidden sm:flex items-center justify-center w-8 h-8 rounded-xl bg-transparent hover:bg-white/8 ' +
+    'text-muted-foreground [[data-transparent]_&]:text-white/75 hover:text-foreground transition-all'
 
 export default function NavBar() {
-    const desktopInputRef = useRef<HTMLInputElement>(null)
-    const mobileInputRef = useRef<HTMLInputElement>(null)
-    const router = useRouter()
-    const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
-
-    const handleSearch = (value?: string) => {
-        const query = value?.trim()
-        if (!query) return
-        router.push(`/search/${encodeURIComponent(query)}`)
-        setMobileSearchOpen(false)
-        if (desktopInputRef.current) desktopInputRef.current.value = ''
-        if (mobileInputRef.current) mobileInputRef.current.value = ''
-    }
+    const [paletteOpen, setPaletteOpen] = useState(false)
 
     useEffect(() => {
         const down = (e: KeyboardEvent) => {
             if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
                 e.preventDefault()
-                desktopInputRef.current?.focus()
+                setPaletteOpen(true)
             }
         }
         document.addEventListener('keydown', down)
@@ -36,95 +26,61 @@ export default function NavBar() {
 
     return (
         <div className='relative flex flex-col w-full h-full'>
-            <div className='flex flex-row justify-between items-center w-full h-full px-5'>
-                <Link href='/' className='flex items-center gap-2.5 h-full shrink-0'>
-                    <div className='flex items-center justify-center w-8 h-8 rounded-xl bg-brand/12 shrink-0'>
-                        <Clapperboard className='h-3.5 w-3.5 text-brand' />
-                    </div>
-                    <span className='font-bold text-sm tracking-tight hidden xs:block'>
+            <div className='flex flex-row justify-between items-center w-full h-full px-5 sm:px-6'>
+                <Link href='/' className='flex items-center gap-2 h-full shrink-0'>
+                    <Clapperboard className='h-4.5 w-4.5 text-brand' />
+                    <span className='display font-bold text-[15px] hidden xs:block'>
                         Tendril
                     </span>
                 </Link>
 
                 <div className='flex items-center gap-2'>
-                    <div className='relative hidden sm:flex items-center'>
-                        <Search className='absolute left-3 h-3.5 w-3.5 text-muted-foreground pointer-events-none z-10' />
-                        <Input
-                            className='w-64 h-9 pl-9 pr-16 text-sm rounded-xl bg-white/5 border-white/8 focus:border-white/20 focus:bg-white/8 transition-colors'
-                            placeholder='Search movies & shows'
-                            ref={desktopInputRef}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') handleSearch(desktopInputRef.current?.value)
-                            }}
-                        />
-                        <div className='absolute right-2.5 flex items-center pointer-events-none select-none'>
-                            <kbd className='inline-flex items-center px-1.5 py-0.5 bg-white/5 border border-white/10 rounded-md text-[10px] text-muted-foreground/50 font-mono font-medium'>
-                                ⌘K
-                            </kbd>
-                        </div>
-                    </div>
-
-                    <Link
-                        href='/discover'
-                        className='hidden sm:flex items-center justify-center w-8 h-8 rounded-xl bg-transparent hover:bg-white/8 text-muted-foreground hover:text-foreground transition-all'
-                        aria-label='Discover'
+                    <button
+                        onClick={() => setPaletteOpen(true)}
+                        className={
+                            'hidden sm:flex items-center gap-2.5 w-64 h-9 pl-3 pr-2 rounded-xl cursor-pointer ' +
+                            'bg-white/5 border border-white/8 hover:border-white/16 hover:bg-white/8 transition-colors'
+                        }
+                        aria-label='Search'
                     >
+                        <Search className='h-3.5 w-3.5 text-muted-foreground [[data-transparent]_*]:text-white/75 shrink-0' />
+                        <span className='flex-1 text-left text-sm text-muted-foreground/60 [[data-transparent]_&]:text-white/50'>Search…</span>
+                        <kbd
+                            className={
+                                'inline-flex items-center px-1.5 py-0.5 bg-white/5 border border-white/10 ' +
+                                'rounded-md text-[10px] text-muted-foreground/50 [[data-transparent]_&]:text-white/40 font-mono font-medium'
+                            }
+                        >
+                            ⌘K
+                        </kbd>
+                    </button>
+
+                    <Link href='/discover' className={iconLinkClasses} aria-label='Discover'>
                         <Compass className='h-3.5 w-3.5' />
                     </Link>
 
-                    <Link
-                        href='/account/notifications'
-                        className='hidden sm:flex items-center justify-center w-8 h-8 rounded-xl bg-transparent hover:bg-white/8 text-muted-foreground hover:text-foreground transition-all'
-                        aria-label='Notifications'
-                    >
+                    <Link href='/account/notifications' className={iconLinkClasses} aria-label='Notifications'>
                         <Bell className='h-3.5 w-3.5' />
                     </Link>
 
-                    <Link
-                        href='/account'
-                        className='hidden sm:flex items-center justify-center w-8 h-8 rounded-xl bg-transparent hover:bg-white/8 text-muted-foreground hover:text-foreground transition-all'
-                        aria-label='Account'
-                    >
+                    <Link href='/account' className={iconLinkClasses} aria-label='Account'>
                         <User className='h-3.5 w-3.5' />
                     </Link>
 
-                    <Button
-                        variant='ghost'
-                        size='icon'
-                        className='sm:hidden h-9 w-9 rounded-xl'
-                        onClick={() => {
-                            setMobileSearchOpen((o) => !o)
-                            setTimeout(() => mobileInputRef.current?.focus(), 50)
-                        }}
+                    <button
+                        onClick={() => setPaletteOpen(true)}
+                        className={
+                            'sm:hidden flex items-center justify-center h-9 w-9 rounded-xl cursor-pointer ' +
+                            'text-muted-foreground [[data-transparent]_&]:text-white/75 hover:text-foreground hover:bg-white/8 transition-colors'
+                        }
                         aria-label='Search'
                     >
                         <Search className='w-4 h-4' />
-                    </Button>
+                    </button>
                 </div>
             </div>
 
-            {mobileSearchOpen && (
-                <div className='absolute top-full left-0 right-0 border-b border-border/60 bg-background/95 backdrop-blur-xl px-4 py-2.5 sm:hidden z-50'>
-                    <div className='relative flex items-center'>
-                        <Search className='absolute left-3.5 h-4 w-4 text-muted-foreground pointer-events-none' />
-                        <Input
-                            ref={mobileInputRef}
-                            className='w-full h-11 pl-10 pr-24 text-base rounded-xl bg-white/5 border-white/8'
-                            placeholder='Search movies or shows...'
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') handleSearch(mobileInputRef.current?.value)
-                                if (e.key === 'Escape') setMobileSearchOpen(false)
-                            }}
-                        />
-                        <Button
-                            className='absolute right-1.5 h-8 px-3 text-xs rounded-lg'
-                            onClick={() => handleSearch(mobileInputRef.current?.value)}
-                        >
-                            Search
-                        </Button>
-                    </div>
-                </div>
-            )}
+            <SearchPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
         </div>
     )
 }

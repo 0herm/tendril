@@ -69,7 +69,7 @@ function DialogContent({ className = '', children, showCloseButton = true }: {
             ref={ref}
             className={
                 'relative m-auto w-full max-w-[calc(100%-2rem)] sm:max-w-lg ' +
-                'bg-card border border-border/60 rounded-2xl shadow-2xl overflow-hidden p-0 ' +
+                'bg-surface-1/90 backdrop-blur-2xl border border-border-strong rounded-2xl shadow-modal overflow-hidden p-0 ' +
                 className
             }
             onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}

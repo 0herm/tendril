@@ -40,7 +40,13 @@ export default function LoadMore({ initialItems, totalPages, fetchMore }: Props)
         <>
             <div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-3'>
                 {items.map((item, index) => (
-                    <MediaCard key={`${item.id}-${index}`} item={item} />
+                    <div
+                        key={`${item.id}-${index}`}
+                        className='animate-[rise-in_360ms_var(--ease-out)_both]'
+                        style={{ animationDelay: `${(index % 14) * 30}ms` }}
+                    >
+                        <MediaCard item={item} />
+                    </div>
                 ))}
             </div>
             {page < totalPages && (

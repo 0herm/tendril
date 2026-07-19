@@ -1,4 +1,5 @@
 import LoadMore from '@/components/media/loadMore'
+import PageContainer from '@/components/pageContainer'
 import { getSearch } from '@/utils/tmdbApi'
 import Link from 'next/link'
 import { ArrowLeft, SearchX } from 'lucide-react'
@@ -24,7 +25,7 @@ export default async function Page({ params }: { params: Promise<{ search: strin
     const fetchMore = fetchMoreSearch.bind(null, param)
 
     return (
-        <div className='w-full flex flex-col gap-6'>
+        <PageContainer className='flex flex-col gap-6'>
             <div className='flex items-center gap-3'>
                 <Link
                     href='/search'
@@ -33,8 +34,8 @@ export default async function Page({ params }: { params: Promise<{ search: strin
                     <ArrowLeft className='h-4 w-4' />
                 </Link>
                 <div className='flex flex-col gap-0.5 min-w-0'>
-                    <h1 className='text-base font-black tracking-tight truncate'>&ldquo;{query}&rdquo;</h1>
-                    {results.length > 0 && <p className='text-[11px] text-muted-foreground/50'>{results.length} results</p>}
+                    <h1 className='display text-xl sm:text-2xl font-bold truncate'>&ldquo;{query}&rdquo;</h1>
+                    {results.length > 0 && <p className='text-[11px] text-muted-foreground/50 tabular-nums'>{results.length} results</p>}
                 </div>
             </div>
 
@@ -53,7 +54,7 @@ export default async function Page({ params }: { params: Promise<{ search: strin
                     </div>
                 </div>
             )}
-        </div>
+        </PageContainer>
     )
 }
 

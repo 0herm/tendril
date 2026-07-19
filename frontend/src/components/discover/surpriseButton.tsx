@@ -5,6 +5,7 @@ import { Shuffle } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/ui/dialog'
 import { Button } from '@/ui/button'
+import { Chip } from '@/ui/chip'
 import { getAllWatched } from '@/utils/queries'
 
 type Candidate = { id: number; type: 'movie' | 'show'; genre_ids?: number[]; runtime?: number }
@@ -31,19 +32,6 @@ function FilterGroup({ label, children }: { label: string; children: ReactNode }
     )
 }
 
-function Pill({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
-    return (
-        <button
-            onClick={onClick}
-            className={`relative px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors ${
-                active ? 'text-brand border-brand/30' : 'border-border/60 bg-card text-muted-foreground/70 hover:text-foreground hover:border-border'
-            }`}
-        >
-            {active && <span className='absolute inset-0 bg-brand/10 rounded-xl' />}
-            <span className='relative'>{children}</span>
-        </button>
-    )
-}
 
 export function SurpriseButton({ items }: { items: Candidate[] }) {
     const router = useRouter()
@@ -102,12 +90,12 @@ export function SurpriseButton({ items }: { items: Candidate[] }) {
                 <div className='flex flex-col gap-5 px-5 pt-4 pb-5'>
                     <FilterGroup label='Mood'>
                         {MOODS.map((m) => (
-                            <Pill key={m.id} active={selectedMoods.includes(m.id)} onClick={() => toggleMood(m.id)}>{m.label}</Pill>
+                            <Chip key={m.id} selected={selectedMoods.includes(m.id)} onClick={() => toggleMood(m.id)}>{m.label}</Chip>
                         ))}
                     </FilterGroup>
                     <FilterGroup label='Length (movies)'>
                         {TIME_FILTERS.map((tf, i) => (
-                            <Pill key={i} active={timeFilter === i} onClick={() => setTimeFilter(i)}>{tf.label}</Pill>
+                            <Chip key={i} selected={timeFilter === i} onClick={() => setTimeFilter(i)}>{tf.label}</Chip>
                         ))}
                     </FilterGroup>
                     <div className='flex flex-col gap-2'>

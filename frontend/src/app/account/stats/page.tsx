@@ -77,7 +77,7 @@ export default async function Page() {
     return (
         <div className='w-full flex flex-col gap-8 max-w-xl'>
             <div className='flex flex-col gap-1'>
-                <h1 className='text-2xl font-black tracking-tight'>Stats</h1>
+                <h1 className='display text-2xl sm:text-3xl font-bold'>Stats</h1>
                 <p className='text-xs text-muted-foreground/70'>Your watching history at a glance.</p>
             </div>
 
@@ -122,12 +122,12 @@ function StatCard({ icon, label, value, mono = false }: {
     mono?: boolean
 }) {
     return (
-        <div className='flex flex-col gap-4 rounded-2xl bg-card border border-border/60 p-4 sm:p-5'>
+        <div className='flex flex-col gap-4 rounded-2xl bg-surface-1 border border-border/60 p-4 sm:p-5'>
             <div className='flex items-start justify-between gap-2'>
                 <span className='text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground/50 leading-tight'>{label}</span>
-                <div className='text-brand/50 shrink-0 mt-0.5'>{icon}</div>
+                <div className='text-ambient/50 shrink-0 mt-0.5'>{icon}</div>
             </div>
-            <span className={`text-3xl font-black tracking-tight leading-none text-foreground ${mono ? 'tabular-nums' : ''}`}>
+            <span className={`display text-3xl font-black leading-none text-foreground ${mono ? 'tabular-nums' : ''}`}>
                 {value}
             </span>
         </div>
@@ -145,16 +145,23 @@ function BarList({ icon: Icon, title, items, max, labelClassName }: {
     return (
         <div className='flex flex-col gap-3'>
             <div className='flex items-center gap-2'>
-                <Icon className='h-3 w-3 text-brand/60' />
+                <Icon className='h-3 w-3 text-ambient/60' />
                 <h2 className='text-[11px] font-bold tracking-[0.1em] uppercase text-muted-foreground'>{title}</h2>
             </div>
             <div className='divide-y divide-border/60'>
-                {items.map(([label, count]) => (
+                {items.map(([label, count], i) => (
                     <div key={label} className='flex items-center gap-3 py-2.5'>
                         <span className={labelClassName}>{label}</span>
                         <div className='flex items-center gap-3 flex-1 min-w-0'>
                             <div className='flex-1 h-1.5 rounded-full bg-muted/80 overflow-hidden'>
-                                <div className='h-full rounded-full bg-brand/60' style={{ width: `${(count / max) * 100}%` }} />
+                                <div
+                                    className={
+                                        'h-full rounded-full origin-left ' +
+                                        'bg-linear-to-r from-brand/50 to-ambient/80 ' +
+                                        'animate-[bar-grow_600ms_var(--ease-out)_both]'
+                                    }
+                                    style={{ width: `${(count / max) * 100}%`, animationDelay: `${i * 45}ms` }}
+                                />
                             </div>
                             <span className='text-xs text-muted-foreground/60 w-5 text-right shrink-0 tabular-nums'>{count}</span>
                         </div>

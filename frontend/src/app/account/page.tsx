@@ -71,6 +71,7 @@ export default async function Page() {
                     <div className='flex flex-col gap-8'>
                         <MediaSection
                             title='Continue Watching'
+                            type='show'
                             items={{ page: 1, total_pages: 1, total_results: continueItems.length, results: continueItems }}
                             filterable
                         />
@@ -103,7 +104,10 @@ export default async function Page() {
                         </div>
                         <Link
                             href='/'
-                            className='inline-flex items-center gap-2 h-9 px-5 rounded-xl bg-brand hover:bg-brand-dim active:bg-brand-dimmer text-white text-sm font-medium transition-colors'
+                            className={
+                                'inline-flex items-center gap-2 h-9 px-5 rounded-xl bg-brand hover:bg-brand-dim ' +
+                                'active:bg-brand-dimmer text-white text-sm font-medium transition-colors'
+                            }
                         >
                             Browse
                         </Link>

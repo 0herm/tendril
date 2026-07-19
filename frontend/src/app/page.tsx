@@ -14,14 +14,16 @@ import { getAllWatched, getDefaultList, getMediaByListId, getUserSettings } from
 import { getSessionUserId } from '@/utils/auth'
 import { redirect } from 'next/navigation'
 import { MediaStateProvider } from '@/components/watched/mediaStateContext'
+import PageContainer from '@/components/pageContainer'
+import { getAmbientColor } from '@/utils/ambient'
 
 function SetupError({ reason }: { reason: string }) {
     return (
-        <div className='w-full flex flex-col items-center justify-center gap-3 py-16 text-center'>
+        <PageContainer className='flex flex-col items-center justify-center gap-3 py-16 text-center'>
             <p className='text-sm font-medium'>Setup required</p>
             <p className='text-xs text-destructive bg-destructive/10 rounded-lg px-3 py-1.5 max-w-sm'>{reason}</p>
             <p className='text-xs text-muted-foreground'>Set <code>TMDB_ACCESS_TOKEN</code> in your environment and restart.</p>
-        </div>
+        </PageContainer>
     )
 }
 
@@ -99,14 +101,21 @@ export default async function Home() {
         const isInvalidKey = tmdbError?.includes('Invalid API key')
         if (isInvalidKey) return <SetupError reason='Invalid TMDB API key. Check your TMDB_ACCESS_TOKEN.' />
         return (
-            <div className='w-full flex flex-col items-center justify-center gap-2 py-16 text-center'>
+            <PageContainer className='flex flex-col items-center justify-center gap-2 py-16 text-center'>
                 <p className='text-sm text-muted-foreground'>No content available.</p>
                 {tmdbError && (
                     <p className='text-xs text-destructive bg-destructive/10 rounded-lg px-3 py-1.5 max-w-sm'>{tmdbError}</p>
                 )}
-            </div>
+            </PageContainer>
         )
     }
+
+    const heroSlides = (trendingDailyResult.data?.results ?? []).filter(i => i.backdrop_path).slice(0, 7)
+    const heroAmbient: Record<number, string> = {}
+    await Promise.all(heroSlides.map(async (slide) => {
+        const color = await getAmbientColor(slide.poster_path)
+        if (color) heroAmbient[slide.id] = color
+    }))
 
     const progressMap = new Map<number, number>()
     for (const show of cwItems) {
@@ -148,37 +157,49 @@ export default async function Home() {
             streamingProviders={settingsResult.data?.streaming_providers ?? []}
             region={settingsResult.data?.region ?? 'GB'}
         >
-            <div className='flex flex-col gap-8 w-full overflow-hidden'>
-                {trendingDailyResult.data?.results?.length ? (
-                    <HeroCarousel items={trendingDailyResult.data.results} />
-                ) : null}
-                <MediaSection title='Top 10 Right Now' items={trendingDailyResult.data} ranked />
-                {cwItems.length > 0 && (
-                    <MediaSection title='Continue Watching' items={cwItems} type='show' progressMap={progressMap} filterable />
+            <div className='flex flex-col w-full'>
+                {heroSlides.length > 0 && (
+                    <HeroCarousel items={heroSlides} ambient={heroAmbient} />
                 )}
-                {watchlistResult.details.length > 0 && (
-                    <MediaSection title='Want to Watch' items={watchlistResult.details} filterable />
-                )}
-                <MediaSection
-                    title='New This Week'
-                    items={[
-                        ...(thisWeekMoviesResult.data?.results ?? []),
-                        ...(thisWeekShowsResult.data?.results ?? []),
-                    ].sort((a, b) => b.popularity - a.popularity)}
-                />
-                <MediaSection title='Trending' items={trendingResult.data} />
+                <PageContainer
+                    padTop={heroSlides.length === 0}
+                    className={`flex flex-col gap-8 overflow-hidden ${heroSlides.length > 0 ? 'pt-6' : ''}`}
+                >
+                    {/* For you */}
+                    <MediaSection title='Top 10 Right Now' items={trendingDailyResult.data} ranked />
+                    {cwItems.length > 0 && (
+                        <MediaSection title='Continue Watching' items={cwItems} type='show' progressMap={progressMap} filterable />
+                    )}
+                    {watchlistResult.details.length > 0 && (
+                        <MediaSection title='Want to Watch' items={watchlistResult.details} filterable />
+                    )}
 
-                <div className='flex flex-col gap-6'>
-                    <div className='-mx-5 sm:-mx-6 h-px bg-white/[0.04]' />
-                    <MediaSection title='New Movies'       items={newMoviesResult.data}      type='movie' />
-                    <MediaSection title='New Shows'        items={newShowsResult.data}       type='show' />
-                    <MediaSection title='Popular Movies'   items={popularMoviesResult.data}  type='movie' />
-                    <MediaSection title='Popular Shows'    items={popularShowsResult.data}   type='show' />
-                    <MediaSection title='Top Rated Movies' items={topRatedMoviesResult.data} type='movie' />
-                    <MediaSection title='Top Rated Shows'  items={topRatedShowsResult.data}  type='show' />
-                    <MediaSection title='Upcoming Movies'  items={upcomingMoviesResult.data} type='movie' />
-                    <MediaSection title='Upcoming Shows'   items={upcomingShowsResult.data}  type='show' />
-                </div>
+                    {/* What's new */}
+                    <div className='flex flex-col gap-8'>
+                        <div className='-mx-5 sm:-mx-6 h-px bg-white/[0.05]' />
+                        <MediaSection
+                            title='New This Week'
+                            items={[
+                                ...(thisWeekMoviesResult.data?.results ?? []),
+                                ...(thisWeekShowsResult.data?.results ?? []),
+                            ].sort((a, b) => b.popularity - a.popularity)}
+                        />
+                        <MediaSection title='Trending' items={trendingResult.data} />
+                    </div>
+
+                    {/* Browse */}
+                    <div className='flex flex-col gap-8'>
+                        <div className='-mx-5 sm:-mx-6 h-px bg-white/[0.05]' />
+                        <MediaSection title='New Movies'       items={newMoviesResult.data}      type='movie' />
+                        <MediaSection title='New Shows'        items={newShowsResult.data}       type='show' />
+                        <MediaSection title='Popular Movies'   items={popularMoviesResult.data}  type='movie' />
+                        <MediaSection title='Popular Shows'    items={popularShowsResult.data}   type='show' />
+                        <MediaSection title='Top Rated Movies' items={topRatedMoviesResult.data} type='movie' />
+                        <MediaSection title='Top Rated Shows'  items={topRatedShowsResult.data}  type='show' />
+                        <MediaSection title='Upcoming Movies'  items={upcomingMoviesResult.data} type='movie' />
+                        <MediaSection title='Upcoming Shows'   items={upcomingShowsResult.data}  type='show' />
+                    </div>
+                </PageContainer>
             </div>
         </MediaStateProvider>
     )

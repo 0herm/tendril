@@ -1,8 +1,9 @@
 import Link from 'next/link'
+import PageContainer from '@/components/pageContainer'
 
 export default function Custom404() {
     return (
-        <div className='w-full flex flex-col items-center justify-center gap-5 py-24 text-center'>
+        <PageContainer className='flex flex-col items-center justify-center gap-5 py-24 text-center'>
             <span className='text-8xl font-bold text-foreground/8 tabular-nums select-none tracking-tighter'>
                 404
             </span>
@@ -18,6 +19,6 @@ export default function Custom404() {
             >
                 Go home
             </Link>
-        </div>
+        </PageContainer>
     )
 }

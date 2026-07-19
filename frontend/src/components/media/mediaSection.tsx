@@ -80,12 +80,12 @@ export default function MediaSection({ title, items, type, ranked, action, progr
                         >
                             {ranked && (
                                 <span
-                                    className='absolute left-0 bottom-0 z-10 text-7xl font-black italic leading-none select-none pointer-events-none'
+                                    className='display absolute left-0 bottom-0 z-10 text-7xl font-black leading-none select-none pointer-events-none'
                                     style={{
-                                        WebkitTextStroke: '1.5px var(--foreground)',
-                                        color: 'oklch(0.22 0 0)',
+                                        WebkitTextStroke: '1.5px color-mix(in oklab, var(--ambient) 45%, var(--foreground))',
+                                        color: 'oklch(0.17 0 0)',
                                         filter: 'drop-shadow(0 2px 6px rgba(0,0,0,1))',
-                                        letterSpacing: index === 9 ? '0' : '-0.15em',
+                                        letterSpacing: index === 9 ? '0' : '-0.12em',
                                     }}
                                 >
                                     {index === 9 ? (

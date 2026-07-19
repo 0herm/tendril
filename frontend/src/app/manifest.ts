@@ -4,7 +4,8 @@ export default function manifest(): MetadataRoute.Manifest {
     return {
         name: 'Tendril',
         short_name: 'Tendril',
-        theme_color: '#0A0A0A',
+        theme_color: '#020202',
+        background_color: '#020202',
         description: 'Movie tracker',
         start_url: '/',
         display: 'standalone',

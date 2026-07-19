@@ -1,12 +1,16 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { ViewTransition } from 'react'
+import { Archivo, Instrument_Sans } from 'next/font/google'
 
 import NavBar from '@/components/nav/nav'
+import HeaderShell from '@/components/nav/headerShell'
 import BottomNav from '@/components/nav/bottomNav'
 import Footer from '@/components/nav/footer'
+import ScrollRestorer from '@/components/nav/scrollRestorer'
 
-const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' })
+const archivo = Archivo({ subsets: ['latin'], display: 'swap', variable: '--font-archivo', axes: ['wdth'] })
+const instrumentSans = Instrument_Sans({ subsets: ['latin'], display: 'swap', variable: '--font-instrument-sans' })
 
 export const metadata: Metadata = {
     title: 'Tendril',
@@ -23,7 +27,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-    themeColor: '#252525',
+    themeColor: '#020202',
     width: 'device-width',
     initialScale: 1,
     viewportFit: 'cover',
@@ -31,23 +35,18 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <html lang='en' className={`dark bg-background ${inter.variable}`}>
+        <html lang='en' className={`dark bg-background ${archivo.variable} ${instrumentSans.variable}`}>
             <head />
-            <body className='w-screen min-h-screen m-0 p-0 font-[var(--font-inter)] antialiased wrap-break-word leading-normal tracking-normal'>
-                <div className='flex flex-col w-full min-h-screen'>
-                    <header
-                        className='fixed top-0 left-0 right-0 z-50 print:hidden bg-background/85 backdrop-blur-lg shadow-[0_1px_0_oklch(1_0_0_/_6%)]'
-                        style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
-                    >
-                        <div className='h-14'>
-                            <NavBar />
-                        </div>
-                    </header>
-                    <main
-                        className='grow w-full bg-background px-5 sm:px-6 pb-28 sm:pb-8'
-                        style={{ paddingTop: 'calc(3.5rem + env(safe-area-inset-top, 0px) + 1.25rem)' }}
-                    >
-                        {children}
+            <body className='w-screen min-h-screen m-0 p-0 font-sans antialiased wrap-break-word leading-normal tracking-normal'>
+                <div className='relative flex flex-col w-full min-h-screen'>
+                    <HeaderShell>
+                        <NavBar />
+                    </HeaderShell>
+                    <main className='grow w-full bg-background pb-28 sm:pb-8'>
+                        <ScrollRestorer />
+                        <ViewTransition>
+                            {children}
+                        </ViewTransition>
                     </main>
                     <footer className='border-t border-border hidden sm:block'>
                         <Footer />

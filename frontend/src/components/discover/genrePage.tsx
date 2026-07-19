@@ -34,11 +34,17 @@ export default async function GenrePage({ genreId, name, defaultName, typeLabel,
         >
             <div className='w-full flex flex-col gap-6'>
                 <div className='flex items-center gap-3'>
-                    <Link href='/discover' className='flex items-center justify-center w-8 h-8 rounded-xl hover:bg-white/8 text-muted-foreground/60 hover:text-foreground transition-all shrink-0'>
+                    <Link
+                        href='/discover'
+                        className={
+                            'flex items-center justify-center w-8 h-8 rounded-xl hover:bg-white/8 ' +
+                            'text-muted-foreground/60 hover:text-foreground transition-all shrink-0'
+                        }
+                    >
                         <ArrowLeft className='h-4 w-4' />
                     </Link>
                     <div className='flex flex-col gap-0.5 min-w-0'>
-                        <h1 className='text-base font-black tracking-tight truncate'>{name ?? defaultName}</h1>
+                        <h1 className='display text-xl sm:text-2xl font-bold truncate'>{name ?? defaultName}</h1>
                         <p className='text-[11px] text-muted-foreground/50'>{typeLabel}</p>
                     </div>
                 </div>

@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import { getAuthenticationOptions, verifyAuthentication } from '@/utils/auth'
 import { startAuthentication } from '@simplewebauthn/browser'
-import { Fingerprint } from 'lucide-react'
-import AuthPageShell from '../authPageShell'
+import AuthPageShell, { PasskeyButton } from '../authPageShell'
 
 export default function LoginClient() {
     const [loading, setLoading] = useState(false)
@@ -36,14 +35,9 @@ export default function LoginClient() {
                     {error}
                 </p>
             )}
-            <button
-                onClick={handleLogin}
-                disabled={loading}
-                className='group w-full h-[3.25rem] flex items-center justify-center gap-2.5 rounded-2xl bg-brand hover:bg-brand-dim active:bg-brand-dimmer text-white text-sm font-semibold transition-all duration-200 shadow-[0_8px_32px_oklch(0.68_0.18_155/25%)] disabled:opacity-60 disabled:pointer-events-none'
-            >
-                <Fingerprint className='h-[1.125rem] w-[1.125rem] transition-transform group-hover:scale-105' />
+            <PasskeyButton onClick={handleLogin} loading={loading}>
                 {loading ? 'Authenticating…' : 'Sign in with Passkey'}
-            </button>
+            </PasskeyButton>
         </AuthPageShell>
     )
 }

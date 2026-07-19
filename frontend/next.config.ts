@@ -2,7 +2,14 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
     output: 'standalone',
+    experimental: {
+        viewTransition: true,
+        staleTimes: {
+            dynamic: 30,
+        },
+    },
     images: {
+        minimumCacheTTL: 2678400,
         remotePatterns: [
             {
                 protocol: 'https',
