@@ -3,7 +3,6 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
     output: 'standalone',
     experimental: {
-        viewTransition: true,
         staleTimes: {
             dynamic: 30,
         },
